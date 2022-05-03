@@ -1,3 +1,5 @@
+import com.sun.media.jfxmedia.Media;
+import com.sun.media.jfxmedia.MediaPlayer;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -15,6 +17,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class main extends Application {
