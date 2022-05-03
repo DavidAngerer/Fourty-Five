@@ -22,7 +22,12 @@ public class Player {
         return cards.add(card);
     }
 
-    public boolean addEfect(Card card){
-        return cards.add(card);
+    public void addEfect(Efect efect){
+        for (int i = 0; i < efects.size(); i++) {
+            if(efects.get(i).efectName == efect.efectName){
+                efects.get(i).addCycles(efect.cyclesLeft);
+            }
+        }
+        efects.add(efect);
     }
 }

@@ -3,4 +3,6 @@ public abstract class Card {
         NormalBullet,PoisonBullet
     }
     protected CardName cardName;
+
+    protected String cardDeskrition;
 }

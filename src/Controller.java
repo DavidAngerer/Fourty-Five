@@ -6,10 +6,19 @@ public class Controller {
 
     Player player;
 
+    ArrayList<Card> CardsinExistence;
+
+    ArrayList<Efect> efectsInExistence;
+
     public Controller(float dificulty, int stage) {
         this.dificulty = dificulty;
         this.stage = stage;
         player = new Player(new ArrayList<>(),new ArrayList<>(),10);
+        fillCards();
+        player.addCard(new Bullet(Card.CardName.NormalBullet));
+    }
+
+    private void fillCards(){
 
     }
 }
