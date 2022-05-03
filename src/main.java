@@ -28,7 +28,7 @@ public class main extends Application {
     GridPane pane;
     Scene scene;
 
-
+    Controller controller;
 
     public static void main(String[] args) {
         launch(args);
@@ -95,6 +95,6 @@ public class main extends Application {
     }
 
     public void startGame(){
-
+        controller = new Controller(1,1);
     }
 }
