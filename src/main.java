@@ -1,24 +1,15 @@
-import com.sun.media.jfxmedia.Media;
-import com.sun.media.jfxmedia.MediaPlayer;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
-import java.io.File;
-import java.util.ArrayList;
 
 public class main extends Application {
 
@@ -63,6 +54,11 @@ public class main extends Application {
 
 
         VBox box = new VBox();
+
+
+
+
+
         box.setAlignment(Pos.CENTER);
         Button newGame = new Button("new Game");
         newGame.setOnAction(new EventHandler<ActionEvent>() {
@@ -88,10 +84,18 @@ public class main extends Application {
         pane.add(box,0,0);
         scene = new Scene(pane,width,height);
 
+
         System.out.println("a");
         primaryStage.setFullScreen(false);
         primaryStage.setScene(scene);
         primaryStage.setFullScreen(true);
+
+        ImageView imageView = new ImageView();
+        box.getChildren().add(imageView);
+        imageView.setImage(new Image("mainmenu_v3.png"));
+        imageView.setFitWidth(width);
+        imageView.setFitHeight(height);
+
     }
 
     public void startGame(){
