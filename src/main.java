@@ -54,12 +54,9 @@ public class main extends Application {
 
 
         VBox box = new VBox();
-
-
-
-
-
         box.setAlignment(Pos.CENTER);
+
+        /*
         Button newGame = new Button("new Game");
         newGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -67,7 +64,9 @@ public class main extends Application {
                 startGame();
             }
         });
+        */
 
+        /*
         Button quit = new Button("Quit");
         quit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -75,10 +74,12 @@ public class main extends Application {
                 System.exit(0);
             }
         });
+
+        */
         pane= new GridPane();
 
-        box.getChildren().add(newGame);
-        box.getChildren().add(quit);
+        //box.getChildren().add(newGame);
+        //box.getChildren().add(quit);
 
 
         pane.add(box,0,0);
@@ -90,6 +91,26 @@ public class main extends Application {
         primaryStage.setScene(scene);
         primaryStage.setFullScreen(true);
 
+
+        //bild button new game
+        ImageView buttonNewGame = new ImageView("button_newGame_v4.png");
+        box.getChildren().add(buttonNewGame);
+        //buttonNewGame.setPickOnBounds(true); // allows click on transparent areas
+        buttonNewGame.setOnMouseClicked((MouseEvent e) -> {
+            startGame(); // change functionality
+            System.out.println("test_button unga bunga");
+        });
+
+
+        //bild button quit
+        ImageView buttonQuit = new ImageView("button_quit_v1.png");
+        box.getChildren().add(buttonQuit);
+        //buttonQuit.setPickOnBounds(true); // allows click on transparent areas
+        buttonQuit.setOnMouseClicked((MouseEvent e) -> {
+            System.exit(0); // change functionality
+        });
+
+        //main menu bg
         ImageView imageView = new ImageView();
         box.getChildren().add(imageView);
         imageView.setImage(new Image("mainmenu_v3.png"));
