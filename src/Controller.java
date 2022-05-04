@@ -16,6 +16,8 @@ public class Controller {
     ArrayList<Efect> efectsInExistence;
 
     public Controller(float dificulty, int stage) {
+        CardsinExistence=new ArrayList<>();
+        efectsInExistence=new ArrayList<>();
         this.dificulty = dificulty;
         this.stage = stage;
         player = new Player(new ArrayList<>(),new ArrayList<>(),10);
@@ -24,11 +26,11 @@ public class Controller {
             player.addCard(CardsinExistence.get(0));
         }
         player.addCard(CardsinExistence.get(1));
-
+        nextTurn();
     }
 
     public void nextTurn(){
-        int hpPool = (int)(Math.random()*stage)*2+(stage*2);
+        int hpPool = (int)(Math.random()*stage)*2+(stage*2)+10;
         ArrayList<Enemy> enemiesThisTurn = new ArrayList<>();
         int enemyNumbers = (int)(Math.random()*3);
         System.out.println(hpPool);
@@ -37,13 +39,14 @@ public class Controller {
     }
 
     private void fillCards(){
-        Path path = Path.of("CardData/Bullet.csv");
+        Path path = Path.of("./res/CardData/Bullet.csv");
         try (BufferedReader br = Files.newBufferedReader(path,
                 StandardCharsets.US_ASCII)) {
             String line = br.readLine();
             while (line != null) {
                 String[] attributes = line.split(";");
                 CardsinExistence.add(new Bullet(attributes));
+                line = br.readLine();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

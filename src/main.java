@@ -40,7 +40,7 @@ public class main extends Application {
         VBox box = new VBox();
         ImageView imageView = new ImageView();
 
-        stage.setFullScreen(true);
+        //stage.setFullScreen(true);
         box.getChildren().add(imageView);
         imageView.setImage(new Image(this.getClass().getResource("backgrounds/titlescreen.gif").toExternalForm()));
 //        pane.add(box, 0, 0);
@@ -63,8 +63,6 @@ public class main extends Application {
     }
 
     private void menu(Stage stage) {
-        //Controller für David NICHT ÄNDERN
-        controller = new Controller(1, 1);
 
 
         pane.setMaxWidth(scene.getWidth());
@@ -207,6 +205,7 @@ public class main extends Application {
 //    }
 
     public void startGame() {
-        //controller = new Controller(1, 1);
+        controller = new Controller(1, 1);
+        System.out.println("startgame");
     }
 }

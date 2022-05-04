@@ -22,7 +22,7 @@ public class Bullet extends Card{
 
     public Bullet(String[] attributes){
         cardName = CardName.valueOf(attributes[0]);
-        cardDeskrition = attributes[5];
+        //cardDeskrition = attributes[5];
         try{
             damage = Integer.parseInt(attributes[1]);
             damageCalculatet = false;
