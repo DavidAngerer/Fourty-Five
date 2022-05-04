@@ -20,7 +20,20 @@ public class Controller {
         this.stage = stage;
         player = new Player(new ArrayList<>(),new ArrayList<>(),10);
         fillCards();
-        player.addCard(new Bullet(Card.CardName.Bullet));
+        for (int i = 0; i < 4; i++) {
+            player.addCard(CardsinExistence.get(0));
+        }
+        player.addCard(CardsinExistence.get(1));
+
+    }
+
+    public void nextTurn(){
+        int hpPool = (int)(Math.random()*stage)*2+(stage*2);
+        ArrayList<Enemy> enemiesThisTurn = new ArrayList<>();
+        int enemyNumbers = (int)(Math.random()*3);
+        System.out.println(hpPool);
+        System.out.println(enemyNumbers);
+
     }
 
     private void fillCards(){
