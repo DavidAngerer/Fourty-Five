@@ -89,7 +89,7 @@ public class main extends Application {
         pane.getRowConstraints().addAll(r);
         pane.getColumnConstraints().clear();
         pane.getColumnConstraints().addAll(Arrays.asList(c));
-        ImageView buttonNewGame = new ImageView("button_newGame_v4.png");
+        ImageView buttonNewGame = new ImageView("button_newGame_v5.png");
         pane.add(buttonNewGame, 3, 1);
         GridPane.setHalignment(buttonNewGame, HPos.CENTER);
 
@@ -100,7 +100,7 @@ public class main extends Application {
         });
 
         //picture button quit
-        ImageView buttonQuit = new ImageView("button_quit_v1.png");
+        ImageView buttonQuit = new ImageView("button_newGame_v5.png");
         GridPane.setHalignment(buttonQuit, HPos.CENTER);
 
         pane.add(buttonQuit, 3, 2);
