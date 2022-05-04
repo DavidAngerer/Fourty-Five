@@ -6,11 +6,14 @@ public class Player {
 
     int health;
 
+    int coins;
+
 
     public Player(ArrayList<Card> cards, ArrayList<Efect> efects, int health) {
         this.cards = cards;
         this.efects = efects;
         this.health = health;
+        coins = 0;
     }
 
     public boolean addCard(Card card){
