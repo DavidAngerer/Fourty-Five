@@ -1,14 +1,24 @@
+import com.sun.javafx.css.StyleCache;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.net.MalformedURLException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class main extends Application {
@@ -16,8 +26,8 @@ public class main extends Application {
     int height = 1080;
     int width = 1920;
 
-    GridPane pane;
-    Scene scene;
+    static GridPane pane;
+    static Scene scene;
 
     Controller controller;
 
@@ -30,12 +40,24 @@ public class main extends Application {
     public void start(Stage stage) {
         pane = new GridPane();
         scene = new Scene(pane, width, height);
-        scene.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
-            menu(stage);
-        });
-        scene.addEventHandler(MouseEvent.MOUSE_CLICKED, (key) -> {
-            menu(stage);
-        });
+        EventHandler eventHandlerMouse = new EventHandler<MouseEvent>(){
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                menu(stage);
+                scene.removeEventHandler(MouseEvent.MOUSE_CLICKED,this);
+            }
+        };
+
+        EventHandler eventHandlerKey = new EventHandler<KeyEvent>(){
+
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                menu(stage);
+                scene.removeEventHandler(KeyEvent.KEY_PRESSED,this);
+            }
+        };
+        scene.addEventHandler(KeyEvent.KEY_PRESSED,eventHandlerKey);
+        scene.addEventHandler(MouseEvent.MOUSE_CLICKED,eventHandlerMouse);
 
         VBox box = new VBox();
         ImageView imageView = new ImageView();
@@ -205,7 +227,53 @@ public class main extends Application {
 //    }
 
     public void startGame() {
-        controller = new Controller(1, 1);
+        controller = new Controller(1, 0);
         System.out.println("startgame");
+    }
+
+    public static void newStage(int stage, ArrayList<Bullet> bullets,ArrayList<EfectCard> efectCards, int health, ArrayList<Enemy> enemies){
+        System.out.println("started");
+        pane.setMaxWidth(scene.getWidth());
+        pane.setMinWidth(scene.getWidth());
+        pane.getChildren().clear();
+        pane.setBackground(null);
+        Text text = new Text(health+"");
+        pane.add(text,0,0);
+        ArrayList<StackPane> stackPanes= new ArrayList<>();
+        for (int i = 0; i < 5 && i<bullets.size(); i++) {
+            Text bullet = new Text(bullets.get(i).getCardNameAsString());
+            Rectangle rect = new Rectangle();
+            rect.setHeight(150);
+            rect.setWidth(150);
+            rect.setFill(Color.GREY);
+            StackPane stack = new StackPane();
+            GridPane.setMargin(stack,new Insets(10,10,10,10));
+            stack.getChildren().addAll(bullet,rect);
+            stackPanes.add(stack);
+        }
+        if(stackPanes.size()>0){
+            pane.add(stackPanes.get(0),3,4);
+        }
+        if(stackPanes.size()>1){
+            pane.add(stackPanes.get(1),2,5);
+        }
+        if(stackPanes.size()>2){
+            pane.add(stackPanes.get(2),2,6);
+        }
+        if(stackPanes.size()>3){
+            pane.add(stackPanes.get(3),4,6);
+        }
+        if(stackPanes.size()>4){
+            pane.add(stackPanes.get(4),4,5);
+        }
+
+        pane.add(new Text("Stage"+ stage),5,0);
+
+        ArrayList<Slider> sliders = new ArrayList<>();
+        for (int i = 0; i < enemies.size(); i++) {
+            sliders.add(new Slider());
+            sliders.get(i).adjustValue(1);
+        }
+
     }
 }

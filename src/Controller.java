@@ -22,20 +22,34 @@ public class Controller {
         this.stage = stage;
         player = new Player(new ArrayList<>(),new ArrayList<>(),10);
         fillCards();
+        fillEfects();
         for (int i = 0; i < 4; i++) {
             player.addCard(CardsinExistence.get(0));
         }
         player.addCard(CardsinExistence.get(1));
-        nextTurn();
+        nextStage();
     }
 
-    public void nextTurn(){
-        int hpPool = (int)(Math.random()*stage)*2+(stage*2)+10;
+    public void nextStage(){
+        stage++;
+        int hpPool = (int)(Math.random()*stage)*4+(stage*4)+10;
+        int damage = (int)(Math.random()*stage)*2+(stage*2);
         ArrayList<Enemy> enemiesThisTurn = new ArrayList<>();
         int enemyNumbers = (int)(Math.random()*3);
         System.out.println(hpPool);
         System.out.println(enemyNumbers);
+        for (int i = 0; i < enemyNumbers; i++) {
+            Efect effekt = efectsInExistence.get((int)(efectsInExistence.size()*Math.random()));
+            enemiesThisTurn.add(new Enemy(hpPool/enemyNumbers,damage,effekt));
+        }
+        main.newStage(stage,player.getBullets(),new ArrayList<>(), player.health, enemiesThisTurn);
+        nextTurn(enemiesThisTurn);
+    }
 
+    private void nextTurn(ArrayList<Enemy> enemiesThisTurn){
+//        while(player.health > 0){
+//
+//        }
     }
 
     private void fillCards(){
@@ -50,6 +64,13 @@ public class Controller {
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void fillEfects(){
+        for (Efect.EfectName name:
+             Efect.EfectName.values()) {
+            efectsInExistence.add(new Efect(name));
         }
     }
 }

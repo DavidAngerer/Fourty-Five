@@ -32,4 +32,8 @@ public class Bullet extends Card{
         }
 
     }
+
+    public String getCardNameAsString() {
+        return cardName.name().replace("_"," ");
+    }
 }

@@ -17,11 +17,7 @@ public class Player {
     }
 
     public boolean addCard(Card card){
-        for (int i = 0; i < cards.size(); i++) {
-            if(cards.get(i).cardName == card.cardName){
-                return false;
-            }
-        }
+
         return cards.add(card);
     }
 
@@ -32,5 +28,29 @@ public class Player {
             }
         }
         efects.add(efect);
+    }
+
+    public ArrayList<Card> getCards() {
+        return cards;
+    }
+
+    public ArrayList<Bullet> getBullets(){
+        ArrayList<Bullet> bullets = new ArrayList<>();
+        for (int i = 0; i < cards.size(); i++) {
+            if(cards.get(i).getClass().getSimpleName().equals("Bullet")){
+                bullets.add((Bullet) cards.get(i));
+            }
+        }
+        return bullets;
+    }
+
+    public ArrayList<EfectCard> getEfectcards(){
+        ArrayList<EfectCard> efectCards = new ArrayList<>();
+        for (int i = 0; i < cards.size(); i++) {
+            if(!cards.get(i).getClass().getSimpleName().equals("Bullet")){
+                efectCards.add((EfectCard) cards.get(i));
+            }
+        }
+        return efectCards;
     }
 }
