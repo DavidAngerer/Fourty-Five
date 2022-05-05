@@ -3,9 +3,11 @@ public class Bullet extends Card{
     private CardName cardName;
 
     boolean damageCalculatet;
+
+    boolean isOnField;
     int damage;
 
-    float rarity;
+    private Rarity rarity;
 
     String cardDeskrition;
 
@@ -13,15 +15,21 @@ public class Bullet extends Card{
         this.cardName = cardName;
     }
 
-    public Bullet(CardName cardName, boolean damageCalculatet, int damage, String cardDeskrition) {
+    public Bullet(CardName cardName, boolean damageCalculatet, int damage, String cardDeskrition,Rarity rarity) {
         this.cardName = cardName;
         this.damageCalculatet = damageCalculatet;
         this.damage = damage;
         this.cardDeskrition = cardDeskrition;
+        this.rarity = rarity;
+    }
+
+    public Rarity getRarity() {
+        return rarity;
     }
 
     public Bullet(String[] attributes){
         cardName = CardName.valueOf(attributes[0]);
+        rarity = Rarity.valueOf(attributes[3]);
         //cardDeskrition = attributes[5];
         try{
             damage = Integer.parseInt(attributes[1]);
@@ -31,6 +39,10 @@ public class Bullet extends Card{
             damage = 0;
         }
 
+    }
+
+    public Bullet cloneBullet(){
+        return new Bullet(this.cardName,this.damageCalculatet,this.damage,this.cardDeskrition,this.rarity);
     }
 
     public String getCardNameAsString() {

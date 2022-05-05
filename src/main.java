@@ -240,34 +240,8 @@ public class main extends Application {
         pane.setBackground(null);
         Text text = new Text(health+"");
         pane.add(text,0,0);
-        ArrayList<StackPane> stackPanesBullets= new ArrayList<>();
-        for (int i = 0; i < 5 && i<bullets.size(); i++) {
-            Text bullet = new Text(bullets.get(i).getCardNameAsString());
-            bullet.setFill(Color.BLACK);
-            Rectangle rect = new Rectangle();
-            rect.setHeight(150);
-            rect.setWidth(150);
-            rect.setFill(Color.GREY);
-            StackPane stack = new StackPane();
-            stack.setId("Bullet"+i);
-            GridPane.setMargin(stack,new Insets(10,10,10,10));
-            stack.getChildren().addAll(rect,bullet);
-            stackPanesBullets.add(stack);
-        }
-        if(stackPanesBullets.size()>0){
-            pane.add(stackPanesBullets.get(0),3,4);
-        }
-        if(stackPanesBullets.size()>1){
-            pane.add(stackPanesBullets.get(1),2,5);
-        }
-        if(stackPanesBullets.size()>2){
-            pane.add(stackPanesBullets.get(2),2,6);
-        }
-        if(stackPanesBullets.size()>3){
-            pane.add(stackPanesBullets.get(3),4,6);
-        }
-        if(stackPanesBullets.size()>4){
-            pane.add(stackPanesBullets.get(4),4,5);
+        for (int i = 0; i < 3; i++) {
+            
         }
 
         ArrayList<StackPane> stackPanesEfectCards= new ArrayList<>();
@@ -298,5 +272,35 @@ public class main extends Application {
         }
 
 
+    }
+
+    public void setBulletInSlot(int slot, Bullet bulletCard){
+        Text bullet = new Text(bulletCard.getCardNameAsString());
+        bullet.setFill(Color.BLACK);
+        Rectangle rect = new Rectangle();
+        rect.setHeight(150);
+        rect.setWidth(150);
+        rect.setFill(Color.GREY);
+        StackPane stack = new StackPane();
+        stack.setId("Bullet"+slot);
+        GridPane.setMargin(stack,new Insets(10,10,10,10));
+        stack.getChildren().addAll(rect,bullet);
+        switch (slot){
+            case 0:
+                pane.add(stack,3,4);
+                break; 
+            case 1:
+                pane.add(stack,2,5);
+                break;
+            case 2:
+                pane.add(stack,2,6);
+                break;
+            case 3:
+                pane.add(stack,4,6);
+                break;
+            case 4:
+                pane.add(stack,4,5);
+                break;
+        }
     }
 }

@@ -1,4 +1,10 @@
 public abstract class Card {
+
+    protected enum Rarity{
+        na,common,rare,superrare,ultrarare
+    }
+
+    protected Rarity rarity;
     protected enum CardName{
         Bullet,Bewitched_Bullet,Incendiary_Bullet,Explosive_Bullet,Leaders_Bullet,Poison_Bullet,Gamblers_Bullet,
         Medics_Bullet,Obsidian_Bullet,Rusted_Bullet,BFB,Bullet_Bullet,Arrow,undead_bullet,moon_Bullet,rotten_Bullet,

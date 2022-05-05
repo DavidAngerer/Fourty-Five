@@ -11,22 +11,29 @@ public class Controller {
 
     Player player;
 
-    ArrayList<Card> CardsinExistence;
+    ArrayList<Bullet> bulletsinExistence;
+
+    ArrayList<EfectCard> efectCardsInExistence;
 
     ArrayList<Efect> efectsInExistence;
 
+
+
     public Controller(float dificulty, int stage) {
-        CardsinExistence=new ArrayList<>();
+        bulletsinExistence=new ArrayList<>();
         efectsInExistence=new ArrayList<>();
+        efectCardsInExistence= new ArrayList<>();
         this.dificulty = dificulty;
         this.stage = stage;
-        player = new Player(new ArrayList<>(),new ArrayList<>(),10);
+        player = new Player(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),10);
         fillCards();
         fillEfects();
         for (int i = 0; i < 4; i++) {
-            player.addCard(CardsinExistence.get(0));
+            player.addCard(bulletsinExistence.get(0).cloneBullet());
+            player.addCard(efectCardsInExistence.get(0).cloneEfectcard());
         }
-        player.addCard(CardsinExistence.get(1));
+        player.addCard(bulletsinExistence.get(1).cloneBullet());
+        player.addCard(efectCardsInExistence.get(1).cloneEfectcard());
         nextStage();
     }
 
@@ -59,12 +66,54 @@ public class Controller {
             String line = br.readLine();
             while (line != null) {
                 String[] attributes = line.split(";");
-                CardsinExistence.add(new Bullet(attributes));
+                bulletsinExistence.add(new Bullet(attributes));
                 line = br.readLine();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        path = Path.of("./res/CardData/CardData.csv");
+        try (BufferedReader br = Files.newBufferedReader(path,
+                StandardCharsets.US_ASCII)) {
+            br.readLine();
+            String line = br.readLine();
+            while (line != null) {
+                String[] attributes = line.split(";");
+                efectCardsInExistence.add(new EfectCard(attributes));
+                line = br.readLine();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ArrayList<EfectCard> getRndEffectCards(int amount){
+        ArrayList<EfectCard> efectCard = player.getEfectcards();
+        ArrayList<EfectCard> erg = new ArrayList<>();
+        for (int i = 0; i < amount; i++) {
+            int number = (int)(Math.random())*efectCard.size();
+            while(efectCard.get(number).isOnField){
+                number = (int)(Math.random())*efectCard.size();
+            }
+            efectCard.get(number).isOnField = true;
+            erg.add(efectCard.get(number));
+        }
+        return erg;
+    }
+
+    public ArrayList<Bullet> getRndBullets(int amount){
+        ArrayList<Bullet> bullets = player.getBullets();
+        ArrayList<Bullet> erg = new ArrayList<>();
+        for (int i = 0; i < amount; i++) {
+            int number = (int)(Math.random())*bullets.size();
+            while(bullets.get(number).isOnField){
+                number = (int)(Math.random())*bullets.size();
+            }
+            bullets.get(number).isOnField = true;
+            erg.add(bullets.get(number));
+        }
+        return erg;
     }
 
     private void fillEfects(){
