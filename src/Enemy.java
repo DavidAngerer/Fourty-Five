@@ -1,5 +1,7 @@
 public class Enemy {
     int health;
+
+    int maxHealth;
     int damage;
     Efect efect;
 
@@ -9,5 +11,6 @@ public class Enemy {
         this.health = health;
         this.damage = damage;
         this.efect = efect;
+        maxHealth = health;
     }
 }

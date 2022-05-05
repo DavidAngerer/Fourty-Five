@@ -4,6 +4,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -239,41 +240,63 @@ public class main extends Application {
         pane.setBackground(null);
         Text text = new Text(health+"");
         pane.add(text,0,0);
-        ArrayList<StackPane> stackPanes= new ArrayList<>();
+        ArrayList<StackPane> stackPanesBullets= new ArrayList<>();
         for (int i = 0; i < 5 && i<bullets.size(); i++) {
             Text bullet = new Text(bullets.get(i).getCardNameAsString());
+            bullet.setFill(Color.BLACK);
             Rectangle rect = new Rectangle();
             rect.setHeight(150);
             rect.setWidth(150);
             rect.setFill(Color.GREY);
             StackPane stack = new StackPane();
+            stack.setId("Bullet"+i);
             GridPane.setMargin(stack,new Insets(10,10,10,10));
-            stack.getChildren().addAll(bullet,rect);
-            stackPanes.add(stack);
+            stack.getChildren().addAll(rect,bullet);
+            stackPanesBullets.add(stack);
         }
-        if(stackPanes.size()>0){
-            pane.add(stackPanes.get(0),3,4);
+        if(stackPanesBullets.size()>0){
+            pane.add(stackPanesBullets.get(0),3,4);
         }
-        if(stackPanes.size()>1){
-            pane.add(stackPanes.get(1),2,5);
+        if(stackPanesBullets.size()>1){
+            pane.add(stackPanesBullets.get(1),2,5);
         }
-        if(stackPanes.size()>2){
-            pane.add(stackPanes.get(2),2,6);
+        if(stackPanesBullets.size()>2){
+            pane.add(stackPanesBullets.get(2),2,6);
         }
-        if(stackPanes.size()>3){
-            pane.add(stackPanes.get(3),4,6);
+        if(stackPanesBullets.size()>3){
+            pane.add(stackPanesBullets.get(3),4,6);
         }
-        if(stackPanes.size()>4){
-            pane.add(stackPanes.get(4),4,5);
+        if(stackPanesBullets.size()>4){
+            pane.add(stackPanesBullets.get(4),4,5);
         }
+
+        ArrayList<StackPane> stackPanesEfectCards= new ArrayList<>();
+        for (int i = 0; i < 5 && i<efectCards.size(); i++) {
+            Text efectCard = new Text(efectCards.get(i).getCardNameAsString());
+            efectCard.setFill(Color.BLACK);
+            Rectangle rect = new Rectangle();
+            rect.setHeight(150);
+            rect.setWidth(150);
+            rect.setFill(Color.GREY);
+            StackPane stack = new StackPane();
+            stack.setId("efectCard"+i);
+            GridPane.setMargin(stack,new Insets(10,10,10,10));
+            stack.getChildren().addAll(rect,efectCard);
+            stackPanesEfectCards.add(stack);
+        }
+
+
 
         pane.add(new Text("Stage"+ stage),5,0);
 
-        ArrayList<Slider> sliders = new ArrayList<>();
+        ArrayList<ProgressBar> progressBars = new ArrayList<>();
         for (int i = 0; i < enemies.size(); i++) {
-            sliders.add(new Slider());
-            sliders.get(i).adjustValue(1);
+            progressBars.add(new ProgressBar());
+            progressBars.get(i).setProgress(1);
+            progressBars.get(i).setId("Bar_"+i);
+            pane.add(progressBars.get(i),i+2,2);
         }
+
 
     }
 }

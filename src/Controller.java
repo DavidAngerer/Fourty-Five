@@ -35,7 +35,7 @@ public class Controller {
         int hpPool = (int)(Math.random()*stage)*4+(stage*4)+10;
         int damage = (int)(Math.random()*stage)*2+(stage*2);
         ArrayList<Enemy> enemiesThisTurn = new ArrayList<>();
-        int enemyNumbers = (int)(Math.random()*3);
+        int enemyNumbers = (int)(Math.random()*3)+1;
         System.out.println(hpPool);
         System.out.println(enemyNumbers);
         for (int i = 0; i < enemyNumbers; i++) {

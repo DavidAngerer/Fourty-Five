@@ -4,4 +4,8 @@ public class EfectCard extends Card{
 
     private int cost;
     private CardName cardName;
+
+    public String getCardNameAsString() {
+        return cardName.name().replace("_"," ");
+    }
 }
