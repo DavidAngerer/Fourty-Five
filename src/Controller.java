@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class Controller {
+
+    private ArrayList<Enemy> enemiesThisTurn;
     float dificulty = 1;
     int stage = 1;
 
@@ -40,7 +42,7 @@ public class Controller {
         stage++;
         int hpPool = (int)(Math.random()*stage)*4+(stage*4)+10;
         int damage = (int)(Math.random()*stage)*2+(stage*2);
-        ArrayList<Enemy> enemiesThisTurn = new ArrayList<>();
+        enemiesThisTurn = new ArrayList<>();
         int enemyNumbers = (int)(Math.random()*3)+1;
         System.out.println(hpPool);
         System.out.println(enemyNumbers);
@@ -92,10 +94,10 @@ public class Controller {
         ArrayList<EfectCard> erg = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
             int number = (int)(Math.random()*efectCard.size());
-            while(efectCard.get(number).isOnField){
+            while(player.handCards.contains(efectCard.get(number))){
                 number = (int)(Math.random()*efectCard.size());
             }
-            efectCard.get(number).isOnField = true;
+            player.handCards.add(efectCard.get(number));
             erg.add(efectCard.get(number));
         }
         return erg;
@@ -105,15 +107,24 @@ public class Controller {
         System.out.println("Effektkarte "+card.getCardNameAsString()+" gespielt");
     }
 
+    public void shoot(){
+        if(player.energy > 0 && main.chambersTaken>0){
+             enemiesThisTurn.get(0).setHealth(enemiesThisTurn.get(0).getHealth()-
+                     player.bulletsInChamber.get(0).getDamage());
+            main.setLifeOfEnemy(0,enemiesThisTurn.get(0));
+        }
+    }
+
     public ArrayList<Bullet> getRndBullets(int amount){
         ArrayList<Bullet> bullets = player.getBullets();
         ArrayList<Bullet> erg = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
             int number = (int)(Math.random()*bullets.size());
-            while(bullets.get(number).isOnField){
+            while(player.bulletsInChamber.contains(bullets.get(number)) ||
+                    player.handCards.contains(bullets.get(number))){
                 number = (int)(Math.random()*bullets.size());
             }
-            bullets.get(number).isOnField = true;
+            player.handCards.add(bullets.get(number));
             erg.add(bullets.get(number));
         }
         return erg;

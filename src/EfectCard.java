@@ -9,8 +9,6 @@ public class EfectCard extends Card{
 
     String cardDeskrition;
 
-    boolean isOnField;
-
     private Rarity rarity;
 
     private int cost;

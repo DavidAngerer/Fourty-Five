@@ -6,6 +6,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
@@ -24,6 +25,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+//TODO DAMAGE
 public class main extends Application {
 
     int height = 1080;
@@ -260,25 +262,14 @@ public class main extends Application {
             addCardInHand(efectCards.get(i));
         }
 
-
-
-        /*ArrayList<StackPane> stackPanesEfectCards= new ArrayList<>();
-        for (int i = 0; i < 5 && i<efectCards.size(); i++) {
-            Text efectCard = new Text(efectCards.get(i).getCardNameAsString());
-            efectCard.setFill(Color.BLACK);
-            Rectangle rect = new Rectangle();
-            rect.setHeight(150);
-            rect.setWidth(150);
-            rect.setFill(Color.GREY);
-            StackPane stack = new StackPane();
-            stack.setId("efectCard"+i);
-            GridPane.setMargin(stack,new Insets(10,10,10,10));
-            stack.getChildren().addAll(rect,efectCard);
-            stackPanesEfectCards.add(stack);
-        }*/
-
-
-
+        Button shoot = new Button("shoot");
+        shoot.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                controller.shoot();
+            }
+        });
+        pane.add(shoot,5,0);
         pane.add(new Text("Stage"+ stage),4,0);
 
         ArrayList<ProgressBar> progressBars = new ArrayList<>();
@@ -362,5 +353,10 @@ public class main extends Application {
             }
         }
         return null;
+    }
+
+    public static void setLifeOfEnemy(int enemyNumber,Enemy enemy){
+        ProgressBar bar = (ProgressBar) getNodeByNameId("Bar_"+enemyNumber);
+        bar.setProgress(enemy.getHealth()/enemy.getMaxHealth());
     }
 }

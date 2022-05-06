@@ -8,6 +8,12 @@ public class Player {
 
     int health;
 
+    int energy;
+
+    ArrayList<Card> handCards = new ArrayList<>();
+
+    ArrayList<Bullet> bulletsInChamber = new ArrayList<>();
+
     int coins;
 
 

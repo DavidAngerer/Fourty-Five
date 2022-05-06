@@ -4,8 +4,7 @@ public class Bullet extends Card{
 
     boolean damageCalculatet;
 
-    boolean isOnField;
-    int damage;
+    private int damage;
 
     private Rarity rarity;
 
@@ -47,5 +46,9 @@ public class Bullet extends Card{
 
     public String getCardNameAsString() {
         return cardName.name().replace("_"," ");
+    }
+
+    public int getDamage() {
+        return damage;
     }
 }
