@@ -1,6 +1,7 @@
 import com.sun.javafx.css.StyleCache;
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -28,9 +29,13 @@ public class main extends Application {
     int width = 1920;
 
     static GridPane pane;
+
+    static int handSlotsTaken;
     static Scene scene;
 
-    Controller controller;
+    static Controller controller;
+
+    static int chambersTaken;
 
     public static void main(String[] args) {
         //test commit
@@ -118,7 +123,8 @@ public class main extends Application {
 
         //buttonNewGame.setPickOnBounds(true); // allows click on transparent areas
         buttonNewGame.setOnMouseClicked((MouseEvent e) -> {
-            startGame(); // change functionality
+            startGame();
+            controller.nextStage();// change functionality
             System.out.println("test_button unga bunga");
         });
 
@@ -232,7 +238,12 @@ public class main extends Application {
         System.out.println("startgame");
     }
 
-    public static void newStage(int stage, ArrayList<Bullet> bullets,ArrayList<EfectCard> efectCards, int health, ArrayList<Enemy> enemies){
+    public static void newStage(int stage, int health, ArrayList<Enemy> enemies){
+        pane.setGridLinesVisible(true);
+        pane.getColumnConstraints().clear();
+        pane.getRowConstraints().clear();
+        ArrayList<Bullet> bullets = new ArrayList<>();
+        ArrayList<EfectCard> efectCards = new ArrayList<>();
         System.out.println("started");
         pane.setMaxWidth(scene.getWidth());
         pane.setMinWidth(scene.getWidth());
@@ -240,11 +251,17 @@ public class main extends Application {
         pane.setBackground(null);
         Text text = new Text(health+"");
         pane.add(text,0,0);
+        bullets.addAll(controller.getRndBullets(3));
+        efectCards.addAll(controller.getRndEffectCards(3));
+        handSlotsTaken = 0;
         for (int i = 0; i < 3; i++) {
-            
+            addCardInHand(bullets.get(i));
+            addCardInHand(efectCards.get(i));
         }
 
-        ArrayList<StackPane> stackPanesEfectCards= new ArrayList<>();
+
+
+        /*ArrayList<StackPane> stackPanesEfectCards= new ArrayList<>();
         for (int i = 0; i < 5 && i<efectCards.size(); i++) {
             Text efectCard = new Text(efectCards.get(i).getCardNameAsString());
             efectCard.setFill(Color.BLACK);
@@ -257,11 +274,11 @@ public class main extends Application {
             GridPane.setMargin(stack,new Insets(10,10,10,10));
             stack.getChildren().addAll(rect,efectCard);
             stackPanesEfectCards.add(stack);
-        }
+        }*/
 
 
 
-        pane.add(new Text("Stage"+ stage),5,0);
+        pane.add(new Text("Stage"+ stage),4,0);
 
         ArrayList<ProgressBar> progressBars = new ArrayList<>();
         for (int i = 0; i < enemies.size(); i++) {
@@ -272,35 +289,65 @@ public class main extends Application {
         }
 
 
+
+
     }
 
-    public void setBulletInSlot(int slot, Bullet bulletCard){
-        Text bullet = new Text(bulletCard.getCardNameAsString());
-        bullet.setFill(Color.BLACK);
+    public static void addCardInHand(Card card){
+        Text efectCard = new Text(card.getCardNameAsString());
+        efectCard.setFill(Color.BLACK);
         Rectangle rect = new Rectangle();
         rect.setHeight(150);
         rect.setWidth(150);
         rect.setFill(Color.GREY);
         StackPane stack = new StackPane();
-        stack.setId("Bullet"+slot);
+        stack.setId("HandCard"+handSlotsTaken);
         GridPane.setMargin(stack,new Insets(10,10,10,10));
-        stack.getChildren().addAll(rect,bullet);
-        switch (slot){
-            case 0:
-                pane.add(stack,3,4);
-                break; 
-            case 1:
-                pane.add(stack,2,5);
-                break;
-            case 2:
-                pane.add(stack,2,6);
-                break;
-            case 3:
-                pane.add(stack,4,6);
-                break;
-            case 4:
-                pane.add(stack,4,5);
-                break;
+        stack.getChildren().addAll(rect,efectCard);
+        stack.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if(card.getClass().getSimpleName().equals("Bullet")){
+                    setBulletInSlot(chambersTaken,(Bullet) card);
+                }else{
+                    controller.useEffectCard(card);
+                }
+            }
+        });
+        pane.add(stack,5+handSlotsTaken,5);
+        handSlotsTaken++;
+    }
+
+    public static void setBulletInSlot(int slot, Bullet bulletCard){
+        if(chambersTaken<=slot){
+            Text bullet = new Text(bulletCard.getCardNameAsString());
+            bullet.setFill(Color.BLACK);
+            Rectangle rect = new Rectangle();
+            rect.setHeight(150);
+            rect.setWidth(150);
+            rect.setFill(Color.GREY);
+            StackPane stack = new StackPane();
+            stack.setId("Bullet"+slot);
+            GridPane.setMargin(stack,new Insets(10,10,10,10));
+            stack.getChildren().addAll(rect,bullet);
+            switch (slot){
+                case 0:
+                    pane.add(stack,3,4);
+                    break;
+                case 1:
+                    pane.add(stack,2,5);
+                    break;
+                case 2:
+                    pane.add(stack,2,6);
+                    break;
+                case 3:
+                    pane.add(stack,4,6);
+                    break;
+                case 4:
+                    pane.add(stack,4,5);
+                    break;
+            }
+            chambersTaken++;
         }
     }
 }

@@ -34,7 +34,6 @@ public class Controller {
         }
         player.addCard(bulletsinExistence.get(1).cloneBullet());
         player.addCard(efectCardsInExistence.get(1).cloneEfectcard());
-        nextStage();
     }
 
     public void nextStage(){
@@ -49,7 +48,7 @@ public class Controller {
             Efect effekt = efectsInExistence.get((int)(efectsInExistence.size()*Math.random()));
             enemiesThisTurn.add(new Enemy(hpPool/enemyNumbers,damage,effekt));
         }
-        main.newStage(stage,player.getBullets(),new ArrayList<>(), player.health, enemiesThisTurn);
+        main.newStage(stage, player.health, enemiesThisTurn);
         nextTurn(enemiesThisTurn);
     }
 
@@ -92,9 +91,9 @@ public class Controller {
         ArrayList<EfectCard> efectCard = player.getEfectcards();
         ArrayList<EfectCard> erg = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
-            int number = (int)(Math.random())*efectCard.size();
+            int number = (int)(Math.random()*efectCard.size());
             while(efectCard.get(number).isOnField){
-                number = (int)(Math.random())*efectCard.size();
+                number = (int)(Math.random()*efectCard.size());
             }
             efectCard.get(number).isOnField = true;
             erg.add(efectCard.get(number));
@@ -102,13 +101,17 @@ public class Controller {
         return erg;
     }
 
+    public void useEffectCard(Card card){
+        System.out.println("Effektkarte "+card.getCardNameAsString()+" gespielt");
+    }
+
     public ArrayList<Bullet> getRndBullets(int amount){
         ArrayList<Bullet> bullets = player.getBullets();
         ArrayList<Bullet> erg = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
-            int number = (int)(Math.random())*bullets.size();
+            int number = (int)(Math.random()*bullets.size());
             while(bullets.get(number).isOnField){
-                number = (int)(Math.random())*bullets.size();
+                number = (int)(Math.random()*bullets.size());
             }
             bullets.get(number).isOnField = true;
             erg.add(bullets.get(number));

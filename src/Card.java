@@ -13,4 +13,8 @@ public abstract class Card {
     protected CardName cardName;
 
     protected String cardDeskrition;
+
+    public String getCardNameAsString(){
+        return cardName.name().replace("_"," ");
+    }
 }
