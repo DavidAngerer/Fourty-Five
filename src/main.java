@@ -4,6 +4,7 @@ import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
@@ -301,7 +302,8 @@ public class main extends Application {
         rect.setWidth(150);
         rect.setFill(Color.GREY);
         StackPane stack = new StackPane();
-        stack.setId("HandCard"+handSlotsTaken);
+        final int HANDSLOTS = handSlotsTaken;
+        stack.setId("HandCard"+HANDSLOTS);
         GridPane.setMargin(stack,new Insets(10,10,10,10));
         stack.getChildren().addAll(rect,efectCard);
         stack.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
@@ -309,6 +311,7 @@ public class main extends Application {
             public void handle(MouseEvent mouseEvent) {
                 if(card.getClass().getSimpleName().equals("Bullet")){
                     setBulletInSlot(chambersTaken,(Bullet) card);
+                    pane.getChildren().remove(getNodeByNameId("HandCard"+HANDSLOTS));
                 }else{
                     controller.useEffectCard(card);
                 }
@@ -349,5 +352,15 @@ public class main extends Application {
             }
             chambersTaken++;
         }
+    }
+
+    public static Node getNodeByNameId(String id){
+        for (Node node:
+                pane.getChildren()) {
+            if(node.getId()!=null && node.getId().equals(id)){
+                return node;
+            }
+        }
+        return null;
     }
 }
