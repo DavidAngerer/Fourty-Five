@@ -27,6 +27,7 @@ import java.util.Arrays;
  */
 public class main extends Application {
 
+    //TODO zielmodus ( welcher Gegner, Kopf oder Body)
     /**
      * Resolution Height
      */
