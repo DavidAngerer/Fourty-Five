@@ -8,7 +8,7 @@ public class Player {
 
     int health;
 
-    int energy;
+    int energy = 5;
 
     ArrayList<Card> handCards = new ArrayList<>();
 

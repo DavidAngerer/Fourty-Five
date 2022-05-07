@@ -1,21 +1,16 @@
-import com.sun.javafx.css.StyleCache;
 import javafx.application.Application;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -25,26 +20,52 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-//TODO DAMAGE
+
+/**
+ * @author David Angelo, Philip Jankovic
+ * main class for the .Fourty-Five game, handles graphics (javafx)
+ */
 public class main extends Application {
 
+    /**
+     * Resolution Height
+     */
     int height = 1080;
+
+    /**
+     * Resolution width
+     */
     int width = 1920;
 
+    /**
+     * The Pane to write on
+     */
     static GridPane pane;
 
+    /**
+     * how many slots in hand are take //TODO Replace with controller Player
+     */
     static int handSlotsTaken;
+
+    /**
+     * Scene
+     */
     static Scene scene;
 
+    /**
+     * Controller class which handles Logic
+     */
     static Controller controller;
-
-    static int chambersTaken;
 
     public static void main(String[] args) {
         //test commit
         launch(args);
     }
 
+    /**
+     * Programm started
+     * @param stage primary Stage
+     */
     @Override
     public void start(Stage stage) {
         pane = new GridPane();
@@ -52,7 +73,7 @@ public class main extends Application {
         EventHandler eventHandlerMouse = new EventHandler<MouseEvent>(){
             @Override
             public void handle(MouseEvent mouseEvent) {
-                menu(stage);
+                menu();
                 scene.removeEventHandler(MouseEvent.MOUSE_CLICKED,this);
             }
         };
@@ -61,7 +82,7 @@ public class main extends Application {
 
             @Override
             public void handle(KeyEvent keyEvent) {
-                menu(stage);
+                menu();
                 scene.removeEventHandler(KeyEvent.KEY_PRESSED,this);
             }
         };
@@ -93,7 +114,10 @@ public class main extends Application {
         System.out.println();
     }
 
-    private void menu(Stage stage) {
+    /**
+     * Called once to get to Menu with start button and quit button
+     */
+    private void menu() {
 
 
         pane.setMaxWidth(scene.getWidth());
@@ -150,97 +174,22 @@ public class main extends Application {
         } catch (MalformedURLException ignored) {
             System.out.println("not working");
         }
-//
     }
 
-//    public void menu(Stage primaryStage) {
-//
-//
-//        //main menu bg
-//        ImageView imageView = new ImageView();
-//        pane.add(imageView,0,0);
-//        imageView.setImage(new Image("mainmenu_v3.png"));
-//        imageView.setFitWidth(width);
-//        imageView.setFitHeight(height);
-//
-//        VBox box = new VBox();
-//        box.setAlignment(Pos.CENTER);
-//
-//        GridPane.setValignment(box, VPos.CENTER);
-//        /*
-//        Button newGame = new Button("new Game");
-//        newGame.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent event) {
-//                startGame();
-//            }
-//        });
-//        */
-//
-//        /*
-//        Button quit = new Button("Quit");
-//        quit.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent event) {
-//                System.exit(0);
-//            }
-//        });
-//
-//        */
-//        pane = new GridPane();
-//
-//        //box.getChildren().add(newGame);
-//        //box.getChildren().add(quit);
-//
-//
-//        pane.add(box, 0, 0);
-//        scene = new Scene(pane, width, height);
-//
-//
-//        System.out.println("a");
-////        primaryStage.setFullScreen(false);
-//        primaryStage.setScene(scene);
-//        primaryStage.setFullScreen(true);
-//
-//        try {
-//            System.out.println(Path.of("./res/backgrounds/static_bg_v1.png").toUri().toURL());
-//            BackgroundSize size = new BackgroundSize(-1d, -1d, true, true, true, true);
-//            Background back = new Background(new BackgroundImage(new Image(String.valueOf(Path.of("mainmenu_v3.png").toUri().toURL())), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT));
-//            pane.setBackground(back);
-//        } catch (MalformedURLException ignored) {
-//            System.out.println("not working");
-//        }
-//
-//
-//
-//
-//        //picture button new game
-//        ImageView buttonNewGame = new ImageView("button_newGame_v4.png");
-//        box.getChildren().add(buttonNewGame);
-//        //buttonNewGame.setPickOnBounds(true); // allows click on transparent areas
-//        buttonNewGame.setOnMouseClicked((MouseEvent e) -> {
-//            startGame(); // change functionality
-//            System.out.println("test_button unga bunga");
-//        });
-//
-//
-//        //picture button quit
-//        ImageView buttonQuit = new ImageView("button_quit_v1.png");
-//        box.getChildren().add(buttonQuit);
-//        //buttonQuit.setPickOnBounds(true); // allows click on transparent areas
-//        buttonQuit.setOnMouseClicked((MouseEvent e) -> {
-//            System.exit(0); // change functionality
-//        });
-//
-//
-//
-//    }
-
+    /**
+     * Called once to start the game
+     */
     public void startGame() {
         controller = new Controller(1, 0);
         System.out.println("startgame");
     }
 
+    /**
+     * Enters a new Stage with new Enemies
+     * @param stage Number of Stage
+     * @param health Health of Player
+     * @param enemies Number of Enemies
+     */
     public static void newStage(int stage, int health, ArrayList<Enemy> enemies){
         pane.setGridLinesVisible(true);
         pane.getColumnConstraints().clear();
@@ -279,12 +228,12 @@ public class main extends Application {
             progressBars.get(i).setId("Bar_"+i);
             pane.add(progressBars.get(i),i+2,2);
         }
-
-
-
-
     }
 
+    /**
+     * Adds a card to Players Hand
+     * @param card Bullet or EfectCard
+     */
     public static void addCardInHand(Card card){
         Text efectCard = new Text(card.getCardNameAsString());
         efectCard.setFill(Color.BLACK);
@@ -301,7 +250,7 @@ public class main extends Application {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if(card.getClass().getSimpleName().equals("Bullet")){
-                    setBulletInSlot(chambersTaken,(Bullet) card);
+                    setBulletInSlot(controller.chambersTaken(),(Bullet) card);
                     pane.getChildren().remove(getNodeByNameId("HandCard"+HANDSLOTS));
                 }else{
                     controller.useEffectCard(card);
@@ -312,8 +261,27 @@ public class main extends Application {
         handSlotsTaken++;
     }
 
+    /**
+     * Removes an Enemy from playing-field
+     * @param enemy
+     */
+    public static void removeEnemy(int enemy){
+        pane.getChildren().remove(getNodeByNameId("Bar_"+enemy));
+        Node node;
+        for (int i = 1; (node=getNodeByNameId("Bar_"+i))!=null; i++) {
+            pane.getChildren().remove(node);
+            node.setId("Bar_"+(i-1));
+            pane.add(node,i+1,2);
+        }
+    }
+
+    /**
+     * Sets BulletCard in Slot of Chamber
+     * @param slot Slot of Chamber
+     * @param bulletCard Bullet to Set
+     */
     public static void setBulletInSlot(int slot, Bullet bulletCard){
-        if(chambersTaken<=slot){
+        if(controller.chambersTaken()<=slot){
             Text bullet = new Text(bulletCard.getCardNameAsString());
             bullet.setFill(Color.BLACK);
             Rectangle rect = new Rectangle();
@@ -324,27 +292,54 @@ public class main extends Application {
             stack.setId("Bullet"+slot);
             GridPane.setMargin(stack,new Insets(10,10,10,10));
             stack.getChildren().addAll(rect,bullet);
-            switch (slot){
-                case 0:
-                    pane.add(stack,3,4);
-                    break;
-                case 1:
-                    pane.add(stack,2,5);
-                    break;
-                case 2:
-                    pane.add(stack,2,6);
-                    break;
-                case 3:
-                    pane.add(stack,4,6);
-                    break;
-                case 4:
-                    pane.add(stack,4,5);
-                    break;
-            }
-            chambersTaken++;
+            setNodeInSlot(stack,slot);
+            controller.setBulletInSlot(bulletCard);
         }
     }
 
+    /**
+     * Sets a node into a slot in chamber
+     * @param node Node to set in chamber
+     * @param slot slot of chamber (first ist 0)
+     */
+    public static void setNodeInSlot(Node node, int slot){
+        switch (slot){
+            case 0:
+                pane.add(node,3,4);
+                break;
+            case 1:
+                pane.add(node,2,5);
+                break;
+            case 2:
+                pane.add(node,2,6);
+                break;
+            case 3:
+                pane.add(node,4,6);
+                break;
+            case 4:
+                pane.add(node,4,5);
+                break;
+        }
+    }
+
+    /**
+     * removes bullet in shoot slot and rotates the chamber
+     */
+    public static void rotate(){
+        pane.getChildren().remove(getNodeByNameId("Bullet"+0));
+        Node node;
+        for (int i = 1; (node=getNodeByNameId("Bullet"+i))!=null; i++) {
+            pane.getChildren().remove(node);
+            node.setId("Bullet"+(i-1));
+            setNodeInSlot(node,i-1);
+        }
+    }
+
+    /**
+     * Gets a node by the Id
+     * @param id Id of Node
+     * @return Node/null if no node has id
+     */
     public static Node getNodeByNameId(String id){
         for (Node node:
                 pane.getChildren()) {
@@ -355,6 +350,11 @@ public class main extends Application {
         return null;
     }
 
+    /**
+     * Sets the Life displayed of Enemy
+     * @param enemyNumber which enemy (1,2 or 3)
+     * @param enemy The enemy
+     */
     public static void setLifeOfEnemy(int enemyNumber,Enemy enemy){
         ProgressBar bar = (ProgressBar) getNodeByNameId("Bar_"+enemyNumber);
         bar.setProgress(enemy.getHealth()/enemy.getMaxHealth());

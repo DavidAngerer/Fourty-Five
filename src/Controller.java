@@ -108,10 +108,17 @@ public class Controller {
     }
 
     public void shoot(){
-        if(player.energy > 0 && main.chambersTaken>0){
+        if(player.energy > 0 && player.bulletsInChamber.size()>0){
              enemiesThisTurn.get(0).setHealth(enemiesThisTurn.get(0).getHealth()-
                      player.bulletsInChamber.get(0).getDamage());
             main.setLifeOfEnemy(0,enemiesThisTurn.get(0));
+            if(enemiesThisTurn.get(0).getHealth()<=0){
+                main.removeEnemy(0);
+                enemiesThisTurn.remove(0);
+            }
+            player.energy--;
+            player.bulletsInChamber.remove(0);
+            main.rotate();
         }
     }
 
@@ -135,5 +142,13 @@ public class Controller {
              Efect.EfectName.values()) {
             efectsInExistence.add(new Efect(name));
         }
+    }
+
+    public int chambersTaken(){
+        return player.bulletsInChamber.size();
+    }
+
+    public void setBulletInSlot(Bullet bullet){
+        player.bulletsInChamber.add(bullet);
     }
 }
