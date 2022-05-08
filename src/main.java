@@ -1,7 +1,9 @@
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -17,8 +19,7 @@ import javafx.stage.Stage;
 
 import java.net.MalformedURLException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 
 /**
@@ -44,11 +45,6 @@ public class main extends Application {
     static GridPane pane;
 
     /**
-     * how many slots in hand are take //TODO Replace with controller Player
-     */
-    static int handSlotsTaken;
-
-    /**
      * Scene
      */
     static Scene scene;
@@ -57,6 +53,10 @@ public class main extends Application {
      * Controller class which handles Logic
      */
     static Controller controller;
+
+    static int handcardsTaken;
+
+    static boolean shootingMode = false;
 
     public static void main(String[] args) {
         //test commit
@@ -192,6 +192,7 @@ public class main extends Application {
      * @param enemies Number of Enemies
      */
     public static void newStage(int stage, int health, ArrayList<Enemy> enemies){
+        handcardsTaken = 0;
         pane.setGridLinesVisible(true);
         pane.getColumnConstraints().clear();
         pane.getRowConstraints().clear();
@@ -206,7 +207,6 @@ public class main extends Application {
         pane.add(text,0,0);
         bullets.addAll(controller.getRndBullets(3));
         efectCards.addAll(controller.getRndEffectCards(3));
-        handSlotsTaken = 0;
         for (int i = 0; i < 3; i++) {
             addCardInHand(bullets.get(i));
             addCardInHand(efectCards.get(i));
@@ -216,20 +216,59 @@ public class main extends Application {
         shoot.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                controller.shoot();
+                shootingMode = true;
+                for (int i = 0; i < enemies.size(); i++) {
+                    StackPane enemy = (StackPane) getNodeByNameId("Enemy_"+i);
+                    Rectangle body = new Rectangle(80,300);
+                    body.setFill(Color.BLUE);
+                    final int ene = i;
+                    body.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent mouseEvent) {
+                            controller.shoot(ene,true);
+                        }
+                    });
+                    Rectangle head = new Rectangle(80,80);
+                    head.setFill(Color.GREEN);
+                    head.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent mouseEvent) {
+                            controller.shoot(ene,false);
+                        }
+                    });
+                    enemy.setAlignment(head, Pos.TOP_CENTER);
+                    enemy.getChildren().addAll(body,head);
+                }
+                //controller.shoot(0,true);
             }
         });
         pane.add(shoot,5,0);
         pane.add(new Text("Stage"+ stage),4,0);
 
+        createEnemies(enemies);
+    }
+
+    /**
+     * Creates the Visuals and healthbars for enemies
+     * @param enemies the enemies to be placed
+     */
+    private static void createEnemies(ArrayList<Enemy> enemies) {
+        ArrayList<StackPane> rects = new ArrayList<>();
         ArrayList<ProgressBar> progressBars = new ArrayList<>();
         for (int i = 0; i < enemies.size(); i++) {
+            rects.add(new StackPane());
+            Rectangle enemy= new Rectangle(80,300);
+            enemy.setFill(Color.RED);
+            rects.get(i).getChildren().add(enemy);
+            rects.get(i).setId("Enemy_"+i);
+            pane.add(rects.get(i),i+2,1);
             progressBars.add(new ProgressBar());
             progressBars.get(i).setProgress(1);
             progressBars.get(i).setId("Bar_"+i);
             pane.add(progressBars.get(i),i+2,2);
         }
     }
+
 
     /**
      * Adds a card to Players Hand
@@ -243,7 +282,7 @@ public class main extends Application {
         rect.setWidth(150);
         rect.setFill(Color.GREY);
         StackPane stack = new StackPane();
-        final int HANDSLOTS = handSlotsTaken;
+        final int HANDSLOTS = handcardsTaken;
         stack.setId("HandCard"+HANDSLOTS);
         GridPane.setMargin(stack,new Insets(10,10,10,10));
         stack.getChildren().addAll(rect,efectCard);
@@ -258,8 +297,8 @@ public class main extends Application {
                 }
             }
         });
-        pane.add(stack,5+handSlotsTaken,5);
-        handSlotsTaken++;
+        pane.add(stack,5+handcardsTaken,5);
+        handcardsTaken++;
     }
 
     /**

@@ -107,14 +107,14 @@ public class Controller {
         System.out.println("Effektkarte "+card.getCardNameAsString()+" gespielt");
     }
 
-    public void shoot(){
+    public void shoot(int enemy,boolean body){
         if(player.energy > 0 && player.bulletsInChamber.size()>0){
-             enemiesThisTurn.get(0).setHealth(enemiesThisTurn.get(0).getHealth()-
-                     player.bulletsInChamber.get(0).getDamage());
-            main.setLifeOfEnemy(0,enemiesThisTurn.get(0));
-            if(enemiesThisTurn.get(0).getHealth()<=0){
-                main.removeEnemy(0);
-                enemiesThisTurn.remove(0);
+             enemiesThisTurn.get(enemy).setHealth(enemiesThisTurn.get(enemy).getHealth()-
+                     player.bulletsInChamber.get(enemy).getDamage());
+            main.setLifeOfEnemy(enemy,enemiesThisTurn.get(enemy));
+            if(enemiesThisTurn.get(enemy).getHealth()<=0){
+                main.removeEnemy(enemy);
+                enemiesThisTurn.remove(enemy);
             }
             player.energy--;
             player.bulletsInChamber.remove(0);
