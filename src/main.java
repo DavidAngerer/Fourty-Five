@@ -21,7 +21,6 @@ import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.*;
 
-//TODO rotatet ids to right slot after getting it to chamber
 /**
  * @author David Angelo, Philip Jankovic
  * main class for the .Fourty-Five game, handles graphics (javafx)
