@@ -1,0 +1,26 @@
+Cardname;;Effekt;cost;rarity;;;card description
+avoid;;+  10 % avoid;1;common;;avoid;+ 10% avoid
+molotov;;burn 2;1;common;;effect;burn 2 for 1 enemy
+superhuman_reflexes_avoid;;+ 20 % avoid;1;common;;avoid;+20% avoid
+sweet_death;;"you lose 40% of your lp but deal 60 dmg to one enemy ";2;superrare;;direct dmg;"you lose 40% of your lp and deal 60 dmg to one enemy "
+whiskey;;"you get burn 1 and you get rage 2";1;common;;effect;"you get burn 1 and you get rage 2"
+questioning_choices;;put the whole playfield back in your hand;0;rare;;other;put the whole playfield back in your hand
+letting_luck_choose;;"flip a coin: on head(0) you get 2 moves on tail(1) you get 10 lp";1;rare;;other;"flip a coin: on head(0) you get 2 moves on tail(1) you get 10 lp"
+aim_for_the_head;;+ 100 % dmg if you hit a headshot this turn;2;rare;;headshot;+ 100 % dmg if you hit a headshot this turn
+godlike_reflexes;;100% avoid;2;rare;;avoid;you get 100% avoid
+confirmed_headshot;;confirms a headshot;2;rare;;headshot;confirms a headshot
+admirable_aim;;if you hit a headshot this turn: +3 max hp;1;rare;;headshot;if you hit a headshot this turn: +3 max hp
+blood_will_paint_the_rivers_red;;20 dmg to all enemies;4;superrare;;direct dmg;20 dmg to all enemies
+sacrificial_avoid;;discard all none avoid cards: you get plus (10 x cards discarded) avoid;1;common;;avoid;discard all none avoid cards: you get plus (10 x cards discarded) avoid
+flush;;if you have 5 special bullets (karo) on the field:  rage 1 +5;0;rare;;effect;if you have 5 special bullets (karo) on the field:  rage 1 +5
+six_feet_under;;if an enemy: has 4 or more different effects:: kill that enemy (can't be used on bosses);1;superrare;;kill;if an enemy: has 4 or more different effects:: kill that enemy (can't be used on bosses)
+your_weakness_disgusts_me;;weak 2 for all enemies;1;rare;;effect;weak 2 for all enemies
+dual_wield;;you can target 2 enemies with one Bullet: you have to pay each shot separately;2;common;;other;you can target 2 enemies with one Bullet: you have to pay each shot separately
+poison_vile;;poison 6 for 1 enemy: when the counter hit 0, the enemy dies;2;rare;;kill;poison 6 for 1 enemy: when the effect turn-counter hits 0, the enemy dies
+last_stand;;if your lp is under 30%: you get poison 5: if the effect turn-counter hits zero: kill all enemies;1;superrare;;kill;if your lp is under 30%: you get poison 5: if the effect turn-counter hits zero: kill all enemies
+round_skip;;1>;1;common;;turn;turn the playfield 1 to the right
+suspicious_accuracy;;+ 30 % headshot;1;common;;headshot;+30% headshot chance
+trying_does_not_hurt;;if your headshot attempt fails: you can still shoot the bullet to the body;1;rare;;headshot;if your headshot attempt fails: you can still shoot the bullet to the body: pay 1 move
+reversed_turn;;<1;1;common;;turn;turn the playfield 1 to the left
+gonna_keep_this;;a bullet gets everlasting;1;rare;;bullet;a bullet of your choice gets everlasting
+random_Bullshit_go;;a bullet gets spray;1;rare;;;a bullet of your choice gets spray
