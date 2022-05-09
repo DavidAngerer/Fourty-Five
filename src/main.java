@@ -28,7 +28,7 @@ import java.util.*;
  */
 public class main extends Application {
 
-    //TODO zielmodus ( welcher Gegner, Kopf oder Body)
+    //TODO zielmodus ( welcher Gegner, Kopf oder Body) perfektionieren
     /**
      * Resolution Height
      */
@@ -218,10 +218,10 @@ public class main extends Application {
             public void handle(MouseEvent mouseEvent) {
                 shootingMode = true;
                 for (int i = 0; i < enemies.size(); i++) {
-                    StackPane enemy = (StackPane) getNodeByNameId("Enemy_"+i);
+                    StackPane enemy = (StackPane) enemies.get(i).getVisual();
                     Rectangle body = new Rectangle(80,300);
                     body.setFill(Color.BLUE);
-                    final int ene = i;
+                    final Enemy ene = enemies.get(i);
                     body.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
                         @Override
                         public void handle(MouseEvent mouseEvent) {
@@ -238,6 +238,7 @@ public class main extends Application {
                     });
                     enemy.setAlignment(head, Pos.TOP_CENTER);
                     enemy.getChildren().addAll(body,head);
+                    enemies.get(i).setVisual(enemy);
                 }
                 //controller.shoot(0,true);
             }
@@ -260,12 +261,12 @@ public class main extends Application {
             Rectangle enemy= new Rectangle(80,300);
             enemy.setFill(Color.RED);
             rects.get(i).getChildren().add(enemy);
-            rects.get(i).setId("Enemy_"+i);
             pane.add(rects.get(i),i+2,1);
             progressBars.add(new ProgressBar());
             progressBars.get(i).setProgress(1);
-            progressBars.get(i).setId("Bar_"+i);
             pane.add(progressBars.get(i),i+2,2);
+            enemies.get(i).setHealthBar(progressBars.get(i));
+            enemies.get(i).setVisual(rects.get(i));
         }
     }
 
@@ -305,14 +306,8 @@ public class main extends Application {
      * Removes an Enemy from playing-field
      * @param enemy
      */
-    public static void removeEnemy(int enemy){
-        pane.getChildren().remove(getNodeByNameId("Bar_"+enemy));
-        Node node;
-        for (int i = 1; (node=getNodeByNameId("Bar_"+i))!=null; i++) {
-            pane.getChildren().remove(node);
-            node.setId("Bar_"+(i-1));
-            pane.add(node,i+1,2);
-        }
+    public static void removeEnemy(Enemy enemy){
+        pane.getChildren().removeAll(enemy.getHealthBar(),enemy.getVisual());
     }
 
     /**
@@ -329,7 +324,7 @@ public class main extends Application {
             rect.setWidth(150);
             rect.setFill(Color.GREY);
             StackPane stack = new StackPane();
-            stack.setId("Bullet"+slot);
+            bulletCard.setNode(stack);
             GridPane.setMargin(stack,new Insets(10,10,10,10));
             stack.getChildren().addAll(rect,bullet);
             setNodeInSlot(stack,slot);
@@ -366,12 +361,11 @@ public class main extends Application {
      * removes bullet in shoot slot and rotates the chamber
      */
     public static void rotate(){
-        pane.getChildren().remove(getNodeByNameId("Bullet"+0));
-        Node node;
-        for (int i = 1; (node=getNodeByNameId("Bullet"+i))!=null; i++) {
-            pane.getChildren().remove(node);
-            node.setId("Bullet"+(i-1));
-            setNodeInSlot(node,i-1);
+        ArrayList<Bullet> bullets = controller.getPlayersBullet();
+        pane.getChildren().remove(bullets.get(0).getNode());
+        for (int i = 1; i<bullets.size(); i++) {
+            pane.getChildren().remove(bullets.get(i).getNode());
+            setNodeInSlot(bullets.get(i).getNode(),i-1);
         }
     }
 
@@ -392,11 +386,9 @@ public class main extends Application {
 
     /**
      * Sets the Life displayed of Enemy
-     * @param enemyNumber which enemy (1,2 or 3)
      * @param enemy The enemy
      */
-    public static void setLifeOfEnemy(int enemyNumber,Enemy enemy){
-        ProgressBar bar = (ProgressBar) getNodeByNameId("Bar_"+enemyNumber);
-        bar.setProgress(enemy.getHealth()/enemy.getMaxHealth());
+    public static void setLifeOfEnemy(Enemy enemy){
+        enemy.getHealthBar().setProgress(enemy.getHealth()/enemy.getMaxHealth());
     }
 }

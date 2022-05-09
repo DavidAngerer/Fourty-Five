@@ -1,3 +1,5 @@
+import javafx.scene.Node;
+
 public class Bullet extends Card{
 
     private CardName cardName;
@@ -5,6 +7,8 @@ public class Bullet extends Card{
     boolean damageCalculatet;
 
     private int damage;
+
+    private Node node;
 
     private Rarity rarity;
 
@@ -38,6 +42,14 @@ public class Bullet extends Card{
             damage = 0;
         }
 
+    }
+
+    public Node getNode() {
+        return node;
+    }
+
+    public void setNode(Node node) {
+        this.node = node;
     }
 
     public Bullet cloneBullet(){

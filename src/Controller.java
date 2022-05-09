@@ -43,7 +43,7 @@ public class Controller {
         int hpPool = (int)(Math.random()*stage)*4+(stage*4)+10;
         int damage = (int)(Math.random()*stage)*2+(stage*2);
         enemiesThisTurn = new ArrayList<>();
-        int enemyNumbers = (int)(Math.random()*3)+1;
+        int enemyNumbers = 3;//(int)(Math.random()*3)+1;
         System.out.println(hpPool);
         System.out.println(enemyNumbers);
         for (int i = 0; i < enemyNumbers; i++) {
@@ -107,18 +107,19 @@ public class Controller {
         System.out.println("Effektkarte "+card.getCardNameAsString()+" gespielt");
     }
 
-    public void shoot(int enemy,boolean body){
+    public void shoot(Enemy enemy,boolean body){
         if(player.energy > 0 && player.bulletsInChamber.size()>0){
-             enemiesThisTurn.get(enemy).setHealth(enemiesThisTurn.get(enemy).getHealth()-
-                     player.bulletsInChamber.get(enemy).getDamage());
-            main.setLifeOfEnemy(enemy,enemiesThisTurn.get(enemy));
-            if(enemiesThisTurn.get(enemy).getHealth()<=0){
+             enemy.setHealth(enemy.getHealth()-
+                     player.bulletsInChamber.get(0).getDamage());
+            main.setLifeOfEnemy(enemy);
+            if(enemy.getHealth()<=0){
                 main.removeEnemy(enemy);
                 enemiesThisTurn.remove(enemy);
             }
             player.energy--;
-            player.bulletsInChamber.remove(0);
             main.rotate();
+
+            player.bulletsInChamber.remove(0);
         }
     }
 
@@ -150,5 +151,9 @@ public class Controller {
 
     public void setBulletInSlot(Bullet bullet){
         player.bulletsInChamber.add(bullet);
+    }
+
+    public ArrayList<Bullet> getPlayersBullet(){
+        return player.getBulletsInChamber();
     }
 }

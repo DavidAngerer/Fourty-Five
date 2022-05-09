@@ -55,4 +55,8 @@ public class Player {
     public ArrayList<EfectCard> getEfectcards(){
         return efectCards;
     }
+
+    public ArrayList<Bullet> getBulletsInChamber() {
+        return bulletsInChamber;
+    }
 }
