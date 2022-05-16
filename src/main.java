@@ -104,20 +104,18 @@ public class main extends Application {
             Background back = new Background(new BackgroundImage(new Image(String.valueOf(Path.of("./res/backgrounds/titlescreen.gif").toUri().toURL())), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, size));
             pane.setBackground(back);
         } catch (MalformedURLException ignored) {
-            System.out.println("not working");
+            ignored.printStackTrace();
         }
 
         stage.setScene(scene);
         stage.setFullScreenExitHint("");
         stage.show();
-
-        System.out.println();
     }
 
     /**
      * Called once to get to Menu with start button and quit button
      */
-    private void menu() {
+    private static void menu() {
 
 
         pane.setMaxWidth(scene.getWidth());
@@ -152,7 +150,6 @@ public class main extends Application {
         buttonNewGame.setOnMouseClicked((MouseEvent e) -> {
             startGame();
             controller.nextStage();// change functionality
-            System.out.println("test_button unga bunga");
         });
 
         //picture button quit
@@ -167,21 +164,19 @@ public class main extends Application {
 
 
         try {
-            System.out.println(Path.of("./res/backgrounds/static_bg_v2.png").toUri().toURL());
             BackgroundSize size = new BackgroundSize(-1d, -1d, true, true, true, true);
             Background back = new Background(new BackgroundImage(new Image(String.valueOf(Path.of("./res/backgrounds/static_bg_v2.png").toUri().toURL())), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, size));
             pane.setBackground(back);
         } catch (MalformedURLException ignored) {
-            System.out.println("not working");
+            ignored.printStackTrace();
         }
     }
 
     /**
      * Called once to start the game
      */
-    public void startGame() {
+    public static void startGame() {
         controller = new Controller(1, 0);
-        System.out.println("startgame");
     }
 
     /**
@@ -197,12 +192,12 @@ public class main extends Application {
         pane.getRowConstraints().clear();
         ArrayList<Bullet> bullets = new ArrayList<>();
         ArrayList<EfectCard> efectCards = new ArrayList<>();
-        System.out.println("started");
         pane.setMaxWidth(scene.getWidth());
         pane.setMinWidth(scene.getWidth());
         pane.getChildren().clear();
         pane.setBackground(null);
         Text text = new Text(health+"");
+        text.setId("Life");
         pane.add(text,0,0);
         bullets.addAll(controller.getRndBullets(3));
         efectCards.addAll(controller.getRndEffectCards(3));
@@ -211,41 +206,92 @@ public class main extends Application {
             addCardInHand(efectCards.get(i));
         }
 
+        scene.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if(mouseEvent.getButton().equals(MouseButton.SECONDARY)){
+                    leaveshootingMode();
+                }
+            }
+        });
+        buttonEndTurn();
+        buttonShoot(enemies);
+        pane.add(new Text("Stage"+ stage),4,0);
+
+        createEnemies(enemies);
+    }
+
+    private static void buttonEndTurn(){
+        Button endTurn = new Button("End Turn");
+        endTurn.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                controller.enemiesTurn();
+            }
+        });
+        pane.add(endTurn,5,1);
+    }
+
+    private static void buttonShoot(ArrayList<Enemy> enemies) {
         Button shoot = new Button("shoot");
         shoot.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                shootingMode = true;
-                for (int i = 0; i < enemies.size(); i++) {
-                    StackPane enemy = (StackPane) enemies.get(i).getVisual();
-                    Rectangle body = new Rectangle(80,300);
-                    body.setFill(Color.BLUE);
-                    final Enemy ene = enemies.get(i);
-                    body.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent mouseEvent) {
-                            controller.shoot(ene,true);
-                        }
-                    });
-                    Rectangle head = new Rectangle(80,80);
-                    head.setFill(Color.GREEN);
-                    head.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent mouseEvent) {
-                            controller.shoot(ene,false);
-                        }
-                    });
-                    enemy.setAlignment(head, Pos.TOP_CENTER);
-                    enemy.getChildren().addAll(body,head);
-                    enemies.get(i).setVisual(enemy);
+                if(controller.chambersTaken()>0){
+                    shootingMode = true;
+                    for (Node node:
+                            pane.getChildren()) {
+
+                        node.setMouseTransparent(true);
+                    }
+                    for (int i = 0; i < enemies.size(); i++) {
+                        StackPane enemy = (StackPane) enemies.get(i).getVisual();
+                        enemy.setMouseTransparent(false);
+                        Rectangle body = new Rectangle(80,300);
+                        body.setFill(Color.BLUE);
+                        final Enemy ene = enemies.get(i);
+                        body.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent mouseEvent) {
+                                controller.shoot(ene,true);
+                                leaveshootingMode();
+                            }
+                        });
+                        Rectangle head = new Rectangle(80,80);
+                        head.setFill(Color.GREEN);
+                        head.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent mouseEvent) {
+                                controller.shoot(ene,false);
+                                leaveshootingMode();
+                            }
+                        });
+                        enemy.setAlignment(head, Pos.TOP_CENTER);
+                        enemy.getChildren().addAll(body,head);
+                        enemies.get(i).setVisual(enemy);
+                    }
+                    //controller.shoot(0,true);
+                    }
                 }
-                //controller.shoot(0,true);
-            }
+
         });
         pane.add(shoot,5,0);
-        pane.add(new Text("Stage"+ stage),4,0);
+    }
 
-        createEnemies(enemies);
+    public static void leaveshootingMode(){
+        if (shootingMode){
+            for (Node node:
+                    pane.getChildren()) {
+                node.setMouseTransparent(false);
+            }
+            ArrayList<Enemy> enemies = controller.getEnemiesThisTurn();
+            for (int i = 0; i < enemies.size(); i++) {
+                StackPane pane = (StackPane)(enemies.get(i).getVisual());
+                pane.getChildren().remove(1);
+                pane.getChildren().remove(1);
+            }
+            shootingMode=false;
+        }
     }
 
     /**
@@ -269,6 +315,13 @@ public class main extends Application {
         }
     }
 
+    /**
+     *Zeigt den Todesscreen an wenn man gestorben ist
+     */
+    public static void deathScreen(){
+        System.out.println("Dead");
+        menu();
+    }
 
     /**
      * Adds a card to Players Hand
@@ -296,6 +349,9 @@ public class main extends Application {
                     controller.useEffectCard(card);
                 }
             }
+        });
+        stack.setOnMouseEntered(e -> {
+            hoveredCard(stack);
         });
         pane.add(stack,5+handcardsTaken,5);
         handcardsTaken++;
@@ -357,6 +413,15 @@ public class main extends Application {
     }
 
     /**
+     * Called when mouse hovers over Handcard
+     * Displays stats
+     * @param node the node which was hovered over
+     */
+    public static void hoveredCard(Node node){
+        System.out.println(node);
+    }
+
+    /**
      * removes bullet in shoot slot and rotates the chamber
      */
     public static void rotate(){
@@ -388,6 +453,15 @@ public class main extends Application {
      * @param enemy The enemy
      */
     public static void setLifeOfEnemy(Enemy enemy){
-        enemy.getHealthBar().setProgress(enemy.getHealth()/enemy.getMaxHealth());
+        enemy.getHealthBar().setProgress((double) enemy.getHealth()/(double)enemy.getMaxHealth());
+    }
+
+    /**
+     * Sets Life of player visualy
+     * @param life life to set
+     */
+    public static void setLife(int life){
+        Text text = (Text) getNodeByNameId("Life");
+        text.setText(life+"");
     }
 }

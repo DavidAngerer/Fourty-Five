@@ -27,7 +27,7 @@ public class Controller {
         efectCardsInExistence= new ArrayList<>();
         this.dificulty = dificulty;
         this.stage = stage;
-        player = new Player(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),10);
+        player = new Player(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),100);
         fillCards();
         fillEfects();
         for (int i = 0; i < 4; i++) {
@@ -40,8 +40,8 @@ public class Controller {
 
     public void nextStage(){
         stage++;
-        int hpPool = (int)(Math.random()*stage)*4+(stage*4)+10;
-        int damage = (int)(Math.random()*stage)*2+(stage*2);
+        int hpPool = (int)(Math.random()*(stage*5))+(stage*15)+50;
+        int damage = (int)(Math.random()*(stage*2))+(stage*2);
         enemiesThisTurn = new ArrayList<>();
         int enemyNumbers = 3;//(int)(Math.random()*3)+1;
         System.out.println(hpPool);
@@ -50,14 +50,27 @@ public class Controller {
             Efect effekt = efectsInExistence.get((int)(efectsInExistence.size()*Math.random()));
             enemiesThisTurn.add(new Enemy(hpPool/enemyNumbers,damage,effekt));
         }
-        main.newStage(stage, player.health, enemiesThisTurn);
-        nextTurn(enemiesThisTurn);
+        main.newStage(stage, player.getHealth(), enemiesThisTurn);
     }
 
-    private void nextTurn(ArrayList<Enemy> enemiesThisTurn){
-//        while(player.health > 0){
-//
-//        }
+    public void enemiesTurn(){
+        for (Enemy enemy:
+             enemiesThisTurn) {
+            player.setHealth(player.getHealth()-enemy.getDamage());
+            if(enemy.getEfect()!=null){
+                player.addEfect(enemy.getEfect());
+            }
+        }
+        main.setLife(player.getHealth());
+        if(player.getHealth()<=0){
+            main.deathScreen();
+        }else{
+            nextTurn();
+        }
+    }
+
+    private void nextTurn(){
+
     }
 
     private void fillCards(){
@@ -102,6 +115,8 @@ public class Controller {
         }
         return erg;
     }
+
+
 
     public void useEffectCard(Card card){
         System.out.println("Effektkarte "+card.getCardNameAsString()+" gespielt");
@@ -155,5 +170,9 @@ public class Controller {
 
     public ArrayList<Bullet> getPlayersBullet(){
         return player.getBulletsInChamber();
+    }
+
+    public ArrayList<Enemy> getEnemiesThisTurn() {
+        return enemiesThisTurn;
     }
 }
