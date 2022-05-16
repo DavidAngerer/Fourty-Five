@@ -59,4 +59,12 @@ public class Player {
     public ArrayList<Bullet> getBulletsInChamber() {
         return bulletsInChamber;
     }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
 }
