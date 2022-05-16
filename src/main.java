@@ -70,6 +70,10 @@ public class main extends Application {
     public void start(Stage stage) {
         pane = new GridPane();
         scene = new Scene(pane, width, height);
+
+        //funktioniert noch nicht
+        //stage.getIcons().add(new Image("small_titlepic_v1.png"));
+
         EventHandler eventHandlerMouse = new EventHandler<MouseEvent>(){
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -89,6 +93,9 @@ public class main extends Application {
         scene.addEventHandler(KeyEvent.KEY_PRESSED,eventHandlerKey);
         scene.addEventHandler(MouseEvent.MOUSE_CLICKED,eventHandlerMouse);
 
+
+
+
         VBox box = new VBox();
         ImageView imageView = new ImageView();
 
@@ -100,7 +107,7 @@ public class main extends Application {
         imageView.setFitHeight(height);
 
         try {
-            BackgroundSize size = new BackgroundSize(-1d, -1d, true, true, true, true);
+            BackgroundSize size = new BackgroundSize(-1d, -1d, true, true, true, false);
             Background back = new Background(new BackgroundImage(new Image(String.valueOf(Path.of("./res/backgrounds/titlescreen.gif").toUri().toURL())), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, size));
             pane.setBackground(back);
         } catch (MalformedURLException ignored) {
