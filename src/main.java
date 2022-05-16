@@ -72,7 +72,8 @@ public class main extends Application {
         scene = new Scene(pane, width, height);
 
         //funktioniert noch nicht
-        //stage.getIcons().add(new Image("small_titlepic_v1.png"));
+//        stage.getIcons().add(new Image(main.class.getResourceAsStream( "small_titlepic_v1.png" )));
+//        stage.getIcons().add(new Image( "small_titlepic_v1.png"));
 
         EventHandler eventHandlerMouse = new EventHandler<MouseEvent>(){
             @Override
