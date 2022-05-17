@@ -1,3 +1,8 @@
+import javafx.scene.Node;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class EfectCard extends Card{
 
     public enum EffectCardName{
@@ -13,6 +18,8 @@ public class EfectCard extends Card{
 
     private int cost;
     private EffectCardName cardName;
+
+    private Node node;
 
     public EfectCard(String cardDeskrition, Rarity rarity, int cost, EffectCardName cardName) {
         this.cardDeskrition = cardDeskrition;
@@ -43,5 +50,22 @@ public class EfectCard extends Card{
 
     public String getCardNameAsString() {
         return cardName.name().replace("_"," ");
+    }
+
+    @Override
+    public Map<String, String> getStats() {
+        Map<String,String> erg= new HashMap<>();
+        erg.put("Name",cardName.toString());
+        erg.put("Cost",cost+"");
+        erg.put("Deskription",cardDeskrition);
+        return erg;
+    }
+
+    public Node getNode() {
+        return node;
+    }
+
+    public void setNode(Node node) {
+        this.node = node;
     }
 }

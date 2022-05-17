@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author David Angelo, Philip Jankovic
@@ -27,7 +28,7 @@ import java.util.*;
  */
 public class main extends Application {
 
-    //TODO zielmodus ( welcher Gegner, Kopf oder Body) perfektionieren
+    //TODO imense bugs beheben
     /**
      * Resolution Height
      */
@@ -206,6 +207,7 @@ public class main extends Application {
         Text text = new Text(health+"");
         text.setId("Life");
         pane.add(text,0,0);
+        //TODO Phillip anfangs box hintun wo dann wenn noch keine karte drüber gehovert wurde
         bullets.addAll(controller.getRndBullets(3));
         efectCards.addAll(controller.getRndEffectCards(3));
         for (int i = 0; i < 3; i++) {
@@ -277,7 +279,6 @@ public class main extends Application {
                         enemy.getChildren().addAll(body,head);
                         enemies.get(i).setVisual(enemy);
                     }
-                    //controller.shoot(0,true);
                     }
                 }
 
@@ -358,10 +359,12 @@ public class main extends Application {
             }
         });
         stack.setOnMouseEntered(e -> {
-            hoveredCard(stack);
+            hoveredCard(card);
         });
         pane.add(stack,5+handcardsTaken,5);
+        card.setNode(stack);
         handcardsTaken++;
+        controller.CardsOnField.add(card);
     }
 
     /**
@@ -391,6 +394,7 @@ public class main extends Application {
             stack.getChildren().addAll(rect,bullet);
             setNodeInSlot(stack,slot);
             controller.setBulletInSlot(bulletCard);
+            handcardsTaken--;
         }
     }
 
@@ -422,10 +426,22 @@ public class main extends Application {
     /**
      * Called when mouse hovers over Handcard
      * Displays stats
-     * @param node the node which was hovered over
+     * @param card the Card which was hovered over
      */
-    public static void hoveredCard(Node node){
-        System.out.println(node);
+    public static void hoveredCard(Card card){
+        pane.getChildren().remove(getNodeByNameId("Infos"));
+
+        StackPane infos = new StackPane();
+        //TODO ersetzten durch imageview von karte
+        Text stats = new Text(card.getStats().entrySet().stream().map(n -> n.getKey()+" = "+ n.getValue()).
+                collect(Collectors.joining("\n")));
+        Text name = new Text(card.getCardNameAsString());
+        Rectangle background = new Rectangle(150,300);
+        background.setFill(Color.GREY);
+        infos.getChildren().addAll(background,name,stats);
+        infos.setAlignment(name,Pos.TOP_CENTER);
+        infos.setId("Infos");
+        pane.add(infos, 10,0);
     }
 
     /**
@@ -433,6 +449,7 @@ public class main extends Application {
      */
     public static void rotate(){
         ArrayList<Bullet> bullets = controller.getPlayersBullet();
+
         pane.getChildren().remove(bullets.get(0).getNode());
         for (int i = 1; i<bullets.size(); i++) {
             pane.getChildren().remove(bullets.get(i).getNode());
@@ -470,5 +487,9 @@ public class main extends Application {
     public static void setLife(int life){
         Text text = (Text) getNodeByNameId("Life");
         text.setText(life+"");
+    }
+
+    public static void drawCards(){
+
     }
 }

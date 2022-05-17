@@ -1,3 +1,7 @@
+import javafx.scene.Node;
+
+import java.util.Map;
+
 public abstract class Card {
 
     protected enum Rarity{
@@ -14,7 +18,14 @@ public abstract class Card {
 
     protected String cardDeskrition;
 
+    protected Node node;
+
     public String getCardNameAsString(){
         return cardName.name().replace("_"," ");
     }
+
+    public abstract Map<String,String> getStats();
+
+    public abstract Node getNode();
+    public abstract void setNode(Node node);
 }

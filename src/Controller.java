@@ -19,7 +19,7 @@ public class Controller {
 
     ArrayList<Efect> efectsInExistence;
 
-
+    ArrayList<Card> CardsOnField = new ArrayList<>();
 
     public Controller(float dificulty, int stage) {
         bulletsinExistence=new ArrayList<>();
@@ -30,7 +30,7 @@ public class Controller {
         player = new Player(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),100);
         fillCards();
         fillEfects();
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 5; i++) {
             player.addCard(bulletsinExistence.get(0).cloneBullet());
             player.addCard(efectCardsInExistence.get(0).cloneEfectcard());
         }
@@ -70,7 +70,24 @@ public class Controller {
     }
 
     private void nextTurn(){
-
+        int cardsLeftToDraw = 6-main.handcardsTaken;
+        int rnd;
+        for (int i = 0; i < cardsLeftToDraw; i++) {
+            rnd = (int)(Math.random()*2);
+            if(rnd == 0){
+                rnd = (int)(Math.random()*player.getBullets().size());
+                if(!CardsOnField.contains(player.getBullets().get(rnd))){
+                    main.addCardInHand(player.getBullets().get(rnd));
+                    CardsOnField.add(player.getBullets().get(rnd));
+                }else{i--;}
+            }else{
+                rnd = (int)(Math.random()*player.getEfectcards().size());
+                if(!CardsOnField.contains(player.getEfectcards().get(rnd))){
+                    main.addCardInHand(player.getEfectcards().get(rnd));
+                    CardsOnField.add(player.getBullets().get(rnd));
+                }else{i--;}
+            }
+        }
     }
 
     private void fillCards(){
@@ -133,7 +150,7 @@ public class Controller {
             }
             player.energy--;
             main.rotate();
-
+            CardsOnField.remove(player.bulletsInChamber.get(0));
             player.bulletsInChamber.remove(0);
         }
     }

@@ -1,5 +1,8 @@
 import javafx.scene.Node;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Bullet extends Card{
 
     private CardName cardName;
@@ -58,6 +61,15 @@ public class Bullet extends Card{
 
     public String getCardNameAsString() {
         return cardName.name().replace("_"," ");
+    }
+
+    @Override
+    public Map<String, String> getStats() {
+        Map<String,String> erg= new HashMap<>();
+        erg.put("Name",cardName.toString());
+        erg.put("damage",damage+"");
+        erg.put("Deskription",cardDeskrition);
+        return erg;
     }
 
     public int getDamage() {
