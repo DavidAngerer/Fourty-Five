@@ -352,7 +352,6 @@ public class main extends Application {
             public void handle(MouseEvent mouseEvent) {
                 if(card.getClass().getSimpleName().equals("Bullet")){
                     setBulletInSlot(controller.chambersTaken(),(Bullet) card);
-                    pane.getChildren().remove(getNodeByNameId("HandCard"+HANDSLOTS));
                 }else{
                     controller.useEffectCard(card);
                 }
@@ -382,16 +381,10 @@ public class main extends Application {
      */
     public static void setBulletInSlot(int slot, Bullet bulletCard){
         if(controller.chambersTaken()<=slot){
-            Text bullet = new Text(bulletCard.getCardNameAsString());
-            bullet.setFill(Color.BLACK);
-            Rectangle rect = new Rectangle();
-            rect.setHeight(150);
-            rect.setWidth(150);
-            rect.setFill(Color.GREY);
-            StackPane stack = new StackPane();
+            pane.getChildren().remove(bulletCard.getNode());
+            StackPane stack = (StackPane) bulletCard.getNode();
             bulletCard.setNode(stack);
             GridPane.setMargin(stack,new Insets(10,10,10,10));
-            stack.getChildren().addAll(rect,bullet);
             setNodeInSlot(stack,slot);
             controller.setBulletInSlot(bulletCard);
             handcardsTaken--;
@@ -441,7 +434,7 @@ public class main extends Application {
         infos.getChildren().addAll(background,name,stats);
         infos.setAlignment(name,Pos.TOP_CENTER);
         infos.setId("Infos");
-        pane.add(infos, 10,0);
+        pane.add(infos, 10,1);
     }
 
     /**
