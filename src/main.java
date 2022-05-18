@@ -1,5 +1,4 @@
 import javafx.application.Application;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -205,6 +204,9 @@ public class main extends Application {
         pane.getRowConstraints().clear();
         ArrayList<Bullet> bullets = new ArrayList<>();
         ArrayList<EfectCard> efectCards = new ArrayList<>();
+        Text energy = new Text("5");
+        energy.setId("Energy");
+        pane.add(energy,0,1);
         pane.setMaxWidth(scene.getWidth());
         pane.setMinWidth(scene.getWidth());
         pane.getChildren().clear();
@@ -357,7 +359,7 @@ public class main extends Application {
                 if(card.getClass().getSimpleName().equals("Bullet")){
                     setBulletInSlot(controller.chambersTaken(),(Bullet) card);
                 }else{
-                    controller.useEffectCard(card);
+                    controller.useEffectCard((EfectCard) card);
                 }
             }
         });
@@ -366,7 +368,7 @@ public class main extends Application {
         });
         card.setNode(stack);
         putCardWhereGoes(card);
-        controller.CardsOnField.add(card);
+        controller.cardsOnField.add(card);
     }
 
     /**
@@ -392,6 +394,16 @@ public class main extends Application {
             controller.setBulletInSlot(bulletCard);
             handcardsTaken--;
         }
+    }
+
+    public static void setEnergy(int energy){
+        Text text = (Text) getNodeByNameId("Energy");
+        text.setText(energy+"");
+    }
+
+    public static void removeCard(Card card){
+        pane.getChildren().remove(card.getNode());
+        handcardsTaken--;
     }
 
     public static void putCardWhereGoes(Card card){

@@ -67,4 +67,12 @@ public class Player {
     public void setHealth(int health) {
         this.health = health;
     }
+
+    public int getEnergy() {
+        return energy;
+    }
+
+    public void setEnergy(int energy) {
+        this.energy = energy;
+    }
 }

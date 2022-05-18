@@ -19,7 +19,7 @@ public class Controller {
 
     ArrayList<Efect> efectsInExistence;
 
-    ArrayList<Card> CardsOnField = new ArrayList<>();
+    ArrayList<Card> cardsOnField = new ArrayList<>();
 
     public Controller(float dificulty, int stage) {
         bulletsinExistence=new ArrayList<>();
@@ -76,15 +76,15 @@ public class Controller {
             rnd = (int)(Math.random()*2);
             if(rnd == 0){
                 rnd = (int)(Math.random()*player.getBullets().size());
-                if(!CardsOnField.contains(player.getBullets().get(rnd))){
+                if(!cardsOnField.contains(player.getBullets().get(rnd))){
                     main.addCardInHand(player.getBullets().get(rnd));
-                    CardsOnField.add(player.getBullets().get(rnd));
+                    cardsOnField.add(player.getBullets().get(rnd));
                 }else{i--;}
             }else{
                 rnd = (int)(Math.random()*player.getEfectcards().size());
-                if(!CardsOnField.contains(player.getEfectcards().get(rnd))){
+                if(!cardsOnField.contains(player.getEfectcards().get(rnd))){
                     main.addCardInHand(player.getEfectcards().get(rnd));
-                    CardsOnField.add(player.getBullets().get(rnd));
+                    cardsOnField.add(player.getBullets().get(rnd));
                 }else{i--;}
             }
         }
@@ -135,8 +135,14 @@ public class Controller {
 
 
 
-    public void useEffectCard(Card card){
-        System.out.println("Effektkarte "+card.getCardNameAsString()+" gespielt");
+    public void useEffectCard(EfectCard card){
+        if(card.getCost()>=player.getEnergy()){
+            System.out.println("Effektkarte "+card.getCardNameAsString()+" gespielt");
+            cardsOnField.remove(card);
+            main.removeCard(card);
+            player.setEnergy(player.getEnergy()- card.getCost());
+            main.setEnergy(player.getEnergy());
+        }
     }
 
     public void shoot(Enemy enemy,boolean body){
@@ -154,7 +160,7 @@ public class Controller {
             }
             player.energy--;
             main.rotate();
-            CardsOnField.remove(player.bulletsInChamber.get(0));
+            cardsOnField.remove(player.bulletsInChamber.get(0));
             player.bulletsInChamber.remove(0);
         }
     }

@@ -68,4 +68,8 @@ public class EfectCard extends Card{
     public void setNode(Node node) {
         this.node = node;
     }
+
+    public int getCost() {
+        return cost;
+    }
 }
