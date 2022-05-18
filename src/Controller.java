@@ -141,8 +141,12 @@ public class Controller {
 
     public void shoot(Enemy enemy,boolean body){
         if(player.energy > 0 && player.bulletsInChamber.size()>0){
+            int head = 1;
+            if(!body){
+                head*=2;
+            }
              enemy.setHealth(enemy.getHealth()-
-                     player.bulletsInChamber.get(0).getDamage());
+                     player.bulletsInChamber.get(0).getDamage()*head);
             main.setLifeOfEnemy(enemy);
             if(enemy.getHealth()<=0){
                 main.removeEnemy(enemy);

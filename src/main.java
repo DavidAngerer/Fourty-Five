@@ -27,8 +27,12 @@ import java.util.stream.Collectors;
  * main class for the .Fourty-Five game, handles graphics (javafx)
  */
 public class main extends Application {
-
-    //TODO imense bugs beheben
+    //TODO effectkarten spielen
+    //TODO headshot bugs beheben
+    //TODO nächste Stage
+    //TODO cardselectscreen
+    //TODO effekte
+    //TODO deathscreen
     /**
      * Resolution Height
      */
@@ -344,7 +348,6 @@ public class main extends Application {
         rect.setFill(Color.GREY);
         StackPane stack = new StackPane();
         final int HANDSLOTS = handcardsTaken;
-        stack.setId("HandCard"+HANDSLOTS);
         GridPane.setMargin(stack,new Insets(10,10,10,10));
         stack.getChildren().addAll(rect,efectCard);
         stack.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
@@ -360,9 +363,8 @@ public class main extends Application {
         stack.setOnMouseEntered(e -> {
             hoveredCard(card);
         });
-        pane.add(stack,5+handcardsTaken,5);
         card.setNode(stack);
-        handcardsTaken++;
+        putCardWhereGoes(card);
         controller.CardsOnField.add(card);
     }
 
@@ -388,6 +390,17 @@ public class main extends Application {
             setNodeInSlot(stack,slot);
             controller.setBulletInSlot(bulletCard);
             handcardsTaken--;
+        }
+    }
+
+    public static void putCardWhereGoes(Card card){
+        for (int i = 0; i < 6; i++) {
+            if(getNodeByNameId("HandCard"+i)==null){
+                pane.add(card.getNode(),5+i,5);
+                handcardsTaken++;
+                card.getNode().setId("HandCard"+i);
+                break;
+            }
         }
     }
 
