@@ -29,10 +29,11 @@ import java.util.stream.Collectors;
 public class main extends Application {
     //TODO effectkarten spielen
     //TODO headshot bugs beheben
-    //TODO nächste Stage
-    //TODO cardselectscreen
+    //TODO nächste Stage --> Arbeite gerade daran
+    //TODO cardselectscreen --> Arbeite gerade daran
     //TODO effekte
     //TODO deathscreen
+
     /**
      * Resolution Height
      */
