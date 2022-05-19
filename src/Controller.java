@@ -22,12 +22,12 @@ public class Controller {
     ArrayList<Card> cardsOnField = new ArrayList<>();
 
     public Controller(float dificulty, int stage) {
-        bulletsinExistence=new ArrayList<>();
-        efectsInExistence=new ArrayList<>();
-        efectCardsInExistence= new ArrayList<>();
+        bulletsinExistence = new ArrayList<>();
+        efectsInExistence = new ArrayList<>();
+        efectCardsInExistence = new ArrayList<>();
         this.dificulty = dificulty;
         this.stage = stage;
-        player = new Player(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),100);
+        player = new Player(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), 100);
         fillCards();
         fillEfects();
         for (int i = 0; i < 5; i++) {
@@ -38,59 +38,65 @@ public class Controller {
         player.addCard(efectCardsInExistence.get(1).cloneEfectcard());
     }
 
-    public void nextStage(){
+    public void nextStage() {
         stage++;
-        int hpPool = (int)(Math.random()*(stage*5))+(stage*15)+50;
-        int damage = (int)(Math.random()*(stage*2))+(stage*2);
+        int hpPool = (int) (Math.random() * (stage * 5)) + (stage * 15) + 50;
+        int damage = (int) (Math.random() * (stage * 2)) + (stage * 2);
         enemiesThisTurn = new ArrayList<>();
-        int enemyNumbers = 3;//(int)(Math.random()*3)+1;
+        int enemyNumbers = (int)(Math.random()*3)+1;
+        player.bulletsInChamber = new ArrayList<>();
+        cardsOnField = new ArrayList<>();
         System.out.println(hpPool);
         System.out.println(enemyNumbers);
         for (int i = 0; i < enemyNumbers; i++) {
-            Efect effekt = efectsInExistence.get((int)(efectsInExistence.size()*Math.random()));
-            enemiesThisTurn.add(new Enemy(hpPool/enemyNumbers,damage,effekt));
+            Efect effekt = efectsInExistence.get((int) (efectsInExistence.size() * Math.random()));
+            enemiesThisTurn.add(new Enemy(hpPool / enemyNumbers, damage, effekt));
         }
-        main.newStage(stage, player.getHealth(), enemiesThisTurn);
+        main.newStage(stage, player.getMaxHealth(), enemiesThisTurn);
     }
 
-    public void enemiesTurn(){
-        for (Enemy enemy:
-             enemiesThisTurn) {
-            player.setHealth(player.getHealth()-enemy.getDamage());
-            if(enemy.getEfect()!=null){
+    public void enemiesTurn() {
+        for (Enemy enemy :
+                enemiesThisTurn) {
+            player.setHealth(player.getHealth() - enemy.getDamage());
+            if (enemy.getEfect() != null) {
                 player.addEfect(enemy.getEfect());
             }
         }
         main.setLife(player.getHealth());
-        if(player.getHealth()<=0){
+        if (player.getHealth() <= 0) {
             main.deathScreen();
-        }else{
+        } else {
             nextTurn();
         }
     }
 
-    private void nextTurn(){
-        int cardsLeftToDraw = 6-main.handcardsTaken;
+    private void nextTurn() {
+        int cardsLeftToDraw = 6 - main.handcardsTaken;
         int rnd;
         for (int i = 0; i < cardsLeftToDraw; i++) {
-            rnd = (int)(Math.random()*2);
-            if(rnd == 0){
-                rnd = (int)(Math.random()*player.getBullets().size());
-                if(!cardsOnField.contains(player.getBullets().get(rnd))){
+            rnd = (int) (Math.random() * 2);
+            if (rnd == 0) {
+                rnd = (int) (Math.random() * player.getBullets().size());
+                if (!cardsOnField.contains(player.getBullets().get(rnd))) {
                     main.addCardInHand(player.getBullets().get(rnd));
-                    cardsOnField.add(player.getBullets().get(rnd));
-                }else{i--;}
-            }else{
-                rnd = (int)(Math.random()*player.getEfectcards().size());
-                if(!cardsOnField.contains(player.getEfectcards().get(rnd))){
+                } else {
+                    i--;
+                }
+            } else {
+                rnd = (int) (Math.random() * player.getEfectcards().size());
+                if (!cardsOnField.contains(player.getEfectcards().get(rnd))) {
                     main.addCardInHand(player.getEfectcards().get(rnd));
-                    cardsOnField.add(player.getBullets().get(rnd));
-                }else{i--;}
+                } else {
+                    i--;
+                }
             }
         }
+        player.energy = 5;
+        main.setEnergy(5);
     }
 
-    private void fillCards(){
+    private void fillCards() {
         Path path = Path.of("./res/CardData/Bullet.csv");
         try (BufferedReader br = Files.newBufferedReader(path,
                 StandardCharsets.US_ASCII)) {
@@ -119,13 +125,13 @@ public class Controller {
         }
     }
 
-    public ArrayList<EfectCard> getRndEffectCards(int amount){
+    public ArrayList<EfectCard> getRndEffectCards(int amount) {
         ArrayList<EfectCard> efectCard = player.getEfectcards();
         ArrayList<EfectCard> erg = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
-            int number = (int)(Math.random()*efectCard.size());
-            while(player.handCards.contains(efectCard.get(number))){
-                number = (int)(Math.random()*efectCard.size());
+            int number = (int) (Math.random() * efectCard.size());
+            while (player.handCards.contains(efectCard.get(number))) {
+                number = (int) (Math.random() * efectCard.size());
             }
             player.handCards.add(efectCard.get(number));
             erg.add(efectCard.get(number));
@@ -134,45 +140,48 @@ public class Controller {
     }
 
 
-
-    public void useEffectCard(EfectCard card){
-        if(card.getCost()>=player.getEnergy()){
-            System.out.println("Effektkarte "+card.getCardNameAsString()+" gespielt");
+    public void useEffectCard(EfectCard card) {
+        if (card.getCost() <= player.getEnergy()) {
+            System.out.println("Effektkarte " + card.getCardNameAsString() + " gespielt");
             cardsOnField.remove(card);
             main.removeCard(card);
-            player.setEnergy(player.getEnergy()- card.getCost());
+            player.setEnergy(player.getEnergy() - card.getCost());
             main.setEnergy(player.getEnergy());
         }
     }
 
-    public void shoot(Enemy enemy,boolean body){
-        if(player.energy > 0 && player.bulletsInChamber.size()>0){
-            int head = 1;
-            if(!body){
-                head*=2;
-            }
-             enemy.setHealth(enemy.getHealth()-
-                     player.bulletsInChamber.get(0).getDamage()*head);
-            main.setLifeOfEnemy(enemy);
-            if(enemy.getHealth()<=0){
-                main.removeEnemy(enemy);
-                enemiesThisTurn.remove(enemy);
-            }
+    public void shoot(Enemy enemy, boolean body) {
+        int head = 1;
+        if (!body) {
+            head *= 2;
+        }
+        enemy.setHealth(enemy.getHealth() -
+                player.bulletsInChamber.get(0).getDamage() * head);
+        main.setLifeOfEnemy(enemy);
+        System.out.println(enemy.getHealth());
+        if (enemy.getHealth() <= 0) {
+            main.removeEnemy(enemy);
+            enemiesThisTurn.remove(enemy);
+
+        }if(enemiesThisTurn.size()==0){
+            nextStage();
+        }else{
             player.energy--;
+            main.setEnergy(player.getEnergy());
             main.rotate();
             cardsOnField.remove(player.bulletsInChamber.get(0));
             player.bulletsInChamber.remove(0);
         }
     }
 
-    public ArrayList<Bullet> getRndBullets(int amount){
+    public ArrayList<Bullet> getRndBullets(int amount) {
         ArrayList<Bullet> bullets = player.getBullets();
         ArrayList<Bullet> erg = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
-            int number = (int)(Math.random()*bullets.size());
-            while(player.bulletsInChamber.contains(bullets.get(number)) ||
-                    player.handCards.contains(bullets.get(number))){
-                number = (int)(Math.random()*bullets.size());
+            int number = (int) (Math.random() * bullets.size());
+            while (player.bulletsInChamber.contains(bullets.get(number)) ||
+                    player.handCards.contains(bullets.get(number))) {
+                number = (int) (Math.random() * bullets.size());
             }
             player.handCards.add(bullets.get(number));
             erg.add(bullets.get(number));
@@ -180,26 +189,30 @@ public class Controller {
         return erg;
     }
 
-    private void fillEfects(){
-        for (Efect.EfectName name:
-             Efect.EfectName.values()) {
+    private void fillEfects() {
+        for (Efect.EfectName name :
+                Efect.EfectName.values()) {
             efectsInExistence.add(new Efect(name));
         }
     }
 
-    public int chambersTaken(){
+    public int chambersTaken() {
         return player.bulletsInChamber.size();
     }
 
-    public void setBulletInSlot(Bullet bullet){
+    public void setBulletInSlot(Bullet bullet) {
         player.bulletsInChamber.add(bullet);
     }
 
-    public ArrayList<Bullet> getPlayersBullet(){
+    public ArrayList<Bullet> getPlayersBullet() {
         return player.getBulletsInChamber();
     }
 
     public ArrayList<Enemy> getEnemiesThisTurn() {
         return enemiesThisTurn;
+    }
+
+    public int getEnergy() {
+        return player.getEnergy();
     }
 }

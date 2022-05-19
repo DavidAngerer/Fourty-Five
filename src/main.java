@@ -27,8 +27,6 @@ import java.util.stream.Collectors;
  */
 public class main extends Application {
     //TODO effectkarten spielen
-    //TODO headshot bugs beheben
-    //TODO nächste Stage --> Arbeite gerade daran
     //TODO cardselectscreen --> Arbeite gerade daran
     //TODO effekte
     //TODO deathscreen
@@ -69,6 +67,7 @@ public class main extends Application {
 
     /**
      * Programm started
+     *
      * @param stage primary Stage
      */
     @Override
@@ -79,26 +78,24 @@ public class main extends Application {
         //funktioniert noch nicht
         //stage.getIcons().add(new Image("small_titlepic_v1.png"));
 
-        EventHandler eventHandlerMouse = new EventHandler<MouseEvent>(){
+        EventHandler eventHandlerMouse = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 menu();
-                scene.removeEventHandler(MouseEvent.MOUSE_CLICKED,this);
+                scene.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
             }
         };
 
-        EventHandler eventHandlerKey = new EventHandler<KeyEvent>(){
+        EventHandler eventHandlerKey = new EventHandler<KeyEvent>() {
 
             @Override
             public void handle(KeyEvent keyEvent) {
                 menu();
-                scene.removeEventHandler(KeyEvent.KEY_PRESSED,this);
+                scene.removeEventHandler(KeyEvent.KEY_PRESSED, this);
             }
         };
-        scene.addEventHandler(KeyEvent.KEY_PRESSED,eventHandlerKey);
-        scene.addEventHandler(MouseEvent.MOUSE_CLICKED,eventHandlerMouse);
-
-
+        scene.addEventHandler(KeyEvent.KEY_PRESSED, eventHandlerKey);
+        scene.addEventHandler(MouseEvent.MOUSE_CLICKED, eventHandlerMouse);
 
 
         VBox box = new VBox();
@@ -193,27 +190,27 @@ public class main extends Application {
 
     /**
      * Enters a new Stage with new Enemies
-     * @param stage Number of Stage
-     * @param health Health of Player
+     *
+     * @param stage   Number of Stage
+     * @param health  Health of Player
      * @param enemies Number of Enemies
      */
-    public static void newStage(int stage, int health, ArrayList<Enemy> enemies){
+    public static void newStage(int stage, int health, ArrayList<Enemy> enemies) {
         handcardsTaken = 0;
         pane.setGridLinesVisible(true);
         pane.getColumnConstraints().clear();
         pane.getRowConstraints().clear();
         ArrayList<Bullet> bullets = new ArrayList<>();
         ArrayList<EfectCard> efectCards = new ArrayList<>();
-        Text energy = new Text("5");
+        Text energy = new Text("Energy left = 5");
         energy.setId("Energy");
-        pane.add(energy,0,1);
         pane.setMaxWidth(scene.getWidth());
         pane.setMinWidth(scene.getWidth());
         pane.getChildren().clear();
         pane.setBackground(null);
-        Text text = new Text(health+"");
+        Text text = new Text(health + "");
         text.setId("Life");
-        pane.add(text,0,0);
+        pane.add(text, 0, 0);
         //TODO Phillip anfangs box hintun wo dann wenn noch keine karte drüber gehovert wurde
         bullets.addAll(controller.getRndBullets(3));
         efectCards.addAll(controller.getRndEffectCards(3));
@@ -225,19 +222,19 @@ public class main extends Application {
         scene.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if(mouseEvent.getButton().equals(MouseButton.SECONDARY)){
+                if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
                     leaveshootingMode();
                 }
             }
         });
         buttonEndTurn();
         buttonShoot(enemies);
-        pane.add(new Text("Stage"+ stage),4,0);
-
+        pane.add(new Text("Stage" + stage), 4, 0);
+        pane.add(energy, 3, 0);
         createEnemies(enemies);
     }
 
-    private static void buttonEndTurn(){
+    private static void buttonEndTurn() {
         Button endTurn = new Button("End Turn");
         endTurn.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
@@ -245,7 +242,7 @@ public class main extends Application {
                 controller.enemiesTurn();
             }
         });
-        pane.add(endTurn,5,1);
+        pane.add(endTurn, 5, 1);
     }
 
     private static void buttonShoot(ArrayList<Enemy> enemies) {
@@ -253,9 +250,9 @@ public class main extends Application {
         shoot.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if(controller.chambersTaken()>0){
+                if (controller.chambersTaken() > 0 && controller.getEnergy() > 0) {
                     shootingMode = true;
-                    for (Node node:
+                    for (Node node :
                             pane.getChildren()) {
 
                         node.setMouseTransparent(true);
@@ -263,54 +260,57 @@ public class main extends Application {
                     for (int i = 0; i < enemies.size(); i++) {
                         StackPane enemy = (StackPane) enemies.get(i).getVisual();
                         enemy.setMouseTransparent(false);
-                        Rectangle body = new Rectangle(80,300);
+                        Rectangle body = new Rectangle(80, 300);
                         body.setFill(Color.BLUE);
                         final Enemy ene = enemies.get(i);
                         body.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
                             @Override
                             public void handle(MouseEvent mouseEvent) {
-                                controller.shoot(ene,true);
+                                controller.shoot(ene, true);
+                                System.out.println("body");
                                 leaveshootingMode();
                             }
                         });
-                        Rectangle head = new Rectangle(80,80);
+                        Rectangle head = new Rectangle(80, 80);
                         head.setFill(Color.GREEN);
                         head.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
                             @Override
                             public void handle(MouseEvent mouseEvent) {
-                                controller.shoot(ene,false);
+                                controller.shoot(ene, false);
+                                System.out.println("Head");
                                 leaveshootingMode();
                             }
                         });
                         enemy.setAlignment(head, Pos.TOP_CENTER);
-                        enemy.getChildren().addAll(body,head);
+                        enemy.getChildren().addAll(body, head);
                         enemies.get(i).setVisual(enemy);
                     }
-                    }
                 }
+            }
 
         });
-        pane.add(shoot,5,0);
+        pane.add(shoot, 5, 0);
     }
 
-    public static void leaveshootingMode(){
-        if (shootingMode){
-            for (Node node:
+    public static void leaveshootingMode() {
+        if (shootingMode) {
+            for (Node node :
                     pane.getChildren()) {
                 node.setMouseTransparent(false);
             }
             ArrayList<Enemy> enemies = controller.getEnemiesThisTurn();
             for (int i = 0; i < enemies.size(); i++) {
-                StackPane pane = (StackPane)(enemies.get(i).getVisual());
+                StackPane pane = (StackPane) (enemies.get(i).getVisual());
                 pane.getChildren().remove(1);
                 pane.getChildren().remove(1);
             }
-            shootingMode=false;
+            shootingMode = false;
         }
     }
 
     /**
      * Creates the Visuals and healthbars for enemies
+     *
      * @param enemies the enemies to be placed
      */
     private static void createEnemies(ArrayList<Enemy> enemies) {
@@ -318,31 +318,32 @@ public class main extends Application {
         ArrayList<ProgressBar> progressBars = new ArrayList<>();
         for (int i = 0; i < enemies.size(); i++) {
             rects.add(new StackPane());
-            Rectangle enemy= new Rectangle(80,300);
+            Rectangle enemy = new Rectangle(80, 300);
             enemy.setFill(Color.RED);
             rects.get(i).getChildren().add(enemy);
-            pane.add(rects.get(i),i+2,1);
+            pane.add(rects.get(i), i + 2, 1);
             progressBars.add(new ProgressBar());
             progressBars.get(i).setProgress(1);
-            pane.add(progressBars.get(i),i+2,2);
+            pane.add(progressBars.get(i), i + 2, 2);
             enemies.get(i).setHealthBar(progressBars.get(i));
             enemies.get(i).setVisual(rects.get(i));
         }
     }
 
     /**
-     *Zeigt den Todesscreen an wenn man gestorben ist
+     * Zeigt den Todesscreen an wenn man gestorben ist
      */
-    public static void deathScreen(){
+    public static void deathScreen() {
         System.out.println("Dead");
         menu();
     }
 
     /**
      * Adds a card to Players Hand
+     *
      * @param card Bullet or EfectCard
      */
-    public static void addCardInHand(Card card){
+    public static void addCardInHand(Card card) {
         Text efectCard = new Text(card.getCardNameAsString());
         efectCard.setFill(Color.BLACK);
         Rectangle rect = new Rectangle();
@@ -351,14 +352,14 @@ public class main extends Application {
         rect.setFill(Color.GREY);
         StackPane stack = new StackPane();
         final int HANDSLOTS = handcardsTaken;
-        GridPane.setMargin(stack,new Insets(10,10,10,10));
-        stack.getChildren().addAll(rect,efectCard);
+        GridPane.setMargin(stack, new Insets(10, 10, 10, 10));
+        stack.getChildren().addAll(rect, efectCard);
         stack.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if(card.getClass().getSimpleName().equals("Bullet")){
-                    setBulletInSlot(controller.chambersTaken(),(Bullet) card);
-                }else{
+                if (card.getClass().getSimpleName().equals("Bullet")) {
+                    setBulletInSlot(controller.chambersTaken(), (Bullet) card);
+                } else {
                     controller.useEffectCard((EfectCard) card);
                 }
             }
@@ -373,45 +374,51 @@ public class main extends Application {
 
     /**
      * Removes an Enemy from playing-field
+     *
      * @param enemy
      */
-    public static void removeEnemy(Enemy enemy){
-        pane.getChildren().removeAll(enemy.getHealthBar(),enemy.getVisual());
+    public static void removeEnemy(Enemy enemy) {
+        pane.getChildren().removeAll(enemy.getHealthBar(), enemy.getVisual());
     }
 
     /**
      * Sets BulletCard in Slot of Chamber
-     * @param slot Slot of Chamber
+     *
+     * @param slot       Slot of Chamber
      * @param bulletCard Bullet to Set
      */
-    public static void setBulletInSlot(int slot, Bullet bulletCard){
-        if(controller.chambersTaken()<=slot){
+    public static void setBulletInSlot(int slot, Bullet bulletCard) {
+        if (controller.chambersTaken() <= slot) {
+            bulletCard.getNode().setId("Bullet"+slot);
             pane.getChildren().remove(bulletCard.getNode());
             StackPane stack = (StackPane) bulletCard.getNode();
             bulletCard.setNode(stack);
-            GridPane.setMargin(stack,new Insets(10,10,10,10));
-            setNodeInSlot(stack,slot);
+            GridPane.setMargin(stack, new Insets(10, 10, 10, 10));
+            setNodeInSlot(stack, slot);
             controller.setBulletInSlot(bulletCard);
             handcardsTaken--;
         }
     }
 
-    public static void setEnergy(int energy){
+    public static void setEnergy(int energy) {
         Text text = (Text) getNodeByNameId("Energy");
-        text.setText(energy+"");
+        text.setText("Energy left = " + energy);
     }
 
-    public static void removeCard(Card card){
+    public static void removeCard(Card card) {
         pane.getChildren().remove(card.getNode());
         handcardsTaken--;
     }
 
-    public static void putCardWhereGoes(Card card){
+    public static void putCardWhereGoes(Card card) {
         for (int i = 0; i < 6; i++) {
-            if(getNodeByNameId("HandCard"+i)==null){
-                pane.add(card.getNode(),5+i,5);
+            System.out.println(getNodeByNameId("HandCard" + i));
+        }
+        for (int i = 0; i < 6; i++) {
+            if (getNodeByNameId("HandCard" + i) == null) {
+                pane.add(card.getNode(), 5 + i, 5);
                 handcardsTaken++;
-                card.getNode().setId("HandCard"+i);
+                card.getNode().setId("HandCard" + i);
                 break;
             }
         }
@@ -419,25 +426,26 @@ public class main extends Application {
 
     /**
      * Sets a node into a slot in chamber
+     *
      * @param node Node to set in chamber
      * @param slot slot of chamber (first ist 0)
      */
-    public static void setNodeInSlot(Node node, int slot){
-        switch (slot){
+    public static void setNodeInSlot(Node node, int slot) {
+        switch (slot) {
             case 0:
-                pane.add(node,3,4);
+                pane.add(node, 3, 4);
                 break;
             case 1:
-                pane.add(node,2,5);
+                pane.add(node, 2, 5);
                 break;
             case 2:
-                pane.add(node,2,6);
+                pane.add(node, 2, 6);
                 break;
             case 3:
-                pane.add(node,4,6);
+                pane.add(node, 4, 6);
                 break;
             case 4:
-                pane.add(node,4,5);
+                pane.add(node, 4, 5);
                 break;
         }
     }
@@ -445,46 +453,48 @@ public class main extends Application {
     /**
      * Called when mouse hovers over Handcard
      * Displays stats
+     *
      * @param card the Card which was hovered over
      */
-    public static void hoveredCard(Card card){
+    public static void hoveredCard(Card card) {
         pane.getChildren().remove(getNodeByNameId("Infos"));
 
         StackPane infos = new StackPane();
         //TODO ersetzten durch imageview von karte
-        Text stats = new Text(card.getStats().entrySet().stream().map(n -> n.getKey()+" = "+ n.getValue()).
+        Text stats = new Text(card.getStats().entrySet().stream().map(n -> n.getKey() + " = " + n.getValue()).
                 collect(Collectors.joining("\n")));
         Text name = new Text(card.getCardNameAsString());
-        Rectangle background = new Rectangle(150,300);
+        Rectangle background = new Rectangle(150, 300);
         background.setFill(Color.GREY);
-        infos.getChildren().addAll(background,name,stats);
-        infos.setAlignment(name,Pos.TOP_CENTER);
+        infos.getChildren().addAll(background, name, stats);
+        infos.setAlignment(name, Pos.TOP_CENTER);
         infos.setId("Infos");
-        pane.add(infos, 10,1);
+        pane.add(infos, 10, 1);
     }
 
     /**
      * removes bullet in shoot slot and rotates the chamber
      */
-    public static void rotate(){
+    public static void rotate() {
         ArrayList<Bullet> bullets = controller.getPlayersBullet();
 
         pane.getChildren().remove(bullets.get(0).getNode());
-        for (int i = 1; i<bullets.size(); i++) {
+        for (int i = 1; i < bullets.size(); i++) {
             pane.getChildren().remove(bullets.get(i).getNode());
-            setNodeInSlot(bullets.get(i).getNode(),i-1);
+            setNodeInSlot(bullets.get(i).getNode(), i - 1);
         }
     }
 
     /**
      * Gets a node by the Id
+     *
      * @param id Id of Node
      * @return Node/null if no node has id
      */
-    public static Node getNodeByNameId(String id){
-        for (Node node:
+    public static Node getNodeByNameId(String id) {
+        for (Node node :
                 pane.getChildren()) {
-            if(node.getId()!=null && node.getId().equals(id)){
+            if (node.getId() != null && node.getId().equals(id)) {
                 return node;
             }
         }
@@ -493,22 +503,24 @@ public class main extends Application {
 
     /**
      * Sets the Life displayed of Enemy
+     *
      * @param enemy The enemy
      */
-    public static void setLifeOfEnemy(Enemy enemy){
-        enemy.getHealthBar().setProgress((double) enemy.getHealth()/(double)enemy.getMaxHealth());
+    public static void setLifeOfEnemy(Enemy enemy) {
+        enemy.getHealthBar().setProgress((double) enemy.getHealth() / (double) enemy.getMaxHealth());
     }
 
     /**
      * Sets Life of player visualy
+     *
      * @param life life to set
      */
-    public static void setLife(int life){
+    public static void setLife(int life) {
         Text text = (Text) getNodeByNameId("Life");
-        text.setText(life+"");
+        text.setText(life + "");
     }
 
-    public static void drawCards(){
+    public static void drawCards() {
 
     }
 }

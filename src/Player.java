@@ -8,6 +8,8 @@ public class Player {
 
     int health;
 
+    private int maxHealth;
+
     int energy = 5;
 
     ArrayList<Card> handCards = new ArrayList<>();
@@ -22,6 +24,7 @@ public class Player {
         this.efectCards = efectCards;
         this.efects = efects;
         this.health = health;
+        maxHealth = health;
         coins = 0;
     }
 
@@ -74,5 +77,13 @@ public class Player {
 
     public void setEnergy(int energy) {
         this.energy = energy;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public void setMaxHealth(int maxHealth) {
+        this.maxHealth = maxHealth;
     }
 }
