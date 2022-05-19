@@ -174,6 +174,20 @@ public class Controller {
         }
     }
 
+    public Card[] getCardsToSelect(){
+        ArrayList<Card> allCards = new ArrayList<>(bulletsinExistence);
+        allCards.add(efectCardsInExistence.get(0));
+        Card[] cards = new Card[3];
+        for (int i = 0; i < 3; i++) {
+            int rnd = (int) (Math.random() * allCards.size());
+            while (!allCards.get(rnd).gotCard()){
+                rnd = (int) (Math.random() * allCards.size());
+            }
+            cards[i] = cloneCard(allCards.get(rnd));
+        }
+        return cards;
+    }
+
     public ArrayList<Bullet> getRndBullets(int amount) {
         ArrayList<Bullet> bullets = player.getBullets();
         ArrayList<Bullet> erg = new ArrayList<>();
@@ -214,5 +228,14 @@ public class Controller {
 
     public int getEnergy() {
         return player.getEnergy();
+    }
+
+    public static Card cloneCard(Card card){
+        if(card.getClass().getSimpleName().equals("Bullet")){
+            Bullet bullet = (Bullet) card;
+            return bullet.cloneBullet();
+        }
+        EfectCard efectCard = (EfectCard) card;
+        return efectCard.cloneEfectcard();
     }
 }

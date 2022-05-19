@@ -181,6 +181,23 @@ public class main extends Application {
         }
     }
 
+    public static Card cardSelectScreen(){
+        pane.setGridLinesVisible(true);
+        pane.getColumnConstraints().clear();
+        pane.getRowConstraints().clear();
+        pane.setMaxWidth(scene.getWidth());
+        pane.setMinWidth(scene.getWidth());
+        pane.getChildren().clear();
+        pane.setBackground(null);
+        Card[] cardsToSelect = controller.getCardsToSelect();
+
+        return null;
+    }
+
+    public void AddCardToSelectScreen(int slot, Card card){
+
+    }
+
     /**
      * Called once to start the game
      */

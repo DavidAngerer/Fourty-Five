@@ -28,4 +28,19 @@ public abstract class Card {
 
     public abstract Node getNode();
     public abstract void setNode(Node node);
+
+    public boolean gotCard(){
+        double rnd =Math.random() * 100;
+        int range = 0;
+        switch (rarity) {
+            case common -> range = 100;
+            case rare -> range = 25;
+            case superrare -> range = 5;
+            case ultrarare -> range = 1;
+        }
+        if(rnd<=range){
+            return true;
+        }
+        return false;
+    }
 }
