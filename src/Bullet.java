@@ -5,17 +5,9 @@ import java.util.Map;
 
 public class Bullet extends Card{
 
-    private CardName cardName;
-
     boolean damageCalculatet;
 
     private int damage;
-
-    private Node node;
-
-    private Rarity rarity;
-
-    String cardDeskrition;
 
     public Bullet(CardName cardName) {
         this.cardName = cardName;

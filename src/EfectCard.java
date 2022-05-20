@@ -12,14 +12,8 @@ public class EfectCard extends Card{
         suspicious_accuracy,trying_does_not_hurt,reversed_turn,gonna_keep_this,random_Bullshit_go
     };
 
-    String cardDeskrition;
-
-    private Rarity rarity;
-
     private int cost;
     private EffectCardName cardName;
-
-    private Node node;
 
     public EfectCard(String cardDeskrition, Rarity rarity, int cost, EffectCardName cardName) {
         this.cardDeskrition = cardDeskrition;

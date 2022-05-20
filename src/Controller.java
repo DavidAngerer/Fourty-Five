@@ -4,6 +4,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class Controller {
 
@@ -40,10 +42,10 @@ public class Controller {
 
     public void nextStage() {
         stage++;
-        int hpPool = (int) (Math.random() * (stage * 5)) + (stage * 15) + 50;
+        int hpPool = 1;//(int) (Math.random() * (stage * 5)) + (stage * 15) + 50;
         int damage = (int) (Math.random() * (stage * 2)) + (stage * 2);
         enemiesThisTurn = new ArrayList<>();
-        int enemyNumbers = (int)(Math.random()*3)+1;
+        int enemyNumbers = 1;//(int)(Math.random()*3)+1;
         player.bulletsInChamber = new ArrayList<>();
         cardsOnField = new ArrayList<>();
         System.out.println(hpPool);
@@ -164,7 +166,7 @@ public class Controller {
             enemiesThisTurn.remove(enemy);
 
         }if(enemiesThisTurn.size()==0){
-            nextStage();
+            main.cardSelectScreen();
         }else{
             player.energy--;
             main.setEnergy(player.getEnergy());
@@ -176,11 +178,12 @@ public class Controller {
 
     public Card[] getCardsToSelect(){
         ArrayList<Card> allCards = new ArrayList<>(bulletsinExistence);
-        allCards.add(efectCardsInExistence.get(0));
+        allCards.addAll(efectCardsInExistence);
         Card[] cards = new Card[3];
         for (int i = 0; i < 3; i++) {
             int rnd = (int) (Math.random() * allCards.size());
-            while (!allCards.get(rnd).gotCard()){
+            while (!allCards.get(rnd).gotCard() &&
+                    Arrays.stream(cards).collect(Collectors.toList()).contains(allCards.get(rnd))){
                 rnd = (int) (Math.random() * allCards.size());
             }
             cards[i] = cloneCard(allCards.get(rnd));
@@ -237,5 +240,9 @@ public class Controller {
         }
         EfectCard efectCard = (EfectCard) card;
         return efectCard.cloneEfectcard();
+    }
+
+    public void addCardToPlayer(Card card){
+        player.addCard(card);
     }
 }

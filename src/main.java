@@ -30,6 +30,7 @@ public class main extends Application {
     //TODO cardselectscreen --> Arbeite gerade daran
     //TODO effekte
     //TODO deathscreen
+    //TODO bug selectscreen :(
 
     /**
      * Resolution Height
@@ -190,12 +191,54 @@ public class main extends Application {
         pane.getChildren().clear();
         pane.setBackground(null);
         Card[] cardsToSelect = controller.getCardsToSelect();
-
+        for (int i = 0; i < cardsToSelect.length; i++) {
+            addCardToSelectScreen(i,cardsToSelect);
+        }
         return null;
     }
 
-    public void AddCardToSelectScreen(int slot, Card card){
+    public static void addCardToSelectScreen(int slot, Card[] card){
+        StackPane stack = getCardVisual(400,card[slot].getCardNameAsString());
+        card[slot].setNode(stack);
+        stack.setId("Choose"+slot);
+        stack.setOnMouseEntered(e -> {
+            turnCardAround(card[slot],slot);
+            for (int i = 0; i < 3; i++) {
+                if(slot!=i && getNodeByNameId("Choose"+i)==null){
+                    pane.getChildren().remove(getNodeByNameId("Turned"+i));
+                    addCardToSelectScreen(i,card);
+                }
+            }
+        });
+        pane.add(stack,slot,2);
+    }
 
+    private static StackPane getCardVisual(int size,String writing) {
+        Text text = new Text(writing);
+        text.setFill(Color.BLACK);
+        Rectangle rect = new Rectangle();
+        rect.setHeight(size);
+        rect.setWidth(size);
+        rect.setFill(Color.GREY);
+        StackPane stack = new StackPane();
+        GridPane.setMargin(stack, new Insets(10, 10, 10, 10));
+        stack.getChildren().addAll(rect, text);
+        return stack;
+    }
+
+    /**
+     * Turns Card Around
+     * @param card
+     */
+    public static void turnCardAround(Card card, int slot){
+        StackPane stack = getCardVisual(400,card.getStats().entrySet().stream().map(n -> n.getKey() + " = " + n.getValue()).
+                collect(Collectors.joining("\n")));
+        pane.getChildren().remove(getNodeByNameId("Choose"+slot));
+        pane.add(stack,slot,2);
+        stack.setOnMouseClicked(e ->{
+            controller.addCardToPlayer(card);
+            controller.nextStage();
+        });
     }
 
     /**
@@ -361,16 +404,8 @@ public class main extends Application {
      * @param card Bullet or EfectCard
      */
     public static void addCardInHand(Card card) {
-        Text efectCard = new Text(card.getCardNameAsString());
-        efectCard.setFill(Color.BLACK);
-        Rectangle rect = new Rectangle();
-        rect.setHeight(150);
-        rect.setWidth(150);
-        rect.setFill(Color.GREY);
-        StackPane stack = new StackPane();
+        StackPane stack = getCardVisual(150,card.getCardNameAsString());
         final int HANDSLOTS = handcardsTaken;
-        GridPane.setMargin(stack, new Insets(10, 10, 10, 10));
-        stack.getChildren().addAll(rect, efectCard);
         stack.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
