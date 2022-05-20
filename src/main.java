@@ -27,10 +27,8 @@ import java.util.stream.Collectors;
  */
 public class main extends Application {
     //TODO effectkarten spielen
-    //TODO cardselectscreen --> Arbeite gerade daran
     //TODO effekte
     //TODO deathscreen
-    //TODO bug selectscreen :(
 
     /**
      * Resolution Height
@@ -213,6 +211,22 @@ public class main extends Application {
         pane.add(stack,slot,2);
     }
 
+    /**
+     * Turns Card Around
+     * @param card
+     */
+    public static void turnCardAround(Card card, int slot){
+        StackPane stack = getCardVisual(400,card.getStats().entrySet().stream().map(n -> n.getKey() + " = " + n.getValue()).
+                collect(Collectors.joining("\n")));
+        pane.getChildren().remove(getNodeByNameId("Choose"+slot));
+        pane.add(stack,slot,2);
+        stack.setId("Turned"+slot);
+        stack.setOnMouseClicked(e ->{
+            controller.addCardToPlayer(card);
+            controller.nextStage();
+        });
+    }
+
     private static StackPane getCardVisual(int size,String writing) {
         Text text = new Text(writing);
         text.setFill(Color.BLACK);
@@ -224,21 +238,6 @@ public class main extends Application {
         GridPane.setMargin(stack, new Insets(10, 10, 10, 10));
         stack.getChildren().addAll(rect, text);
         return stack;
-    }
-
-    /**
-     * Turns Card Around
-     * @param card
-     */
-    public static void turnCardAround(Card card, int slot){
-        StackPane stack = getCardVisual(400,card.getStats().entrySet().stream().map(n -> n.getKey() + " = " + n.getValue()).
-                collect(Collectors.joining("\n")));
-        pane.getChildren().remove(getNodeByNameId("Choose"+slot));
-        pane.add(stack,slot,2);
-        stack.setOnMouseClicked(e ->{
-            controller.addCardToPlayer(card);
-            controller.nextStage();
-        });
     }
 
     /**
@@ -327,7 +326,6 @@ public class main extends Application {
                             @Override
                             public void handle(MouseEvent mouseEvent) {
                                 controller.shoot(ene, true);
-                                System.out.println("body");
                                 leaveshootingMode();
                             }
                         });
@@ -337,7 +335,6 @@ public class main extends Application {
                             @Override
                             public void handle(MouseEvent mouseEvent) {
                                 controller.shoot(ene, false);
-                                System.out.println("Head");
                                 leaveshootingMode();
                             }
                         });
@@ -394,7 +391,6 @@ public class main extends Application {
      * Zeigt den Todesscreen an wenn man gestorben ist
      */
     public static void deathScreen() {
-        System.out.println("Dead");
         menu();
     }
 
@@ -463,9 +459,6 @@ public class main extends Application {
     }
 
     public static void putCardWhereGoes(Card card) {
-        for (int i = 0; i < 6; i++) {
-            System.out.println(getNodeByNameId("HandCard" + i));
-        }
         for (int i = 0; i < 6; i++) {
             if (getNodeByNameId("HandCard" + i) == null) {
                 pane.add(card.getNode(), 5 + i, 5);

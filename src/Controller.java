@@ -47,9 +47,8 @@ public class Controller {
         enemiesThisTurn = new ArrayList<>();
         int enemyNumbers = 1;//(int)(Math.random()*3)+1;
         player.bulletsInChamber = new ArrayList<>();
+        player.handCards=new ArrayList<>();
         cardsOnField = new ArrayList<>();
-        System.out.println(hpPool);
-        System.out.println(enemyNumbers);
         for (int i = 0; i < enemyNumbers; i++) {
             Efect effekt = efectsInExistence.get((int) (efectsInExistence.size() * Math.random()));
             enemiesThisTurn.add(new Enemy(hpPool / enemyNumbers, damage, effekt));
@@ -144,7 +143,6 @@ public class Controller {
 
     public void useEffectCard(EfectCard card) {
         if (card.getCost() <= player.getEnergy()) {
-            System.out.println("Effektkarte " + card.getCardNameAsString() + " gespielt");
             cardsOnField.remove(card);
             main.removeCard(card);
             player.setEnergy(player.getEnergy() - card.getCost());
@@ -160,7 +158,6 @@ public class Controller {
         enemy.setHealth(enemy.getHealth() -
                 player.bulletsInChamber.get(0).getDamage() * head);
         main.setLifeOfEnemy(enemy);
-        System.out.println(enemy.getHealth());
         if (enemy.getHealth() <= 0) {
             main.removeEnemy(enemy);
             enemiesThisTurn.remove(enemy);
