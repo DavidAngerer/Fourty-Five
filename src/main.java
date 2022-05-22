@@ -26,7 +26,14 @@ import java.util.stream.Collectors;
  * main class for the .Fourty-Five game, handles graphics (javafx)
  */
 public class main extends Application {
-    //TODO effectkarten spielen
+    //TODO effectkarten spielen:
+    //TODO efect type
+    //TODO direct dmg type
+    //TODO other type
+    //TODO headshot type
+    //TODO kill type
+    //TODO bullet type
+
     //TODO effekte
     //TODO deathscreen
 

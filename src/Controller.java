@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class Controller {
-
     private ArrayList<Enemy> enemiesThisTurn;
     float dificulty = 1;
     int stage = 1;
@@ -35,6 +34,7 @@ public class Controller {
         for (int i = 0; i < 5; i++) {
             player.addCard(bulletsinExistence.get(0).cloneBullet());
             player.addCard(efectCardsInExistence.get(0).cloneEfectcard());
+            player.addCard(efectCardsInExistence.get(12).cloneEfectcard());
         }
         player.addCard(bulletsinExistence.get(1).cloneBullet());
         player.addCard(efectCardsInExistence.get(1).cloneEfectcard());
@@ -48,6 +48,7 @@ public class Controller {
         int enemyNumbers = 1;//(int)(Math.random()*3)+1;
         player.bulletsInChamber = new ArrayList<>();
         player.handCards=new ArrayList<>();
+        player.setAvoidChance(0);
         cardsOnField = new ArrayList<>();
         for (int i = 0; i < enemyNumbers; i++) {
             Efect effekt = efectsInExistence.get((int) (efectsInExistence.size() * Math.random()));
@@ -59,9 +60,11 @@ public class Controller {
     public void enemiesTurn() {
         for (Enemy enemy :
                 enemiesThisTurn) {
-            player.setHealth(player.getHealth() - enemy.getDamage());
-            if (enemy.getEfect() != null) {
-                player.addEfect(enemy.getEfect());
+            if(Math.random()>player.getAvoidChance()){
+                player.setHealth(player.getHealth() - enemy.getDamage());
+                if (enemy.getEfect() != null) {
+                    player.addEfect(enemy.getEfect());
+                }
             }
         }
         main.setLife(player.getHealth());
@@ -73,6 +76,7 @@ public class Controller {
     }
 
     private void nextTurn() {
+        player.setAvoidChance(0);
         int cardsLeftToDraw = 6 - main.handcardsTaken;
         int rnd;
         for (int i = 0; i < cardsLeftToDraw; i++) {
@@ -143,10 +147,33 @@ public class Controller {
 
     public void useEffectCard(EfectCard card) {
         if (card.getCost() <= player.getEnergy()) {
+            if(card.getType()!=null &&card.getType().equals("avoid")){
+                avoidCards(card);
+            }
             cardsOnField.remove(card);
             main.removeCard(card);
             player.setEnergy(player.getEnergy() - card.getCost());
             main.setEnergy(player.getEnergy());
+        }
+    }
+
+    private void avoidCards(EfectCard card){
+        switch (card.getCardName()){
+            case avoid -> player.setAvoidChance(player.getAvoidChance()+0.1);
+            case superhuman_reflexes_avoid -> player.setAvoidChance(player.getAvoidChance()+0.2);
+            case godlike_reflexes -> player.setAvoidChance(player.getAvoidChance()+1);
+            case sacrificial_avoid -> {
+                player.setAvoidChance(((double)(cardsOnField.size()-cardsOnField.stream().filter(n -> n.getClass().
+                        getSimpleName().equals("EfectCard")).
+                        filter(n -> ((EfectCard)n).getType().equals("avoid")).count()))/10);
+                for (Card card1:
+                cardsOnField.stream().filter(n -> n.getClass().getSimpleName().equals("Bullet") ||
+                        !((EfectCard)n).getType().equals("avoid")).collect(Collectors.toList())) {
+                    main.removeCard(card1);
+                }
+                cardsOnField.removeIf(n -> n.getClass().getSimpleName().equals("Bullet") ||
+                        !((EfectCard)n).getType().equals("avoid"));
+            }
         }
     }
 

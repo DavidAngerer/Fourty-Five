@@ -17,6 +17,7 @@ public class Player {
     ArrayList<Bullet> bulletsInChamber = new ArrayList<>();
 
     int coins;
+    double avoidChance=0;
 
 
     public Player(ArrayList<Bullet> bullets,ArrayList<EfectCard> efectCards, ArrayList<Efect> efects, int health) {
@@ -85,5 +86,13 @@ public class Player {
 
     public void setMaxHealth(int maxHealth) {
         this.maxHealth = maxHealth;
+    }
+
+    public double getAvoidChance() {
+        return avoidChance;
+    }
+
+    public void setAvoidChance(double avoidChance) {
+        this.avoidChance = avoidChance;
     }
 }
