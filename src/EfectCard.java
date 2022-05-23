@@ -1,3 +1,8 @@
+import javafx.scene.Node;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class EfectCard extends Card{
 
     public enum EffectCardName{
@@ -7,23 +12,22 @@ public class EfectCard extends Card{
         suspicious_accuracy,trying_does_not_hurt,reversed_turn,gonna_keep_this,random_Bullshit_go
     };
 
-    String cardDeskrition;
-
-    private Rarity rarity;
-
-    private int cost;
+    protected int cost;
     private EffectCardName cardName;
+    private String type;
 
-    public EfectCard(String cardDeskrition, Rarity rarity, int cost, EffectCardName cardName) {
+    public EfectCard(String cardDeskrition, Rarity rarity, int cost, EffectCardName cardName,String type) {
         this.cardDeskrition = cardDeskrition;
         this.rarity = rarity;
         this.cost = cost;
         this.cardName = cardName;
+        this.type = type;
     }
 
     public EfectCard(String[] attributes){
         cardName = EffectCardName.valueOf(attributes[0]);
         cardDeskrition = attributes[7];
+        type=attributes[6];
         rarity = Rarity.valueOf(attributes[4]);
         try{
             cost = Integer.parseInt(attributes[3]);
@@ -34,7 +38,7 @@ public class EfectCard extends Card{
     }
 
     public EfectCard cloneEfectcard(){
-        return new EfectCard(cardDeskrition,this.rarity,cost,cardName);
+        return new EfectCard(cardDeskrition,this.rarity,cost,cardName,type);
     }
 
     public Rarity getRarity() {
@@ -43,5 +47,34 @@ public class EfectCard extends Card{
 
     public String getCardNameAsString() {
         return cardName.name().replace("_"," ");
+    }
+
+    @Override
+    public Map<String, String> getStats() {
+        Map<String,String> erg= new HashMap<>();
+        erg.put("Name",cardName.toString());
+        erg.put("Cost",cost+"");
+        erg.put("Deskription",cardDeskrition);
+        return erg;
+    }
+
+    public Node getNode() {
+        return node;
+    }
+
+    public void setNode(Node node) {
+        this.node = node;
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public EffectCardName getCardName() {
+        return cardName;
+    }
+
+    public String getType() {
+        return type;
     }
 }

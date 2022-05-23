@@ -8,6 +8,8 @@ public class Player {
 
     int health;
 
+    private int maxHealth;
+
     int energy = 5;
 
     ArrayList<Card> handCards = new ArrayList<>();
@@ -15,6 +17,7 @@ public class Player {
     ArrayList<Bullet> bulletsInChamber = new ArrayList<>();
 
     int coins;
+    double avoidChance=0;
 
 
     public Player(ArrayList<Bullet> bullets,ArrayList<EfectCard> efectCards, ArrayList<Efect> efects, int health) {
@@ -22,6 +25,7 @@ public class Player {
         this.efectCards = efectCards;
         this.efects = efects;
         this.health = health;
+        maxHealth = health;
         coins = 0;
     }
 
@@ -66,5 +70,29 @@ public class Player {
 
     public void setHealth(int health) {
         this.health = health;
+    }
+
+    public int getEnergy() {
+        return energy;
+    }
+
+    public void setEnergy(int energy) {
+        this.energy = energy;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public void setMaxHealth(int maxHealth) {
+        this.maxHealth = maxHealth;
+    }
+
+    public double getAvoidChance() {
+        return avoidChance;
+    }
+
+    public void setAvoidChance(double avoidChance) {
+        this.avoidChance = avoidChance;
     }
 }
