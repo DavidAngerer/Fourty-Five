@@ -1,3 +1,4 @@
+import com.sun.javafx.css.StyleCacheEntry;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -83,7 +84,6 @@ public class main extends Application {
 
         //funktioniert noch nicht
         //stage.getIcons().add(new Image("small_titlepic_v1.png"));
-
         EventHandler eventHandlerMouse = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -341,8 +341,25 @@ public class main extends Application {
                         head.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
                             @Override
                             public void handle(MouseEvent mouseEvent) {
-                                controller.shoot(ene, false);
-                                leaveshootingMode();
+                                HeadshotgameVisual a = new HeadshotgameVisual(20,10,50,Color.LIGHTBLUE);
+                                pane.add(a.getNode(),3,3);
+                                new Thread(a).start();
+                                scene.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>(){
+                                    @Override
+                                    public void handle(KeyEvent keyEvent) {
+                                        if(keyEvent.getCharacter().equals(" ")){
+                                            if(a.isInside()){
+                                                controller.shoot(ene, false);
+                                            }else{
+                                                controller.miss();
+                                            }
+                                            scene.removeEventHandler(KeyEvent.KEY_TYPED,this);
+                                            leaveshootingMode();
+                                            pane.getChildren().remove(a.getNode());
+                                            a.terminate();
+                                        }
+                                    }
+                                });
                             }
                         });
                         enemy.setAlignment(head, Pos.TOP_CENTER);

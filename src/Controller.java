@@ -200,6 +200,14 @@ public class Controller {
         }
     }
 
+    public void miss(){
+        player.energy--;
+        main.setEnergy(player.getEnergy());
+        main.rotate();
+        cardsOnField.remove(player.bulletsInChamber.get(0));
+        player.bulletsInChamber.remove(0);
+    }
+
     public Card[] getCardsToSelect(){
         ArrayList<Card> allCards = new ArrayList<>(bulletsinExistence);
         allCards.addAll(efectCardsInExistence);
