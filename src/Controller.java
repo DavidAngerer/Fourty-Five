@@ -22,6 +22,10 @@ public class Controller {
 
     ArrayList<Card> cardsOnField = new ArrayList<>();
 
+    float headShotProbability = 10;
+
+    private boolean [] headShotThisTurn = new boolean[]{false,false,false};
+
     public Controller(float dificulty, int stage) {
         bulletsinExistence = new ArrayList<>();
         efectsInExistence = new ArrayList<>();
@@ -33,23 +37,31 @@ public class Controller {
         fillEfects();
         for (int i = 0; i < 5; i++) {
             player.addCard(bulletsinExistence.get(0).cloneBullet());
-            player.addCard(efectCardsInExistence.get(0).cloneEfectcard());
-            player.addCard(efectCardsInExistence.get(12).cloneEfectcard());
+            //player.addCard(efectCardsInExistence.get(0).cloneEfectcard());
         }
+        player.addCard(efectCardsInExistence.get(3).cloneEfectcard());
+        player.addCard(efectCardsInExistence.get(7).cloneEfectcard());
+        player.addCard(efectCardsInExistence.get(9).cloneEfectcard());
+        player.addCard(efectCardsInExistence.get(10).cloneEfectcard());
+        player.addCard(efectCardsInExistence.get(11).cloneEfectcard());
+        player.addCard(efectCardsInExistence.get(20).cloneEfectcard());
+        player.addCard(efectCardsInExistence.get(21).cloneEfectcard());
+
         player.addCard(bulletsinExistence.get(1).cloneBullet());
         player.addCard(efectCardsInExistence.get(1).cloneEfectcard());
     }
 
     public void nextStage() {
         stage++;
-        int hpPool = 1;//(int) (Math.random() * (stage * 5)) + (stage * 15) + 50;
+        int hpPool = (int) (Math.random() * (stage * 5)) + (stage * 15) + 50;
         int damage = (int) (Math.random() * (stage * 2)) + (stage * 2);
         enemiesThisTurn = new ArrayList<>();
-        int enemyNumbers = 1;//(int)(Math.random()*3)+1;
+        int enemyNumbers = 3;//(int)(Math.random()*3)+1;
         player.bulletsInChamber = new ArrayList<>();
         player.handCards=new ArrayList<>();
         player.setAvoidChance(0);
         cardsOnField = new ArrayList<>();
+        headShotThisTurn= new boolean[]{false, false,false};
         for (int i = 0; i < enemyNumbers; i++) {
             Efect effekt = efectsInExistence.get((int) (efectsInExistence.size() * Math.random()));
             enemiesThisTurn.add(new Enemy(hpPool / enemyNumbers, damage, effekt));
@@ -77,6 +89,7 @@ public class Controller {
 
     private void nextTurn() {
         player.setAvoidChance(0);
+        headShotThisTurn= new boolean[]{false, false,false};
         int cardsLeftToDraw = 6 - main.handcardsTaken;
         int rnd;
         for (int i = 0; i < cardsLeftToDraw; i++) {
@@ -150,10 +163,68 @@ public class Controller {
             if(card.getType()!=null &&card.getType().equals("avoid")){
                 avoidCards(card);
             }
+            if(card.getType()!=null &&card.getType().equals("direct dmg")){
+                directdamage(card);
+            }
+            if(card.getType()!=null &&card.getType().equals("headshot")){
+                headShot(card);
+            }
             cardsOnField.remove(card);
             main.removeCard(card);
             player.setEnergy(player.getEnergy() - card.getCost());
             main.setEnergy(player.getEnergy());
+        }
+    }
+
+    private void headShot(EfectCard card){
+        switch (card.getCardName()){
+            case aim_for_the_head -> headShotThisTurn[1]=true;
+            case confirmed_headshot -> headShotProbability=360;
+            case admirable_aim -> {
+                if(headShotThisTurn[0]){
+                    player.setMaxHealth(player.getMaxHealth()+3);
+                }
+            }
+            case suspicious_accuracy -> {
+                if(headShotProbability+360*0.3<=360){
+                    headShotProbability+=360*0.3;
+                }else{
+                    headShotProbability=360;
+                }
+            }
+            case trying_does_not_hurt -> {
+                headShotThisTurn[2]=true;
+            }
+        }
+    }
+
+    private void directdamage(EfectCard card){
+        switch (card.getCardName()){
+            case sweet_death -> {
+                player.setHealth((int)Math.round(player.getHealth()*0.6));
+                main.setLife(player.getHealth());
+                enemiesThisTurn.get(0).setHealth(enemiesThisTurn.get(0).getHealth() - 60);
+                main.setLifeOfEnemy(enemiesThisTurn.get(0));
+                if (enemiesThisTurn.get(0).getHealth() <= 0) {
+                    main.removeEnemy(enemiesThisTurn.get(0));
+                    enemiesThisTurn.remove(enemiesThisTurn.get(0));
+
+                }
+            }
+            case blood_will_paint_the_rivers_red -> {
+                for (Enemy enemy:
+                     enemiesThisTurn) {
+                    enemy.setHealth(enemy.getHealth()-20);
+                    main.setLifeOfEnemy(enemy);
+                    if (enemy.getHealth() <= 0) {
+                        main.removeEnemy(enemy);
+                        enemiesThisTurn.remove(enemy);
+
+                    }
+                }
+            }
+        }if(enemiesThisTurn.size()==0){
+            main.cardSelectScreen();
         }
     }
 
@@ -181,6 +252,11 @@ public class Controller {
         int head = 1;
         if (!body) {
             head *= 2;
+            headShotThisTurn[0]=true;
+            headShotProbability=10;
+        }
+        if(headShotThisTurn[1]&&headShotThisTurn[0]){
+            head*=2;
         }
         enemy.setHealth(enemy.getHealth() -
                 player.bulletsInChamber.get(0).getDamage() * head);
@@ -200,12 +276,19 @@ public class Controller {
         }
     }
 
-    public void miss(){
-        player.energy--;
-        main.setEnergy(player.getEnergy());
-        main.rotate();
-        cardsOnField.remove(player.bulletsInChamber.get(0));
-        player.bulletsInChamber.remove(0);
+    public void miss(Enemy enemy){
+        if(headShotThisTurn[2]){
+            shoot(enemy,true);
+        }else{
+            player.energy--;
+            main.setEnergy(player.getEnergy());
+            main.rotate();
+            cardsOnField.remove(player.bulletsInChamber.get(0));
+            player.bulletsInChamber.remove(0);
+            if(headShotProbability+5<=360){
+                headShotProbability+=5;
+            }
+        }
     }
 
     public Card[] getCardsToSelect(){
@@ -276,5 +359,13 @@ public class Controller {
 
     public void addCardToPlayer(Card card){
         player.addCard(card);
+    }
+
+    public float getHeadShotProbability() {
+        return headShotProbability;
+    }
+
+    public void setHeadShotProbability(float headShotProbability) {
+        this.headShotProbability = headShotProbability;
     }
 }

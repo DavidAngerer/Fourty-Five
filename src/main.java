@@ -29,12 +29,11 @@ import java.util.stream.Collectors;
 public class main extends Application {
     //TODO effectkarten spielen:
     //TODO efect type
-    //TODO direct dmg type
     //TODO other type
-    //TODO headshot type
     //TODO kill type
     //TODO bullet type
 
+    //TODO enemy aussuchen effekt
     //TODO effekte
     //TODO deathscreen
 
@@ -341,7 +340,8 @@ public class main extends Application {
                         head.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
                             @Override
                             public void handle(MouseEvent mouseEvent) {
-                                HeadshotgameVisual a = new HeadshotgameVisual(20,10,50,Color.LIGHTBLUE);
+                                HeadshotgameVisual a = new HeadshotgameVisual(20,
+                                        controller.getHeadShotProbability(),50,Color.LIGHTBLUE);
                                 pane.add(a.getNode(),3,3);
                                 new Thread(a).start();
                                 scene.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>(){
@@ -351,7 +351,7 @@ public class main extends Application {
                                             if(a.isInside()){
                                                 controller.shoot(ene, false);
                                             }else{
-                                                controller.miss();
+                                                controller.miss(ene);
                                             }
                                             scene.removeEventHandler(KeyEvent.KEY_TYPED,this);
                                             leaveshootingMode();
@@ -383,7 +383,9 @@ public class main extends Application {
             for (int i = 0; i < enemies.size(); i++) {
                 StackPane pane = (StackPane) (enemies.get(i).getVisual());
                 pane.getChildren().remove(1);
-                pane.getChildren().remove(1);
+                if(pane.getChildren().size()==2){
+                    pane.getChildren().remove(1);
+                }
             }
             shootingMode = false;
         }
@@ -589,7 +591,28 @@ public class main extends Application {
         text.setText(life + "");
     }
 
-    public static void drawCards() {
+    public static void displaySelectscreenForEffectAttack(ArrayList<Enemy> enemies,EfectCard card){
+        shootingMode = true;
+        for (Node node :
+                pane.getChildren()) {
 
+            node.setMouseTransparent(true);
+        }
+        for (int i = 0; i < enemies.size(); i++) {
+            StackPane enemy = (StackPane) enemies.get(i).getVisual();
+            enemy.setMouseTransparent(false);
+            Rectangle body = new Rectangle(80, 300);
+            body.setFill(Color.BLUE);
+            final Enemy ene = enemies.get(i);
+            body.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    //controller.
+                    leaveshootingMode();
+                }
+            });
+            enemy.getChildren().add(body);
+            enemies.get(i).setVisual(enemy);
+        }
     }
 }
