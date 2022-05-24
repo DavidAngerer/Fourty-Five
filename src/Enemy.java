@@ -1,6 +1,8 @@
 import javafx.scene.Node;
 import javafx.scene.control.ProgressBar;
 
+import java.util.ArrayList;
+
 public class Enemy {
     private int health;
 
@@ -11,6 +13,8 @@ public class Enemy {
     private ProgressBar healthBar;
     private int damage;
     private Efect efect;
+
+    private ArrayList<Efect> efectsOnHim = new ArrayList<>();
 
     private String name;
 
@@ -75,5 +79,13 @@ public class Enemy {
 
     public ProgressBar getHealthBar() {
         return healthBar;
+    }
+
+    public ArrayList<Efect> getEfectsOnHim() {
+        return efectsOnHim;
+    }
+
+    public void addEfectOnHim(Efect efect) {
+        this.efectsOnHim.add(efect);
     }
 }

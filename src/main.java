@@ -13,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -29,13 +30,11 @@ import java.util.stream.Collectors;
 public class main extends Application {
     //TODO effectkarten spielen:
     //TODO efect type
-    //TODO direct dmg type
-    //TODO other type
-    //TODO headshot type
-    //TODO kill type
     //TODO bullet type
 
+    //TODO enemy aussuchen effekt
     //TODO effekte
+    //TODO bei poison kill hinzufügen
     //TODO deathscreen
 
     /**
@@ -274,7 +273,7 @@ public class main extends Application {
         pane.setMinWidth(scene.getWidth());
         pane.getChildren().clear();
         pane.setBackground(null);
-        Text text = new Text(health + "");
+        Text text = new Text(health +"/" + controller.getMaxHealth());
         text.setId("Life");
         pane.add(text, 0, 0);
         //TODO Phillip anfangs box hintun wo dann wenn noch keine karte drüber gehovert wurde
@@ -341,7 +340,8 @@ public class main extends Application {
                         head.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
                             @Override
                             public void handle(MouseEvent mouseEvent) {
-                                HeadshotgameVisual a = new HeadshotgameVisual(20,10,50,Color.LIGHTBLUE);
+                                HeadshotgameVisual a = new HeadshotgameVisual(20,
+                                        controller.getHeadShotProbability(),50,Color.LIGHTBLUE);
                                 pane.add(a.getNode(),3,3);
                                 new Thread(a).start();
                                 scene.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>(){
@@ -351,7 +351,7 @@ public class main extends Application {
                                             if(a.isInside()){
                                                 controller.shoot(ene, false);
                                             }else{
-                                                controller.miss();
+                                                controller.miss(ene);
                                             }
                                             scene.removeEventHandler(KeyEvent.KEY_TYPED,this);
                                             leaveshootingMode();
@@ -383,7 +383,9 @@ public class main extends Application {
             for (int i = 0; i < enemies.size(); i++) {
                 StackPane pane = (StackPane) (enemies.get(i).getVisual());
                 pane.getChildren().remove(1);
-                pane.getChildren().remove(1);
+                if(pane.getChildren().size()==2){
+                    pane.getChildren().remove(1);
+                }
             }
             shootingMode = false;
         }
@@ -538,7 +540,7 @@ public class main extends Application {
         infos.getChildren().addAll(background, name, stats);
         infos.setAlignment(name, Pos.TOP_CENTER);
         infos.setId("Infos");
-        pane.add(infos, 10, 1);
+        pane.add(infos, 11, 1);
     }
 
     /**
@@ -551,6 +553,30 @@ public class main extends Application {
         for (int i = 1; i < bullets.size(); i++) {
             pane.getChildren().remove(bullets.get(i).getNode());
             setNodeInSlot(bullets.get(i).getNode(), i - 1);
+        }
+    }
+
+    public static void TurnRight(){
+        ArrayList<Bullet> bullets = controller.getPlayersBullet();
+        pane.getChildren().remove(bullets.get(0).getNode());
+        for (int i = 1; i < bullets.size(); i++) {
+            pane.getChildren().remove(bullets.get(i).getNode());
+            setNodeInSlot(bullets.get(i).getNode(), i - 1);
+        }
+        setNodeInSlot(bullets.get(0).getNode(),4);
+    }
+
+    public static void TurnLeft(){
+        ArrayList<Bullet> bullets = controller.getPlayersBullet();
+        if(bullets.size()==5){
+            pane.getChildren().remove(bullets.get(4).getNode());
+        }
+        for (int i = bullets.size()-1; i >= 0; i--) {
+            pane.getChildren().remove(bullets.get(i).getNode());
+            setNodeInSlot(bullets.get(i).getNode(), i + 1);
+        }
+        if(bullets.size()==5){
+            setNodeInSlot(bullets.get(4).getNode(),0);
         }
     }
 
@@ -571,6 +597,25 @@ public class main extends Application {
     }
 
     /**
+     * Displays Coinflip
+     */
+    public static void coinflip(boolean isHead){
+        StackPane coin = new StackPane();
+        Circle circle = new Circle(50);
+        circle.setFill(Color.GOLD);
+        Text text = new Text(isHead?"Head":"Tails");
+        coin.getChildren().addAll(circle,text);
+        pane.add(coin,3,3);
+        scene.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                pane.getChildren().remove(coin);
+                scene.removeEventHandler(MouseEvent.MOUSE_PRESSED,this);
+            }
+        });
+    }
+
+    /**
      * Sets the Life displayed of Enemy
      *
      * @param enemy The enemy
@@ -586,10 +631,31 @@ public class main extends Application {
      */
     public static void setLife(int life) {
         Text text = (Text) getNodeByNameId("Life");
-        text.setText(life + "");
+        text.setText(life + "/" + controller.getMaxHealth());
     }
 
-    public static void drawCards() {
+    public static void displaySelectscreenForEffectAttack(ArrayList<Enemy> enemies,EfectCard card){
+        shootingMode = true;
+        for (Node node :
+                pane.getChildren()) {
 
+            node.setMouseTransparent(true);
+        }
+        for (int i = 0; i < enemies.size(); i++) {
+            StackPane enemy = (StackPane) enemies.get(i).getVisual();
+            enemy.setMouseTransparent(false);
+            Rectangle body = new Rectangle(80, 300);
+            body.setFill(Color.BLUE);
+            final Enemy ene = enemies.get(i);
+            body.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    //controller.
+                    leaveshootingMode();
+                }
+            });
+            enemy.getChildren().add(body);
+            enemies.get(i).setVisual(enemy);
+        }
     }
 }
