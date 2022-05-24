@@ -1,4 +1,3 @@
-import com.sun.javafx.css.StyleCacheEntry;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -156,7 +155,7 @@ public class main extends Application {
         pane.getRowConstraints().addAll(r);
         pane.getColumnConstraints().clear();
         pane.getColumnConstraints().addAll(Arrays.asList(c));
-        ImageView buttonNewGame = new ImageView("button_newGame_v5.png");
+        ImageView buttonNewGame = new ImageView("button_newGame_v6.png");
         pane.add(buttonNewGame, 3, 1);
         GridPane.setHalignment(buttonNewGame, HPos.CENTER);
 
