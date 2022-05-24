@@ -13,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -30,11 +31,12 @@ public class main extends Application {
     //TODO effectkarten spielen:
     //TODO efect type
     //TODO other type
-    //TODO kill type
     //TODO bullet type
+    //TODO turn type
 
     //TODO enemy aussuchen effekt
     //TODO effekte
+    //TODO bei poison kill hinzufügen
     //TODO deathscreen
 
     /**
@@ -273,7 +275,7 @@ public class main extends Application {
         pane.setMinWidth(scene.getWidth());
         pane.getChildren().clear();
         pane.setBackground(null);
-        Text text = new Text(health + "");
+        Text text = new Text(health +"/" + controller.getMaxHealth());
         text.setId("Life");
         pane.add(text, 0, 0);
         //TODO Phillip anfangs box hintun wo dann wenn noch keine karte drüber gehovert wurde
@@ -540,7 +542,7 @@ public class main extends Application {
         infos.getChildren().addAll(background, name, stats);
         infos.setAlignment(name, Pos.TOP_CENTER);
         infos.setId("Infos");
-        pane.add(infos, 10, 1);
+        pane.add(infos, 11, 1);
     }
 
     /**
@@ -553,6 +555,30 @@ public class main extends Application {
         for (int i = 1; i < bullets.size(); i++) {
             pane.getChildren().remove(bullets.get(i).getNode());
             setNodeInSlot(bullets.get(i).getNode(), i - 1);
+        }
+    }
+
+    public static void TurnRight(){
+        ArrayList<Bullet> bullets = controller.getPlayersBullet();
+        pane.getChildren().remove(bullets.get(0).getNode());
+        for (int i = 1; i < bullets.size(); i++) {
+            pane.getChildren().remove(bullets.get(i).getNode());
+            setNodeInSlot(bullets.get(i).getNode(), i - 1);
+        }
+        setNodeInSlot(bullets.get(0).getNode(),4);
+    }
+
+    public static void TurnLeft(){
+        ArrayList<Bullet> bullets = controller.getPlayersBullet();
+        if(bullets.size()==5){
+            pane.getChildren().remove(bullets.get(4).getNode());
+        }
+        for (int i = bullets.size()-1; i >= 0; i--) {
+            pane.getChildren().remove(bullets.get(i).getNode());
+            setNodeInSlot(bullets.get(i).getNode(), i + 1);
+        }
+        if(bullets.size()==5){
+            setNodeInSlot(bullets.get(4).getNode(),0);
         }
     }
 
@@ -573,6 +599,25 @@ public class main extends Application {
     }
 
     /**
+     * Displays Coinflip
+     */
+    public static void coinflip(boolean isHead){
+        StackPane coin = new StackPane();
+        Circle circle = new Circle(50);
+        circle.setFill(Color.GOLD);
+        Text text = new Text(isHead?"Head":"Tails");
+        coin.getChildren().addAll(circle,text);
+        pane.add(coin,3,3);
+        scene.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                pane.getChildren().remove(coin);
+                scene.removeEventHandler(MouseEvent.MOUSE_PRESSED,this);
+            }
+        });
+    }
+
+    /**
      * Sets the Life displayed of Enemy
      *
      * @param enemy The enemy
@@ -588,7 +633,7 @@ public class main extends Application {
      */
     public static void setLife(int life) {
         Text text = (Text) getNodeByNameId("Life");
-        text.setText(life + "");
+        text.setText(life + "/" + controller.getMaxHealth());
     }
 
     public static void displaySelectscreenForEffectAttack(ArrayList<Enemy> enemies,EfectCard card){
