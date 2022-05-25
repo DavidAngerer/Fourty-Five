@@ -166,7 +166,7 @@ public class main extends Application {
         });
 
         //picture button quit
-        ImageView buttonQuit = new ImageView("button_newGame_v5.png");
+        ImageView buttonQuit = new ImageView("button_quit_v6.png");
         GridPane.setHalignment(buttonQuit, HPos.CENTER);
 
         pane.add(buttonQuit, 3, 2);
