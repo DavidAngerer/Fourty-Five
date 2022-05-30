@@ -68,27 +68,37 @@ public class Controller {
     }
 
     public void enemiesTurn() {
+        float multiplier = 1;
         if(freemoves<=0){
             for (Enemy enemy :
                     enemiesThisTurn) {
                 if(Math.random()>player.getAvoidChance()){
-                    player.setHealth(player.getHealth() - enemy.getDamage());
+                    if(enemy.hasEfect(Efect.EfectName.WEAK)){
+                        multiplier*=0.5;
+                    }
+                    if(player.hasEffect(Efect.EfectName.THORNES)){
+                        enemy.setHealth((int)(enemy.getHealth()-enemy.getDamage()*multiplier));
+                        main.setLifeOfEnemy(enemy);
+                        if (enemy.getHealth() <= 0) {
+                            main.removeEnemy(enemy);
+                            enemiesThisTurn.remove(enemy);
+                        }
+                    }
+                    player.setHealth((int)(player.getHealth() - enemy.getDamage()*multiplier));
                     if (enemy.getEfect() != null) {
                         player.addEfect(enemy.getEfect());
                     }
                 }
             }
         }
-        main.setLife(player.getHealth());
-        if (player.getHealth() <= 0) {
-            main.deathScreen();
-        } else {
+        if(checkAlive()){
             nextTurn();
         }
     }
 
     private void nextTurn() {
         player.setAvoidChance(0);
+        doEfects();
         headShotThisTurn= new boolean[]{false, false,false};
         int cardsLeftToDraw = 6 - main.handcardsTaken;
         if(freemoves>0){
@@ -115,6 +125,22 @@ public class Controller {
         }
         player.energy = 5;
         main.setEnergy(5);
+    }
+
+    public boolean checkAlive(){
+        main.setLife(player.getHealth());
+        if (player.getHealth() <= 0) {
+            main.deathScreen();
+            return false;
+        }
+        return true;
+    }
+
+    public void doEfects(){
+        if(player.hasEffect(Efect.EfectName.BURN)){
+            player.setHealth(player.getHealth()-5);
+        }
+        checkAlive();
     }
 
     private void fillCards() {
@@ -339,7 +365,10 @@ public class Controller {
     }
 
     public void shoot(Enemy enemy, boolean body) {
-        int head = 1;
+        float head = 1;
+        if(player.hasEffect(Efect.EfectName.WEAK)){
+            head*=0.5;
+        }
         if (!body) {
             head *= 2;
             headShotThisTurn[0]=true;
@@ -348,8 +377,8 @@ public class Controller {
         if(headShotThisTurn[1]&&headShotThisTurn[0]){
             head*=2;
         }
-        enemy.setHealth(enemy.getHealth() -
-                player.bulletsInChamber.get(0).getDamage() * head);
+        enemy.setHealth((int)(enemy.getHealth() -
+                player.bulletsInChamber.get(0).getDamage() * head));
         main.setLifeOfEnemy(enemy);
         if (enemy.getHealth() <= 0) {
             main.removeEnemy(enemy);

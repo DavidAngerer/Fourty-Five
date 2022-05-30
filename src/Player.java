@@ -95,4 +95,18 @@ public class Player {
     public void setAvoidChance(double avoidChance) {
         this.avoidChance = avoidChance;
     }
+
+    public ArrayList<Efect> getEfects() {
+        return efects;
+    }
+
+    public boolean hasEffect(Efect.EfectName efectName){
+        for (Efect efect:
+             efects) {
+            if(efect.efectName == efectName){
+                return true;
+            }
+        }
+        return false;
+    }
 }

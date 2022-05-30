@@ -88,4 +88,14 @@ public class Enemy {
     public void addEfectOnHim(Efect efect) {
         this.efectsOnHim.add(efect);
     }
+
+    public boolean hasEfect(Efect.EfectName efectName){
+        for (Efect efect:
+             efectsOnHim) {
+            if(efect.efectName==efectName){
+                return true;
+            }
+        }
+        return false;
+    }
 }
