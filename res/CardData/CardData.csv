@@ -23,4 +23,4 @@ suspicious_accuracy;;+ 30 % headshot;1;common;;headshot;+30% headshot chance
 trying_does_not_hurt;;if your headshot attempt fails: you can still shoot the bullet to the body;1;rare;;headshot;if your headshot attempt fails: you can still shoot the bullet to the body: pay 1 move
 reversed_turn;;<1;1;common;;turn;turn the playfield 1 to the left
 gonna_keep_this;;a bullet gets everlasting;1;rare;;bullet;a bullet of your choice gets everlasting
-random_Bullshit_go;;a bullet gets spray;1;rare;;;a bullet of your choice gets spray
+random_Bullshit_go;;a bullet gets spray;1;rare;;bullet;a bullet of your choice gets spray

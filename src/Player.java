@@ -37,12 +37,21 @@ public class Player {
     }
 
     public void addEfect(Efect efect){
-        for (int i = 0; i < efects.size(); i++) {
-            if(efects.get(i).efectName == efect.efectName){
-                efects.get(i).addCycles(efect.cyclesLeft);
+        if(efect.efectName == Efect.EfectName.RAGE){
+            efects.add(efect);
+        }else{
+            boolean efectInside = false;
+            for (Efect efect1:
+                    efects) {
+                if(efect1.efectName==efect.efectName){
+                    efectInside=true;
+                    efect1.addCycles(efect.cyclesLeft);
+                }
+            }
+            if(!efectInside){
+                this.efects.add(efect);
             }
         }
-        efects.add(efect);
     }
 
     public ArrayList<Card> getCards() {

@@ -230,11 +230,44 @@ public class Controller {
                 other(card);
             }else if(card.getType()!=null &&card.getType().equals("turn")){
                 turn(card);
+            }else if(card.getType()!=null &&card.getType().equals("effect")){
+                effectCard(card);
             }
             cardsOnField.remove(card);
             main.removeCard(card);
             player.setEnergy(player.getEnergy() - card.getCost());
             main.setEnergy(player.getEnergy());
+        }
+    }
+
+    private void effectCard(EfectCard card){
+        switch ((card.getCardName())){
+            case molotov -> enemiesThisTurn.get(0).
+                    addEfectOnHim(new Efect(Efect.EfectName.BURN,2,false));
+            case whiskey -> {
+                player.addEfect(new Efect(Efect.EfectName.BURN,1,false));
+                player.addEfect(new Efect(Efect.EfectName.RAGE,2,false));
+            }
+            case flush -> {
+                int counter = 0;
+                for (Bullet bullet:
+                     player.bulletsInChamber) {
+                    if(bullet.cardName!= Card.CardName.Bullet){
+                        counter++;
+                    }
+                }
+                if(counter==5){
+                    for (int i = 0; i < 3; i++) {
+                        player.addEfect(new Efect(Efect.EfectName.RAGE,1,false));
+                    }
+                }
+            }
+            case your_weakness_disgusts_me -> {
+                for (Enemy enemy:
+                     enemiesThisTurn) {
+                    enemy.addEfectOnHim(new Efect(Efect.EfectName.WEAK,2,false));
+                }
+            }
         }
     }
 

@@ -86,7 +86,21 @@ public class Enemy {
     }
 
     public void addEfectOnHim(Efect efect) {
-        this.efectsOnHim.add(efect);
+        if(efect.efectName == Efect.EfectName.RAGE){
+            efectsOnHim.add(efect);
+        }else{
+            boolean efectInside = false;
+            for (Efect efect1:
+                    efectsOnHim) {
+                if(efect1.efectName==efect.efectName){
+                    efectInside=true;
+                    efect1.addCycles(efect.cyclesLeft);
+                }
+            }
+            if(!efectInside){
+                this.efectsOnHim.add(efect);
+            }
+        }
     }
 
     public boolean hasEfect(Efect.EfectName efectName){

@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
  */
 public class main extends Application {
     //TODO effectkarten spielen:
-    //TODO efect type
     //TODO bullet type
     //TODO remorse
     //TODO enemy aussuchen effekt
