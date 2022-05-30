@@ -91,7 +91,12 @@ public class Controller {
                     }
                     player.setHealth((int)(player.getHealth() - enemy.getDamage()*multiplier));
                     if (enemy.getEfect() != null) {
-                        player.addEfect(enemy.getEfect());
+                        if(enemy.getEfect().efectName== Efect.EfectName.POISOND ||
+                                enemy.getEfect().efectName== Efect.EfectName.WEAK ||
+                                enemy.getEfect().efectName== Efect.EfectName.BURN ||
+                                enemy.getEfect().efectName== Efect.EfectName.REMORSE){
+                            player.addEfect(enemy.getEfect());
+                        }
                     }
                 }
             }
