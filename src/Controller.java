@@ -68,14 +68,19 @@ public class Controller {
     }
 
     public void enemiesTurn() {
-        float multiplier = 1;
+        float multiplier;
         if(freemoves<=0){
             for (Enemy enemy :
                     enemiesThisTurn) {
+                multiplier=1;
                 if(Math.random()>player.getAvoidChance()){
+                    if(player.hasEffect(Efect.EfectName.POISOND)){
+                        multiplier*=1.5;
+                    }
                     if(enemy.hasEfect(Efect.EfectName.WEAK)){
                         multiplier*=0.5;
                     }
+                    multiplier*=enemy.rageMulitplier();
                     if(player.hasEffect(Efect.EfectName.THORNES)){
                         enemy.setHealth((int)(enemy.getHealth()-enemy.getDamage()*multiplier));
                         main.setLifeOfEnemy(enemy);
@@ -140,6 +145,19 @@ public class Controller {
         if(player.hasEffect(Efect.EfectName.BURN)){
             player.setHealth(player.getHealth()-5);
         }
+        for (Enemy enemy:
+             enemiesThisTurn) {
+            for (Efect efect:
+                 enemy.getEfectsOnHim()) {
+                efect.cyclesLeft--;
+            }
+            enemy.getEfectsOnHim().removeIf(n-> n.cyclesLeft<=0);
+        }
+        for (Efect efect:
+                player.getEfects()) {
+            efect.cyclesLeft--;
+        }
+        player.getEfects().removeIf(n-> n.cyclesLeft<=0);
         checkAlive();
     }
 
@@ -316,11 +334,12 @@ public class Controller {
     }
 
     private void directdamage(EfectCard card){
+        float multiplier = getMultiplierOnPlayerToEnemy(enemiesThisTurn.get(0));
         switch (card.getCardName()){
             case sweet_death -> {
                 player.setHealth((int)Math.round(player.getHealth()*0.6));
                 main.setLife(player.getHealth());
-                enemiesThisTurn.get(0).setHealth(enemiesThisTurn.get(0).getHealth() - 60);
+                enemiesThisTurn.get(0).setHealth(enemiesThisTurn.get(0).getHealth() - (int)(60*multiplier));
                 main.setLifeOfEnemy(enemiesThisTurn.get(0));
                 if (enemiesThisTurn.get(0).getHealth() <= 0) {
                     main.removeEnemy(enemiesThisTurn.get(0));
@@ -330,12 +349,11 @@ public class Controller {
             case blood_will_paint_the_rivers_red -> {
                 for (Enemy enemy:
                      enemiesThisTurn) {
-                    enemy.setHealth(enemy.getHealth()-20);
+                    enemy.setHealth(enemy.getHealth()-(int)(20*multiplier));
                     main.setLifeOfEnemy(enemy);
                     if (enemy.getHealth() <= 0) {
                         main.removeEnemy(enemy);
                         enemiesThisTurn.remove(enemy);
-
                     }
                 }
             }
@@ -364,37 +382,51 @@ public class Controller {
         }
     }
 
-    public void shoot(Enemy enemy, boolean body) {
-        float head = 1;
+    public float getMultiplierOnPlayerToEnemy(Enemy enemy){
+        float multiplier = 1;
         if(player.hasEffect(Efect.EfectName.WEAK)){
-            head*=0.5;
+            multiplier*=0.5;
         }
+        if(enemy.hasEfect(Efect.EfectName.POISOND)){
+            multiplier*=1.5;
+        }
+        multiplier*=player.rageMulitplier();
+        return multiplier;
+    }
+
+    public void shoot(Enemy enemy, boolean body) {
+        float multiplier = getMultiplierOnPlayerToEnemy(enemy);
         if (!body) {
-            head *= 2;
+            multiplier *= 2;
             headShotThisTurn[0]=true;
             headShotProbability=10;
         }
         if(headShotThisTurn[1]&&headShotThisTurn[0]){
-            head*=2;
+            multiplier*=2;
         }
-        enemy.setHealth((int)(enemy.getHealth() -
-                player.bulletsInChamber.get(0).getDamage() * head));
-        main.setLifeOfEnemy(enemy);
-        if (enemy.getHealth() <= 0) {
-            main.removeEnemy(enemy);
-            enemiesThisTurn.remove(enemy);
+        if(enemy.hasEfect(Efect.EfectName.THORNES)){
+            player.setHealth((int)(player.bulletsInChamber.get(0).getDamage() * multiplier));
+        }
+        if(checkAlive()){
+            enemy.setHealth((int)(enemy.getHealth() -
+                    player.bulletsInChamber.get(0).getDamage() * multiplier));
+            main.setLifeOfEnemy(enemy);
+            if (enemy.getHealth() <= 0) {
+                main.removeEnemy(enemy);
+                enemiesThisTurn.remove(enemy);
 
-        }if(enemiesThisTurn.size()==0){
-            main.cardSelectScreen();
-        }else{
-            player.energy--;
-            main.setEnergy(player.getEnergy());
-            if(dualWield){
-                dualWield=false;
+            }if(enemiesThisTurn.size()==0){
+                main.cardSelectScreen();
             }else{
-                main.rotate();
-                cardsOnField.remove(player.bulletsInChamber.get(0));
-                player.bulletsInChamber.remove(0);
+                player.energy--;
+                main.setEnergy(player.getEnergy());
+                if(dualWield){
+                    dualWield=false;
+                }else{
+                    main.rotate();
+                    cardsOnField.remove(player.bulletsInChamber.get(0));
+                    player.bulletsInChamber.remove(0);
+                }
             }
         }
     }

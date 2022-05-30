@@ -109,4 +109,15 @@ public class Player {
         }
         return false;
     }
+
+    public int rageMulitplier(){
+        int rage = 1;
+        for (Efect efect:
+             efects) {
+            if(efect.efectName== Efect.EfectName.RAGE){
+                rage++;
+            }
+        }
+        return rage;
+    }
 }

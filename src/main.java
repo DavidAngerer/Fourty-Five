@@ -30,9 +30,8 @@ public class main extends Application {
     //TODO effectkarten spielen:
     //TODO efect type
     //TODO bullet type
-
+    //TODO remorse
     //TODO enemy aussuchen effekt
-    //TODO effekte
     //TODO bei poison kill hinzufügen
     //TODO deathscreen
 

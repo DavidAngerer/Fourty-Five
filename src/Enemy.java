@@ -96,6 +96,19 @@ public class Enemy {
                 return true;
             }
         }
-        return false;
+        return efect.efectName ==efectName;
     }
+
+    public int rageMulitplier(){
+        int rage = 1;
+        for (Efect efect:
+                efectsOnHim) {
+            if(efect.efectName== Efect.EfectName.RAGE){
+                rage++;
+            }
+        }
+        return rage;
+    }
+
+
 }
