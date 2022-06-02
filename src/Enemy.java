@@ -35,6 +35,7 @@ public class Enemy {
 
     public void setHealth(int health) {
         this.health = health;
+        healthBar.setProgress((double) health / (double) maxHealth);
     }
 
     public int getMaxHealth() {

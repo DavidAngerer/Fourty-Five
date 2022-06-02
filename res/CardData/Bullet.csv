@@ -1,7 +1,7 @@
 Bullet;7;;na;in basedeck 4 times;;
 Bewitched_Bullet;9;<1;common;in basedeck 1 time;;
 Incendiary_Bullet;6;burn 3;common;;;
-Explosive_Bullet;15;+  3  agains burn;common;;;
+Explosive_Bullet;15;+  10  agains burn;common;;;
 Leaders_Bullet;8;inspire;rare;;;
 Poison_Bullet;5;poison 3;common;;;
 Gamblers_Bullet;3 x dicethrow;;rare;;;

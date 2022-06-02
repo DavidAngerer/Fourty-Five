@@ -9,6 +9,8 @@ public class Bullet extends Card{
 
     private int damage;
 
+    private boolean everLasting=false;
+
     public Bullet(CardName cardName) {
         this.cardName = cardName;
     }
@@ -66,5 +68,17 @@ public class Bullet extends Card{
 
     public int getDamage() {
         return damage;
+    }
+
+    public void addDamage(int amount){
+        damage+=amount;
+    }
+
+    public boolean isEverLasting() {
+        return everLasting;
+    }
+
+    public void setEverLasting(boolean everLasting) {
+        this.everLasting = everLasting;
     }
 }

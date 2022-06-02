@@ -83,7 +83,6 @@ public class Controller {
                     multiplier*=enemy.rageMulitplier();
                     if(player.hasEffect(Efect.EfectName.THORNES)){
                         enemy.setHealth((int)(enemy.getHealth()-enemy.getDamage()*multiplier));
-                        main.setLifeOfEnemy(enemy);
                         if (enemy.getHealth() <= 0) {
                             main.removeEnemy(enemy);
                             enemiesThisTurn.remove(enemy);
@@ -108,37 +107,37 @@ public class Controller {
 
     private void nextTurn() {
         player.setAvoidChance(0);
-        doEfects();
-        headShotThisTurn= new boolean[]{false, false,false};
-        int cardsLeftToDraw = 6 - main.handcardsTaken;
-        if(freemoves>0){
-            freemoves--;
-        }
-        int rnd;
-        for (int i = 0; i < cardsLeftToDraw; i++) {
-            rnd = (int) (Math.random() * 2);
-            if (rnd == 0) {
-                rnd = (int) (Math.random() * player.getBullets().size());
-                if (!cardsOnField.contains(player.getBullets().get(rnd))) {
-                    main.addCardInHand(player.getBullets().get(rnd));
+        if(doEfects()){
+            headShotThisTurn= new boolean[]{false, false,false};
+            int cardsLeftToDraw = 6 - main.handcardsTaken;
+            if(freemoves>0){
+                freemoves--;
+            }
+            int rnd;
+            for (int i = 0; i < cardsLeftToDraw; i++) {
+                rnd = (int) (Math.random() * 2);
+                if (rnd == 0) {
+                    rnd = (int) (Math.random() * player.getBullets().size());
+                    if (!cardsOnField.contains(player.getBullets().get(rnd))) {
+                        main.addCardInHand(player.getBullets().get(rnd));
+                    } else {
+                        i--;
+                    }
                 } else {
-                    i--;
-                }
-            } else {
-                rnd = (int) (Math.random() * player.getEfectcards().size());
-                if (!cardsOnField.contains(player.getEfectcards().get(rnd))) {
-                    main.addCardInHand(player.getEfectcards().get(rnd));
-                } else {
-                    i--;
+                    rnd = (int) (Math.random() * player.getEfectcards().size());
+                    if (!cardsOnField.contains(player.getEfectcards().get(rnd))) {
+                        main.addCardInHand(player.getEfectcards().get(rnd));
+                    } else {
+                        i--;
+                    }
                 }
             }
+            player.energy = 5;
+            main.setEnergy(5);
         }
-        player.energy = 5;
-        main.setEnergy(5);
     }
 
     public boolean checkAlive(){
-        main.setLife(player.getHealth());
         if (player.getHealth() <= 0) {
             main.deathScreen();
             return false;
@@ -146,7 +145,7 @@ public class Controller {
         return true;
     }
 
-    public void doEfects(){
+    public boolean doEfects(){
         if(player.hasEffect(Efect.EfectName.BURN)){
             player.setHealth(player.getHealth()-5);
         }
@@ -171,9 +170,14 @@ public class Controller {
         for (Efect efect:
                 player.getEfects()) {
             efect.cyclesLeft--;
+            if(efect.killOnLastTurn&&efect.cyclesLeft==0){
+                main.cardSelectScreen();
+                return false;
+            }
         }
         player.getEfects().removeIf(n-> n.cyclesLeft<=0);
         checkAlive();
+        return true;
     }
 
     private void fillCards() {
@@ -365,7 +369,6 @@ public class Controller {
             case admirable_aim -> {
                 if(headShotThisTurn[0]){
                     player.setMaxHealth(player.getMaxHealth()+3);
-                    main.setLife(player.getHealth());
                 }
             }
             case suspicious_accuracy -> {
@@ -386,9 +389,7 @@ public class Controller {
         switch (card.getCardName()){
             case sweet_death -> {
                 player.setHealth((int)Math.round(player.getHealth()*0.6));
-                main.setLife(player.getHealth());
                 enemiesThisTurn.get(0).setHealth(enemiesThisTurn.get(0).getHealth() - (int)(60*multiplier));
-                main.setLifeOfEnemy(enemiesThisTurn.get(0));
                 if (enemiesThisTurn.get(0).getHealth() <= 0) {
                     main.removeEnemy(enemiesThisTurn.get(0));
                     enemiesThisTurn.remove(enemiesThisTurn.get(0));
@@ -398,7 +399,6 @@ public class Controller {
                 for (Enemy enemy:
                      enemiesThisTurn) {
                     enemy.setHealth(enemy.getHealth()-(int)(20*multiplier));
-                    main.setLifeOfEnemy(enemy);
                     if (enemy.getHealth() <= 0) {
                         main.removeEnemy(enemy);
                         enemiesThisTurn.remove(enemy);
@@ -444,6 +444,7 @@ public class Controller {
 
     public void shoot(Enemy enemy, boolean body) {
         float multiplier = getMultiplierOnPlayerToEnemy(enemy);
+        boolean turnAtEnd = doBulletEffect(enemy);
         if (!body) {
             multiplier *= 2;
             headShotThisTurn[0]=true;
@@ -458,11 +459,9 @@ public class Controller {
         if(checkAlive()){
             enemy.setHealth((int)(enemy.getHealth() -
                     player.bulletsInChamber.get(0).getDamage() * multiplier));
-            main.setLifeOfEnemy(enemy);
             if (enemy.getHealth() <= 0) {
                 main.removeEnemy(enemy);
                 enemiesThisTurn.remove(enemy);
-
             }if(enemiesThisTurn.size()==0){
                 main.cardSelectScreen();
             }else{
@@ -470,6 +469,8 @@ public class Controller {
                 main.setEnergy(player.getEnergy());
                 if(dualWield){
                     dualWield=false;
+                }else if(bulletsinExistence.get(0).isEverLasting()){
+                    turn(new EfectCard(EfectCard.EffectCardName.round_skip));
                 }else{
                     main.rotate();
                     cardsOnField.remove(player.bulletsInChamber.get(0));
@@ -477,7 +478,53 @@ public class Controller {
                 }
             }
         }
+        if(turnAtEnd){
+            turn(new EfectCard(EfectCard.EffectCardName.reversed_turn));
+        }
     }
+
+    public boolean doBulletEffect(Enemy enemy){
+        switch (player.getBulletsInChamber().get(0).cardName){
+            case Bewitched_Bullet -> {
+                return true;
+            }
+            case Incendiary_Bullet -> enemy.addEfectOnHim(new Efect(Efect.EfectName.BURN,3,false));
+            case Explosive_Bullet -> {
+                if(enemy.hasEfect(Efect.EfectName.BURN)){
+                    player.getBulletsInChamber().get(0).addDamage(10);
+                }
+            }
+            case Leaders_Bullet ->{
+                if(player.getBulletsInChamber().size()>1){
+                    player.getBulletsInChamber().get(1).addDamage(4);
+                }
+            }
+            case Poison_Bullet -> enemy.addEfectOnHim(new Efect(Efect.EfectName.BURN,3,false));
+            case Gamblers_Bullet -> {
+                //TODO GAMBlersBullet
+            }
+            case Medics_Bullet -> player.setHealth(player.getHealth()+5);
+            case Obsidian_Bullet -> player.addEfect(new Efect(Efect.EfectName.RAGE,2,false));
+            case Rusted_Bullet -> enemy.addEfectOnHim(new Efect(Efect.EfectName.WEAK));
+            case Bullet_Bullet -> bulletBulletEffect();
+            case Arrow -> {
+                player.getBulletsInChamber().get(0).setEverLasting(true);
+            }
+        }
+        return false;
+    }
+
+    public void bulletBulletEffect(){
+        int rnd = (int) (Math.random() * player.getBullets().size());
+        while(cardsOnField.contains(player.getBullets().get(rnd))){
+            rnd = (int) (Math.random() * player.getBullets().size());
+        }
+        cardsOnField.add(player.getBullets().get(rnd));
+        player.getBulletsInChamber().add(player.getBullets().get(rnd));
+        main.setBulletInSlot(chambersTaken(),player.getBullets().get(rnd));
+        main.addCardInHand(player.getBullets().get(rnd));
+    }
+
 
     public void miss(Enemy enemy){
         if(headShotThisTurn[2]){

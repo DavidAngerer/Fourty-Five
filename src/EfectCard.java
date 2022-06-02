@@ -37,6 +37,10 @@ public class EfectCard extends Card{
 
     }
 
+    public EfectCard(EffectCardName cardName) {
+        this.cardName = cardName;
+    }
+
     public EfectCard cloneEfectcard(){
         return new EfectCard(cardDeskrition,this.rarity,cost,cardName,type);
     }

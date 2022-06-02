@@ -65,7 +65,6 @@ public class main extends Application {
     static boolean shootingMode = false;
 
     public static void main(String[] args) {
-        //test commit
         launch(args);
     }
 
@@ -493,7 +492,15 @@ public class main extends Application {
      * Zeigt den Todesscreen an wenn man gestorben ist
      */
     public static void deathScreen() {
+        displayStats();
         menu();
+    }
+
+    /**
+     * Displays stats of round
+     */
+    public static void displayStats(){
+
     }
 
     /**
@@ -694,15 +701,6 @@ public class main extends Application {
                 scene.removeEventHandler(MouseEvent.MOUSE_PRESSED, this);
             }
         });
-    }
-
-    /**
-     * Sets the Life displayed of Enemy
-     *
-     * @param enemy The enemy
-     */
-    public static void setLifeOfEnemy(Enemy enemy) {
-        enemy.getHealthBar().setProgress((double) enemy.getHealth() / (double) enemy.getMaxHealth());
     }
 
     /**
