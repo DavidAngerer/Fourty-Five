@@ -155,8 +155,18 @@ public class Controller {
             for (Efect efect:
                  enemy.getEfectsOnHim()) {
                 efect.cyclesLeft--;
+                if(efect.cyclesLeft==0 && efect.killOnLastTurn){
+                    enemy.setHealth(0);
+                }
             }
             enemy.getEfectsOnHim().removeIf(n-> n.cyclesLeft<=0);
+            if(enemy.hasEfect(Efect.EfectName.BURN)){
+                enemy.setHealth(enemy.getHealth()-5);
+            }
+            if(enemy.getHealth()<=0){
+                main.removeEnemy(enemy);
+                enemiesThisTurn.remove(enemy);
+            }
         }
         for (Efect efect:
                 player.getEfects()) {

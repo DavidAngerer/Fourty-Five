@@ -3,12 +3,14 @@ import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -31,7 +33,6 @@ public class main extends Application {
     //TODO bullet type
     //TODO remorse
     //TODO enemy aussuchen effekt
-    //TODO bei poison kill hinzufügen
     //TODO deathscreen
 
     /**
@@ -183,7 +184,7 @@ public class main extends Application {
         }
     }
 
-    public static Card cardSelectScreen(){
+    public static Card cardSelectScreen() {
         pane.setGridLinesVisible(true);
         pane.getColumnConstraints().clear();
         pane.getRowConstraints().clear();
@@ -193,44 +194,50 @@ public class main extends Application {
         pane.setBackground(null);
         Card[] cardsToSelect = controller.getCardsToSelect();
         for (int i = 0; i < cardsToSelect.length; i++) {
-            addCardToSelectScreen(i,cardsToSelect);
+            addCardToSelectScreen(i, cardsToSelect);
         }
         return null;
     }
 
-    public static void addCardToSelectScreen(int slot, Card[] card){
-        StackPane stack = getCardVisual(400,card[slot].getCardNameAsString());
+    public static void addCardToSelectScreen(int slot, Card[] card) {
+        StackPane stack;
+        try {
+            stack = getCardVisual(400, card[slot]);
+        } catch (IllegalArgumentException e) {
+            stack = getCardVisual(400, card[slot].getCardNameAsString());
+        }
         card[slot].setNode(stack);
-        stack.setId("Choose"+slot);
+        stack.setId("Choose" + slot);
         stack.setOnMouseEntered(e -> {
-            turnCardAround(card[slot],slot);
+            turnCardAround(card[slot], slot);
             for (int i = 0; i < 3; i++) {
-                if(slot!=i && getNodeByNameId("Choose"+i)==null){
-                    pane.getChildren().remove(getNodeByNameId("Turned"+i));
-                    addCardToSelectScreen(i,card);
+                if (slot != i && getNodeByNameId("Choose" + i) == null) {
+                    pane.getChildren().remove(getNodeByNameId("Turned" + i));
+                    addCardToSelectScreen(i, card);
                 }
             }
         });
-        pane.add(stack,slot,2);
+        pane.add(stack, slot, 2);
     }
 
     /**
      * Turns Card Around
+     *
      * @param card
      */
-    public static void turnCardAround(Card card, int slot){
-        StackPane stack = getCardVisual(400,card.getStats().entrySet().stream().map(n -> n.getKey() + " = " + n.getValue()).
+    public static void turnCardAround(Card card, int slot) {
+        StackPane stack = getCardVisual(400, card.getStats().entrySet().stream().map(n -> n.getKey() + " = " + n.getValue()).
                 collect(Collectors.joining("\n")));
-        pane.getChildren().remove(getNodeByNameId("Choose"+slot));
-        pane.add(stack,slot,2);
-        stack.setId("Turned"+slot);
-        stack.setOnMouseClicked(e ->{
+        pane.getChildren().remove(getNodeByNameId("Choose" + slot));
+        pane.add(stack, slot, 2);
+        stack.setId("Turned" + slot);
+        stack.setOnMouseClicked(e -> {
             controller.addCardToPlayer(card);
             controller.nextStage();
         });
     }
 
-    private static StackPane getCardVisual(int size,String writing) {
+    private static StackPane getCardVisual(int size, String writing) {
         Text text = new Text(writing);
         text.setFill(Color.BLACK);
         Rectangle rect = new Rectangle();
@@ -240,6 +247,78 @@ public class main extends Application {
         StackPane stack = new StackPane();
         GridPane.setMargin(stack, new Insets(10, 10, 10, 10));
         stack.getChildren().addAll(rect, text);
+
+        return stack;
+    }
+
+    /**
+     * Gibt Karte ein visual
+     * @param size
+     * @param card
+     * @return
+     */
+    private static StackPane getCardVisual(int size, Card card) {
+        StackPane stack = new StackPane();
+        Image image = new Image("cards/" + card.getCardNameAsString() + ".png");
+        ImageView imageView = new ImageView(image);
+
+        int w = (int) image.getWidth();
+        int h = (int) image.getHeight();
+
+        int firstNonEmptyColumn = 0;
+        int firstNonEmptyRow = 0;
+        int lastNonEmptyColumn = w - 1;
+        int lastNonEmptyRow = h - 1;
+
+        PixelReader reader = image.getPixelReader();
+
+        outer:
+        for (; firstNonEmptyColumn < w; firstNonEmptyColumn++) {
+            for (int y = 0; y < h; y++) {
+                // stop, if most significant byte (alpha channel) is != 0
+                if ((reader.getArgb(firstNonEmptyColumn, y) & 0xFF000000) != 0) {
+                    break outer;
+                }
+            }
+        }
+        outer:
+        for (; lastNonEmptyColumn > firstNonEmptyColumn; lastNonEmptyColumn--) {
+            for (int y = 0; y < h; y++) {
+                if ((reader.getArgb(lastNonEmptyColumn, y) & 0xFF000000) != 0) {
+                    break outer;
+                }
+            }
+        }
+
+        outer:
+        for (; firstNonEmptyRow < h; firstNonEmptyRow++) {
+            // use info for columns to reduce the amount of pixels that need checking
+            for (int x = firstNonEmptyColumn; x <= lastNonEmptyColumn; x++) {
+                if ((reader.getArgb(x, firstNonEmptyRow) & 0xFF000000) != 0) {
+                    break outer;
+                }
+            }
+        }
+
+        outer:
+        for (; lastNonEmptyRow > firstNonEmptyRow; lastNonEmptyRow--) {
+            for (int x = firstNonEmptyColumn; x <= lastNonEmptyColumn; x++) {
+                if ((reader.getArgb(x, lastNonEmptyRow) & 0xFF000000) != 0) {
+                    break outer;
+                }
+            }
+        }
+
+        // set viewport to only show the opaque parts
+        imageView.setViewport(new Rectangle2D(firstNonEmptyColumn, firstNonEmptyRow,
+                lastNonEmptyColumn - firstNonEmptyColumn + 1,
+                lastNonEmptyRow - firstNonEmptyRow + 1));
+
+
+        imageView.setFitWidth(size);
+        imageView.setFitHeight(size);
+        GridPane.setMargin(stack, new Insets(10, 10, 10, 10));
+        stack.getChildren().add(imageView);
         return stack;
     }
 
@@ -270,7 +349,7 @@ public class main extends Application {
         pane.setMinWidth(scene.getWidth());
         pane.getChildren().clear();
         pane.setBackground(null);
-        Text text = new Text(health +"/" + controller.getMaxHealth());
+        Text text = new Text(health + "/" + controller.getMaxHealth());
         text.setId("Life");
         pane.add(text, 0, 0);
         //TODO Phillip anfangs box hintun wo dann wenn noch keine karte drüber gehovert wurde
@@ -338,19 +417,19 @@ public class main extends Application {
                             @Override
                             public void handle(MouseEvent mouseEvent) {
                                 HeadshotgameVisual a = new HeadshotgameVisual(20,
-                                        controller.getHeadShotProbability(),50,Color.LIGHTBLUE);
-                                pane.add(a.getNode(),3,3);
+                                        controller.getHeadShotProbability(), 50, Color.LIGHTBLUE);
+                                pane.add(a.getNode(), 3, 3);
                                 new Thread(a).start();
-                                scene.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>(){
+                                scene.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
                                     @Override
                                     public void handle(KeyEvent keyEvent) {
-                                        if(keyEvent.getCharacter().equals(" ")){
-                                            if(a.isInside()){
+                                        if (keyEvent.getCharacter().equals(" ")) {
+                                            if (a.isInside()) {
                                                 controller.shoot(ene, false);
-                                            }else{
+                                            } else {
                                                 controller.miss(ene);
                                             }
-                                            scene.removeEventHandler(KeyEvent.KEY_TYPED,this);
+                                            scene.removeEventHandler(KeyEvent.KEY_TYPED, this);
                                             leaveshootingMode();
                                             pane.getChildren().remove(a.getNode());
                                             a.terminate();
@@ -380,7 +459,7 @@ public class main extends Application {
             for (int i = 0; i < enemies.size(); i++) {
                 StackPane pane = (StackPane) (enemies.get(i).getVisual());
                 pane.getChildren().remove(1);
-                if(pane.getChildren().size()==2){
+                if (pane.getChildren().size() == 2) {
                     pane.getChildren().remove(1);
                 }
             }
@@ -423,7 +502,12 @@ public class main extends Application {
      * @param card Bullet or EfectCard
      */
     public static void addCardInHand(Card card) {
-        StackPane stack = getCardVisual(150,card.getCardNameAsString());
+        StackPane stack;
+        try {
+            stack = getCardVisual(100, card);
+        } catch (IllegalArgumentException e) {
+            stack = getCardVisual(100, card.getCardNameAsString());
+        }
         final int HANDSLOTS = handcardsTaken;
         stack.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
@@ -460,7 +544,7 @@ public class main extends Application {
      */
     public static void setBulletInSlot(int slot, Bullet bulletCard) {
         if (controller.chambersTaken() <= slot) {
-            bulletCard.getNode().setId("Bullet"+slot);
+            bulletCard.getNode().setId("Bullet" + slot);
             pane.getChildren().remove(bulletCard.getNode());
             StackPane stack = (StackPane) bulletCard.getNode();
             bulletCard.setNode(stack);
@@ -553,27 +637,27 @@ public class main extends Application {
         }
     }
 
-    public static void TurnRight(){
+    public static void TurnRight() {
         ArrayList<Bullet> bullets = controller.getPlayersBullet();
         pane.getChildren().remove(bullets.get(0).getNode());
         for (int i = 1; i < bullets.size(); i++) {
             pane.getChildren().remove(bullets.get(i).getNode());
             setNodeInSlot(bullets.get(i).getNode(), i - 1);
         }
-        setNodeInSlot(bullets.get(0).getNode(),4);
+        setNodeInSlot(bullets.get(0).getNode(), 4);
     }
 
-    public static void TurnLeft(){
+    public static void TurnLeft() {
         ArrayList<Bullet> bullets = controller.getPlayersBullet();
-        if(bullets.size()==5){
+        if (bullets.size() == 5) {
             pane.getChildren().remove(bullets.get(4).getNode());
         }
-        for (int i = bullets.size()-1; i >= 0; i--) {
+        for (int i = bullets.size() - 1; i >= 0; i--) {
             pane.getChildren().remove(bullets.get(i).getNode());
             setNodeInSlot(bullets.get(i).getNode(), i + 1);
         }
-        if(bullets.size()==5){
-            setNodeInSlot(bullets.get(4).getNode(),0);
+        if (bullets.size() == 5) {
+            setNodeInSlot(bullets.get(4).getNode(), 0);
         }
     }
 
@@ -596,18 +680,18 @@ public class main extends Application {
     /**
      * Displays Coinflip
      */
-    public static void coinflip(boolean isHead){
+    public static void coinflip(boolean isHead) {
         StackPane coin = new StackPane();
         Circle circle = new Circle(50);
         circle.setFill(Color.GOLD);
-        Text text = new Text(isHead?"Head":"Tails");
-        coin.getChildren().addAll(circle,text);
-        pane.add(coin,3,3);
+        Text text = new Text(isHead ? "Head" : "Tails");
+        coin.getChildren().addAll(circle, text);
+        pane.add(coin, 3, 3);
         scene.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 pane.getChildren().remove(coin);
-                scene.removeEventHandler(MouseEvent.MOUSE_PRESSED,this);
+                scene.removeEventHandler(MouseEvent.MOUSE_PRESSED, this);
             }
         });
     }
@@ -631,7 +715,7 @@ public class main extends Application {
         text.setText(life + "/" + controller.getMaxHealth());
     }
 
-    public static void displaySelectscreenForEffectAttack(ArrayList<Enemy> enemies,EfectCard card){
+    public static void displaySelectscreenForEffectAttack(ArrayList<Enemy> enemies, EfectCard card) {
         shootingMode = true;
         for (Node node :
                 pane.getChildren()) {
