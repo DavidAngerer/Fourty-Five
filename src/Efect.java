@@ -22,4 +22,13 @@ public class Efect {
         cyclesLeft=cycles;
         this.killOnLastTurn = killOnLastTurn;
     }
+
+    @Override
+    public String toString() {
+        return "Efect{" +
+                "cyclesLeft=" + cyclesLeft +
+                ", killOnLastTurn=" + killOnLastTurn +
+                ", efectName=" + efectName +
+                '}';
+    }
 }

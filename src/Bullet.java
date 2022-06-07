@@ -11,6 +11,8 @@ public class Bullet extends Card{
 
     private boolean everLasting=false;
 
+    private boolean spray=false;
+
     public Bullet(CardName cardName) {
         this.cardName = cardName;
     }
@@ -30,7 +32,7 @@ public class Bullet extends Card{
     public Bullet(String[] attributes){
         cardName = CardName.valueOf(attributes[0]);
         rarity = Rarity.valueOf(attributes[3]);
-        //cardDeskrition = attributes[5];
+        cardDeskrition = attributes[2];
         try{
             damage = Integer.parseInt(attributes[1]);
             damageCalculatet = false;
@@ -80,5 +82,17 @@ public class Bullet extends Card{
 
     public void setEverLasting(boolean everLasting) {
         this.everLasting = everLasting;
+    }
+
+    public boolean isSpray() {
+        return spray;
+    }
+
+    public void setSpray(boolean spray) {
+        this.spray = spray;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
     }
 }

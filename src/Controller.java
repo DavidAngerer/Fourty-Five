@@ -40,11 +40,18 @@ public class Controller {
         fillCards();
         fillEfects();
         for (int i = 0; i < 5; i++) {
-            player.addCard(bulletsinExistence.get(0).cloneBullet());
+            //player.addCard(bulletsinExistence.get(0).cloneBullet());
             player.addCard(efectCardsInExistence.get(0).cloneEfectcard());
         }
-        player.addCard(bulletsinExistence.get(1).cloneBullet());
+        //player.addCard(bulletsinExistence.get(1).cloneBullet());
+        addCards(1,4,6,9,11,12,20);
         player.addCard(efectCardsInExistence.get(1).cloneEfectcard());
+    }
+
+    public void addCards(int ... cards){
+        for (int i = 0; i < cards.length; i++) {
+            player.addCard(bulletsinExistence.get(cards[i]));
+        }
     }
 
     public void nextStage() {
@@ -105,7 +112,26 @@ public class Controller {
         }
     }
 
+    public void displayEffects(){
+        for (int i = 0; i < enemiesThisTurn.size(); i++) {
+            System.out.println(i+"");
+            for (Efect efect:
+                 enemiesThisTurn.get(0).getEfectsOnHim()) {
+                System.out.println(efect.toString());
+            }
+            System.out.println();
+        }
+        System.out.println();
+        System.out.println();
+        System.out.println("Player:");
+        for (Efect efect:
+                player.getEfects()) {
+            System.out.println(efect.toString());
+        }
+    }
+
     private void nextTurn() {
+        displayEffects();
         player.setAvoidChance(0);
         if(doEfects()){
             headShotThisTurn= new boolean[]{false, false,false};
@@ -499,10 +525,8 @@ public class Controller {
                     player.getBulletsInChamber().get(1).addDamage(4);
                 }
             }
-            case Poison_Bullet -> enemy.addEfectOnHim(new Efect(Efect.EfectName.BURN,3,false));
-            case Gamblers_Bullet -> {
-                //TODO GAMBlersBullet
-            }
+            case Poison_Bullet -> enemy.addEfectOnHim(new Efect(Efect.EfectName.POISOND,3,false));
+            case Gamblers_Bullet -> diceThrow();
             case Medics_Bullet -> player.setHealth(player.getHealth()+5);
             case Obsidian_Bullet -> player.addEfect(new Efect(Efect.EfectName.RAGE,2,false));
             case Rusted_Bullet -> enemy.addEfectOnHim(new Efect(Efect.EfectName.WEAK));
@@ -510,8 +534,24 @@ public class Controller {
             case Arrow -> {
                 player.getBulletsInChamber().get(0).setEverLasting(true);
             }
+            case shotgun_shell_Bullet -> bulletsinExistence.get(0).setSpray(true);
         }
         return false;
+    }
+
+    public void diceThrow(){
+        int side = (int)(Math.random()*6)+1;
+        main.displayDiceThrow(side);
+        player.getBulletsInChamber().get(0).setDamage(side);
+    }
+
+    public void spray(Bullet bullet, Enemy enemy,float multiplikator){
+        for (Enemy toHit:
+             enemiesThisTurn) {
+            if(!toHit.equals(enemy)){
+                toHit.setHealth(toHit.getHealth()-(int)(bullet.getDamage()*multiplikator));
+            }
+        }
     }
 
     public void bulletBulletEffect(){

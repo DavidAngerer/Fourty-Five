@@ -737,4 +737,20 @@ public class main extends Application {
             enemies.get(i).setVisual(enemy);
         }
     }
+
+    public static void displayDiceThrow(int side){
+        Rectangle rectangle = new Rectangle(100,100);
+        rectangle.setFill(Color.GREY);
+        Text number = new Text(side+"");
+        StackPane dice = new StackPane();
+        dice.getChildren().addAll(rectangle,number);
+        pane.add(dice,3,3);
+        scene.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                pane.getChildren().remove(dice);
+                scene.removeEventHandler(MouseEvent.MOUSE_PRESSED, this);
+            }
+        });
+    }
 }
