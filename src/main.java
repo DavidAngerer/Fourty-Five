@@ -190,6 +190,11 @@ public class main extends Application {
         pane.setMaxWidth(scene.getWidth());
         pane.setMinWidth(scene.getWidth());
         pane.getChildren().clear();
+
+        BackgroundImage backCardSelect = new BackgroundImage(new Image("my url", 32, 32, false, true),
+                BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+                BackgroundSize.DEFAULT);
+
         pane.setBackground(null);
         Card[] cardsToSelect = controller.getCardsToSelect();
         for (int i = 0; i < cardsToSelect.length; i++) {
