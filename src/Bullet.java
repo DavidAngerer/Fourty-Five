@@ -55,10 +55,6 @@ public class Bullet extends Card{
         return new Bullet(this.cardName,this.damageCalculatet,this.damage,this.cardDeskrition,this.rarity);
     }
 
-    public String getCardNameAsString() {
-        return cardName.name().replace("_"," ");
-    }
-
     @Override
     public Map<String, String> getStats() {
         Map<String,String> erg= new HashMap<>();
@@ -84,7 +80,7 @@ public class Bullet extends Card{
         this.everLasting = everLasting;
     }
 
-    public boolean isSpray() {
+    public boolean hasSpray() {
         return spray;
     }
 

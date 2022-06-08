@@ -44,7 +44,7 @@ public class Controller {
             player.addCard(efectCardsInExistence.get(0).cloneEfectcard());
         }
         //player.addCard(bulletsinExistence.get(1).cloneBullet());
-        addCards(1,4,6,9,11,12,20);
+        addCards(1,4,11,12);
         player.addCard(efectCardsInExistence.get(1).cloneEfectcard());
     }
 
@@ -68,8 +68,10 @@ public class Controller {
         cardsOnField = new ArrayList<>();
         headShotThisTurn= new boolean[]{false, false,false};
         for (int i = 0; i < enemyNumbers; i++) {
-            Efect effekt = efectsInExistence.get((int) (efectsInExistence.size() * Math.random()));
-            enemiesThisTurn.add(new Enemy(hpPool / enemyNumbers, damage, effekt));
+            //if(Math.random()*100<stage*5-10){
+                Efect effekt = efectsInExistence.get((int) (efectsInExistence.size() * Math.random()));
+                enemiesThisTurn.add(new Enemy(hpPool / enemyNumbers, damage, effekt));
+            //}
         }
         main.newStage(stage, player.getMaxHealth(), enemiesThisTurn);
     }
@@ -116,7 +118,7 @@ public class Controller {
         for (int i = 0; i < enemiesThisTurn.size(); i++) {
             System.out.println(i+"");
             for (Efect efect:
-                 enemiesThisTurn.get(0).getEfectsOnHim()) {
+                 enemiesThisTurn.get(i).getEfectsOnHim()) {
                 System.out.println(efect.toString());
             }
             System.out.println();
@@ -469,8 +471,11 @@ public class Controller {
     }
 
     public void shoot(Enemy enemy, boolean body) {
-        float multiplier = getMultiplierOnPlayerToEnemy(enemy);
         boolean turnAtEnd = doBulletEffect(enemy);
+        if(player.getBulletsInChamber().get(0).hasSpray() && !player.getBulletsInChamber().get(0).isEverLasting()){
+            spray(player.getBulletsInChamber().get(0),enemy,body);
+        }
+        float multiplier = getMultiplierOnPlayerToEnemy(enemy);
         if (!body) {
             multiplier *= 2;
             headShotThisTurn[0]=true;
@@ -495,7 +500,7 @@ public class Controller {
                 main.setEnergy(player.getEnergy());
                 if(dualWield){
                     dualWield=false;
-                }else if(bulletsinExistence.get(0).isEverLasting()){
+                }else if(player.getBulletsInChamber().get(0).isEverLasting()){ //TODO Arrow
                     turn(new EfectCard(EfectCard.EffectCardName.round_skip));
                 }else{
                     main.rotate();
@@ -529,12 +534,12 @@ public class Controller {
             case Gamblers_Bullet -> diceThrow();
             case Medics_Bullet -> player.setHealth(player.getHealth()+5);
             case Obsidian_Bullet -> player.addEfect(new Efect(Efect.EfectName.RAGE,2,false));
-            case Rusted_Bullet -> enemy.addEfectOnHim(new Efect(Efect.EfectName.WEAK));
+            case Rusted_Bullet -> enemy.addEfectOnHim(new Efect(Efect.EfectName.WEAK,5,false));
             case Bullet_Bullet -> bulletBulletEffect();
             case Arrow -> {
                 player.getBulletsInChamber().get(0).setEverLasting(true);
             }
-            case shotgun_shell_Bullet -> bulletsinExistence.get(0).setSpray(true);
+            case Shotgun_Shell_Bullet -> player.getBulletsInChamber().get(0).setSpray(true);
         }
         return false;
     }
@@ -545,13 +550,17 @@ public class Controller {
         player.getBulletsInChamber().get(0).setDamage(side);
     }
 
-    public void spray(Bullet bullet, Enemy enemy,float multiplikator){
+    public void spray(Bullet bullet, Enemy enemy,boolean body){
+        player.setEnergy(player.getEnergy()+2);
+        bullet.setEverLasting(true);
+        bullet.setSpray(false);
         for (Enemy toHit:
              enemiesThisTurn) {
-            if(!toHit.equals(enemy)){
-                toHit.setHealth(toHit.getHealth()-(int)(bullet.getDamage()*multiplikator));
+            if (!toHit.equals(enemy)) {
+                shoot(toHit,body);
             }
         }
+        bullet.setEverLasting(false);
     }
 
     public void bulletBulletEffect(){

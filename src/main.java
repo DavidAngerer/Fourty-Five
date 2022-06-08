@@ -258,7 +258,10 @@ public class main extends Application {
      */
     private static StackPane getCardVisual(int size, Card card) {
         StackPane stack = new StackPane();
-        Image image = new Image("cards/" + card.getCardNameAsString() + ".png");
+        System.out.println("cards/" + card.getCardNameAsString().replace(" ","_") + ".png");
+        Image image = new Image(card.getClass().getSimpleName().equals("Bullet")?
+                "cards/" + card.getCardNameAsString().replace(" ","_") + ".png":
+                "effectcards/" + card.getCardNameAsString().replace(" ","_") + ".png");
         ImageView imageView = new ImageView(image);
 
         int w = (int) image.getWidth();
@@ -509,12 +512,8 @@ public class main extends Application {
      * @param card Bullet or EfectCard
      */
     public static void addCardInHand(Card card) {
-        StackPane stack;
-        try {
-            stack = getCardVisual(100, card);
-        } catch (IllegalArgumentException e) {
-            stack = getCardVisual(100, card.getCardNameAsString());
-        }
+        final StackPane stack;
+        stack = getCardVisual(100, card);
         final int HANDSLOTS = handcardsTaken;
         stack.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
@@ -524,6 +523,7 @@ public class main extends Application {
                 } else {
                     controller.useEffectCard((EfectCard) card);
                 }
+                stack.removeEventHandler(MouseEvent.MOUSE_CLICKED,this);
             }
         });
         stack.setOnMouseEntered(e -> {
