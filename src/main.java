@@ -191,11 +191,11 @@ public class main extends Application {
         pane.setMinWidth(scene.getWidth());
         pane.getChildren().clear();
 
-        BackgroundImage backCardSelect = new BackgroundImage(new Image("my url", 32, 32, false, true),
+        BackgroundImage backCardSelect = new BackgroundImage(new Image("backgrounds/cardSelect_v1.png", 1920, 1080, false, true),
                 BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
                 BackgroundSize.DEFAULT);
 
-        pane.setBackground(null);
+        pane.setBackground(new Background(backCardSelect));
         Card[] cardsToSelect = controller.getCardsToSelect();
         for (int i = 0; i < cardsToSelect.length; i++) {
             addCardToSelectScreen(i, cardsToSelect);
@@ -355,7 +355,12 @@ public class main extends Application {
         pane.setMaxWidth(scene.getWidth());
         pane.setMinWidth(scene.getWidth());
         pane.getChildren().clear();
-        pane.setBackground(null);
+
+        BackgroundImage backFightStage = new BackgroundImage(new Image("backgrounds/background_player_stage1_1_v1.png", 1920, 1080, false, true),
+                BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+                BackgroundSize.DEFAULT);
+
+        pane.setBackground(new Background(backFightStage));
         Text text = new Text(health + "/" + controller.getMaxHealth());
         text.setId("Life");
         pane.add(text, 0, 0);

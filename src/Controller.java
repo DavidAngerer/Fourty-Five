@@ -56,10 +56,10 @@ public class Controller {
 
     public void nextStage() {
         stage++;
-        int hpPool = (int) (Math.random() * (stage * 5)) + (stage * 15) + 50;
+        int hpPool = 1;//(int) (Math.random() * (stage * 5)) + (stage * 15) + 50;
         int damage = (int) (Math.random() * (stage * 2)) + (stage * 2);
         enemiesThisTurn = new ArrayList<>();
-        int enemyNumbers = 3;//(int)(Math.random()*3)+1;
+        int enemyNumbers = 1;//(int)(Math.random()*3)+1;
         player.bulletsInChamber = new ArrayList<>();
         player.handCards=new ArrayList<>();
         player.setAvoidChance(0);
