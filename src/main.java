@@ -576,15 +576,17 @@ public class main extends Application {
      * @param bulletCard Bullet to Set
      */
     public static void setBulletInSlot(int slot, Bullet bulletCard) {
-        bulletCard.getNode().setId("Bullet" + slot);
-        pane.getChildren().remove(bulletCard.getNode());
-        StackPane stack = (StackPane) bulletCard.getNode();
-        bulletCard.setNode(stack);
-        GridPane.setMargin(stack, new Insets(10, 10, 10, 10));
-        setNodeInSlot(stack, slot);
-        bulletChambers[slot].getChildren().add(bulletCard.getNode());
-        controller.setBulletInSlot(bulletCard,slot);
-        handcardsTaken--;
+        if(controller.getFirstAvailableSlot()==-1){
+            bulletCard.getNode().setId("Bullet" + slot);
+            pane.getChildren().remove(bulletCard.getNode());
+            StackPane stack = (StackPane) bulletCard.getNode();
+            bulletCard.setNode(stack);
+            GridPane.setMargin(stack, new Insets(10, 10, 10, 10));
+            setNodeInSlot(stack, slot);
+            bulletChambers[slot].getChildren().add(bulletCard.getNode());
+            controller.setBulletInSlot(bulletCard,slot);
+            handcardsTaken--;
+        }
     }
 
     public static void setEnergy(int energy) {

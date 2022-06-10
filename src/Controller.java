@@ -144,6 +144,7 @@ public class Controller {
             int rnd;
             for (int i = 0; i < cardsLeftToDraw; i++) {
                 rnd = (int) (Math.random() * 2);
+                System.out.println(rnd);
                 if (rnd == 0) {
                     rnd = (int) (Math.random() * player.getBullets().size());
                     if (!cardsOnField.contains(player.getBullets().get(rnd))) {
@@ -583,9 +584,13 @@ public class Controller {
     }
 
     public void bulletBulletEffect(){
+        int threshold = 0;
         int rnd = (int) (Math.random() * player.getBullets().size());
         while(cardsOnField.contains(player.getBullets().get(rnd))){
             rnd = (int) (Math.random() * player.getBullets().size());
+            if(threshold>300){
+                return;
+            }
         }
         cardsOnField.add(player.getBullets().get(rnd));
         int chamber = player.setBulletInFirstAvailableChamber(player.getBullets().get(rnd));
