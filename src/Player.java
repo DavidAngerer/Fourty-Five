@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Player {
     private ArrayList<Bullet> bullets;
@@ -14,7 +15,7 @@ public class Player {
 
     ArrayList<Card> handCards = new ArrayList<>();
 
-    ArrayList<Bullet> bulletsInChamber = new ArrayList<>();
+    Bullet[] bulletsInChamber = new Bullet[5];
 
     int coins;
     double avoidChance=0;
@@ -26,6 +27,7 @@ public class Player {
         this.efects = efects;
         this.health = health;
         maxHealth = health;
+        Arrays.fill(bulletsInChamber,null);
         coins = 0;
     }
 
@@ -69,8 +71,50 @@ public class Player {
         return efectCards;
     }
 
-    public ArrayList<Bullet> getBulletsInChamber() {
+    public Bullet[] getBulletsInChamber() {
         return bulletsInChamber;
+    }
+
+    public void setBulletInChamber(Bullet bullet, int pos){
+        bulletsInChamber[pos] = bullet;
+    }
+
+    public void removeBullet(int pos){
+        bulletsInChamber[pos]=null;
+    }
+
+    public void removeBullet(Bullet bullet){
+        for (int i = 0; i < bulletsInChamber.length; i++) {
+            if(bulletsInChamber[i].equals(bullet)){
+                bulletsInChamber[i]=null;
+            }
+        }
+    }
+
+    public int setBulletInFirstAvailableChamber(Bullet bullet){
+        if(getFirstAvailableSlot()==-1){
+            return -1;
+        }
+        bulletsInChamber[getFirstAvailableSlot()]=bullet;
+        return getFirstAvailableSlot();
+    }
+
+    public boolean bulletsInChamberContain(Bullet bullet){
+        for (int i = 0; i < bulletsInChamber.length; i++) {
+            if(bulletsInChamber[i]!=null && bulletsInChamber[i].equals(bullet)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int getFirstAvailableSlot(){
+        for (int i = 0; i < bulletsInChamber.length; i++) {
+            if(bulletsInChamber[i]==null){
+                return i;
+            }
+        }
+        return -1;
     }
 
     public int getHealth() {

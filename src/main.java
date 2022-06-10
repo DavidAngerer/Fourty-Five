@@ -55,6 +55,8 @@ public class main extends Application {
      */
     static Scene scene;
 
+    static StackPane[] bulletChambers = new StackPane[5];
+
     /**
      * Controller class which handles Logic
      */
@@ -385,6 +387,18 @@ public class main extends Application {
         pane.add(new Text("Stage" + stage), 4, 0);
         pane.add(energy, 3, 0);
         createEnemies(enemies);
+        setBulletsBack();
+    }
+
+    public static void setBulletsBack(){
+        for (int i = 0; i < 5; i++) {
+            bulletChambers[i] = new StackPane();
+            bulletChambers[i].setId("Chamber"+i);
+            Rectangle rectangle = new Rectangle(100,100);
+            rectangle.setFill(Color.GREY);
+            bulletChambers[i].getChildren().add(rectangle);
+            setNodeInSlot(bulletChambers[i],i);
+        }
     }
 
     private static void buttonEndTurn() {
@@ -403,7 +417,7 @@ public class main extends Application {
         shoot.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if (controller.chambersTaken() > 0 && controller.getEnergy() > 0) {
+                if (controller.shootAvailable() && controller.getEnergy() > 0) {
                     shootingMode = true;
                     for (Node node :
                             pane.getChildren()) {
@@ -529,7 +543,7 @@ public class main extends Application {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (card.getClass().getSimpleName().equals("Bullet")) {
-                    setBulletInSlot(controller.chambersTaken(), (Bullet) card);
+                    setBulletInSlot(controller.getFirstAvailableSlot(), (Bullet) card);
                 } else {
                     controller.useEffectCard((EfectCard) card);
                 }
@@ -560,16 +574,15 @@ public class main extends Application {
      * @param bulletCard Bullet to Set
      */
     public static void setBulletInSlot(int slot, Bullet bulletCard) {
-        if (controller.chambersTaken() <= slot) {
-            bulletCard.getNode().setId("Bullet" + slot);
-            pane.getChildren().remove(bulletCard.getNode());
-            StackPane stack = (StackPane) bulletCard.getNode();
-            bulletCard.setNode(stack);
-            GridPane.setMargin(stack, new Insets(10, 10, 10, 10));
-            setNodeInSlot(stack, slot);
-            controller.setBulletInSlot(bulletCard);
-            handcardsTaken--;
-        }
+        bulletCard.getNode().setId("Bullet" + slot);
+        pane.getChildren().remove(bulletCard.getNode());
+        StackPane stack = (StackPane) bulletCard.getNode();
+        bulletCard.setNode(stack);
+        GridPane.setMargin(stack, new Insets(10, 10, 10, 10));
+        setNodeInSlot(stack, slot);
+        bulletChambers[slot].getChildren().add(bulletCard.getNode());
+        controller.setBulletInSlot(bulletCard,slot);
+        handcardsTaken--;
     }
 
     public static void setEnergy(int energy) {
@@ -601,21 +614,11 @@ public class main extends Application {
      */
     public static void setNodeInSlot(Node node, int slot) {
         switch (slot) {
-            case 0:
-                pane.add(node, 3, 4);
-                break;
-            case 1:
-                pane.add(node, 2, 5);
-                break;
-            case 2:
-                pane.add(node, 2, 6);
-                break;
-            case 3:
-                pane.add(node, 4, 6);
-                break;
-            case 4:
-                pane.add(node, 4, 5);
-                break;
+            case 0 -> pane.add(node, 3, 4);
+            case 1 -> pane.add(node, 2, 5);
+            case 2 -> pane.add(node, 2, 6);
+            case 3 -> pane.add(node, 4, 6);
+            case 4 -> pane.add(node, 4, 5);
         }
     }
 
@@ -642,43 +645,6 @@ public class main extends Application {
     }
 
     /**
-     * removes bullet in shoot slot and rotates the chamber
-     */
-    public static void rotate() {
-        ArrayList<Bullet> bullets = controller.getPlayersBullet();
-
-        pane.getChildren().remove(bullets.get(0).getNode());
-        for (int i = 1; i < bullets.size(); i++) {
-            pane.getChildren().remove(bullets.get(i).getNode());
-            setNodeInSlot(bullets.get(i).getNode(), i - 1);
-        }
-    }
-
-    public static void TurnRight() {
-        ArrayList<Bullet> bullets = controller.getPlayersBullet();
-        pane.getChildren().remove(bullets.get(0).getNode());
-        for (int i = 1; i < bullets.size(); i++) {
-            pane.getChildren().remove(bullets.get(i).getNode());
-            setNodeInSlot(bullets.get(i).getNode(), i - 1);
-        }
-        setNodeInSlot(bullets.get(0).getNode(), 4);
-    }
-
-    public static void TurnLeft() {
-        ArrayList<Bullet> bullets = controller.getPlayersBullet();
-        if (bullets.size() == 5) {
-            pane.getChildren().remove(bullets.get(4).getNode());
-        }
-        for (int i = bullets.size() - 1; i >= 0; i--) {
-            pane.getChildren().remove(bullets.get(i).getNode());
-            setNodeInSlot(bullets.get(i).getNode(), i + 1);
-        }
-        if (bullets.size() == 5) {
-            setNodeInSlot(bullets.get(4).getNode(), 0);
-        }
-    }
-
-    /**
      * Gets a node by the Id
      *
      * @param id Id of Node
@@ -692,6 +658,17 @@ public class main extends Application {
             }
         }
         return null;
+    }
+
+    public static void updateBullets(Bullet[] bullets){
+        for (int i = 0; i < bullets.length; i++) {
+            if(bulletChambers[i].getChildren().size()>1){
+                bulletChambers[i].getChildren().remove(1);
+            }
+            if(bullets[i]!=null){
+                setBulletInSlot(i,bullets[i]);
+            }
+        }
     }
 
     /**
