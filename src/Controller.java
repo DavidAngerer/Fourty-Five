@@ -99,10 +99,7 @@ public class Controller {
                     }
                     player.setHealth((int)(player.getHealth() - enemy.getDamage()*multiplier));
                     if (enemy.getEfect() != null) {
-                        if(enemy.getEfect().efectName== Efect.EfectName.POISOND ||
-                                enemy.getEfect().efectName== Efect.EfectName.WEAK ||
-                                enemy.getEfect().efectName== Efect.EfectName.BURN ||
-                                enemy.getEfect().efectName== Efect.EfectName.REMORSE){
+                        if(enemy.getEfect().isNegative()){
                             player.addEfect(enemy.getEfect());
                         }
                     }
@@ -535,7 +532,7 @@ public class Controller {
         }else if(player.getBulletsInChamber()[0].bulletEffect== Bullet.BulletEffect.EVERLASTING){
             turn(new EfectCard(EfectCard.EffectCardName.round_skip));
         }else if(player.getBulletsInChamber()[0].bulletEffect== Bullet.BulletEffect.UNDEAD){
-            player.getBulletsInChamber()[0].increaseDieCounter();
+            player.getBulletsInChamber()[0].setDamage(player.bulletsInChamber[0].getDamage()+2);
             final Bullet bullet = player.getBulletsInChamber()[0];
             cardsOnField.remove(player.getBulletsInChamber()[0]);
             rotate();
@@ -571,6 +568,12 @@ public class Controller {
             case Bullet_Bullet -> bulletBulletEffect();
             case Arrow -> player.getBulletsInChamber()[0].setBulletEffect(Bullet.BulletEffect.EVERLASTING);
             case Undead_Bullet -> player.getBulletsInChamber()[0].setBulletEffect(Bullet.BulletEffect.UNDEAD);
+            case Moon_Bullet -> player.getEfects().removeIf(Efect::isNegative);
+            case Rotten_Bullet -> {
+                if(player.bulletsInChamber[1]!=null){
+                    player.getBulletsInChamber()[1].setDamage(player.bulletsInChamber[1].getDamage()+5);
+                }
+            }
             case Shotgun_Shell_Bullet -> player.getBulletsInChamber()[0].setSpray(true);
         }
         return false;

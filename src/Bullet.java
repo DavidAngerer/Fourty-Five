@@ -13,8 +13,6 @@ public class Bullet extends Card{
         NOTHING,EVERLASTING,SPRAY,UNDEAD,GOOD_WILL,MONEY
     }
 
-    public int dieCounter=0;
-
     BulletEffect bulletEffect=BulletEffect.NOTHING;
 
     private boolean everLasting=false;
@@ -55,10 +53,6 @@ public class Bullet extends Card{
         this.bulletEffect = bulletEffect;
     }
 
-    public void increaseDieCounter(){
-        dieCounter++;
-    }
-
     public Node getNode() {
         return node;
     }
@@ -81,9 +75,6 @@ public class Bullet extends Card{
     }
 
     public int getDamage() {
-        if(bulletEffect==BulletEffect.UNDEAD){
-            return dieCounter*2;
-        }
         return damage;
     }
 

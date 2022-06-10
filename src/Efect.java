@@ -31,4 +31,13 @@ public class Efect {
                 ", efectName=" + efectName +
                 '}';
     }
+
+    public boolean isNegative(){
+        if(efectName== Efect.EfectName.BURN || efectName== Efect.EfectName.POISOND ||
+                efectName == Efect.EfectName.WEAK || efectName == Efect.EfectName.REMORSE ||
+                efectName == Efect.EfectName.UNLUCKY){
+            return true;
+        }
+        return false;
+    }
 }
