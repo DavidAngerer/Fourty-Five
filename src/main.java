@@ -16,6 +16,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -353,6 +354,10 @@ public class main extends Application {
         ArrayList<Bullet> bullets = new ArrayList<>();
         ArrayList<EfectCard> efectCards = new ArrayList<>();
         Text energy = new Text("Energy left = 5");
+        energy.setSelectionFill(Color.WHITE);
+        energy.setStroke(Color.BLUE);
+        energy.setStrokeWidth(1);
+        energy.setFont(new Font(20));
         energy.setId("Energy");
         pane.setMaxWidth(scene.getWidth());
         pane.setMinWidth(scene.getWidth());
@@ -365,6 +370,10 @@ public class main extends Application {
         pane.setBackground(new Background(backFightStage));
         Text text = new Text(health + "/" + controller.getMaxHealth());
         text.setId("Life");
+        text.setSelectionFill(Color.WHITE);
+        text.setStroke(Color.BLUE);
+        text.setStrokeWidth(1);
+        text.setFont(new Font(20));
         pane.add(text, 0, 0);
         //TODO Phillip anfangs box hintun wo dann wenn noch keine karte drüber gehovert wurde
         bullets.addAll(controller.getRndBullets(3));
@@ -538,8 +547,7 @@ public class main extends Application {
      * @param card Bullet or EfectCard
      */
     public static void addCardInHand(Card card) {
-        final StackPane stack;
-        stack = getCardVisual(100, card);
+        final StackPane stack = createCard(card);
         final int HANDSLOTS = handcardsTaken;
         stack.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
@@ -552,12 +560,17 @@ public class main extends Application {
                 stack.removeEventHandler(MouseEvent.MOUSE_CLICKED,this);
             }
         });
+        putCardWhereGoes(card);
+        controller.cardsOnField.add(card);
+    }
+
+    public static StackPane createCard(Card card){
+        StackPane stack = getCardVisual(100, card);
         stack.setOnMouseEntered(e -> {
             hoveredCard(card);
         });
         card.setNode(stack);
-        putCardWhereGoes(card);
-        controller.cardsOnField.add(card);
+        return stack;
     }
 
     /**
@@ -576,7 +589,10 @@ public class main extends Application {
      * @param bulletCard Bullet to Set
      */
     public static void setBulletInSlot(int slot, Bullet bulletCard) {
-        if(controller.getFirstAvailableSlot()==-1){
+        if(controller.getFirstAvailableSlot()!=-1){
+            if(bulletCard.getNode()==null){
+                bulletCard.setNode(createCard(bulletCard));
+            }
             bulletCard.getNode().setId("Bullet" + slot);
             pane.getChildren().remove(bulletCard.getNode());
             StackPane stack = (StackPane) bulletCard.getNode();

@@ -9,6 +9,14 @@ public class Bullet extends Card{
 
     private int damage;
 
+    public enum BulletEffect{
+        NOTHING,EVERLASTING,SPRAY,UNDEAD,GOOD_WILL,MONEY
+    }
+
+    public int dieCounter=0;
+
+    BulletEffect bulletEffect=BulletEffect.NOTHING;
+
     private boolean everLasting=false;
 
     private boolean spray=false;
@@ -43,6 +51,14 @@ public class Bullet extends Card{
 
     }
 
+    public void setBulletEffect(BulletEffect bulletEffect){
+        this.bulletEffect = bulletEffect;
+    }
+
+    public void increaseDieCounter(){
+        dieCounter++;
+    }
+
     public Node getNode() {
         return node;
     }
@@ -65,6 +81,9 @@ public class Bullet extends Card{
     }
 
     public int getDamage() {
+        if(bulletEffect==BulletEffect.UNDEAD){
+            return dieCounter*2;
+        }
         return damage;
     }
 
