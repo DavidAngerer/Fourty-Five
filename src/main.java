@@ -468,6 +468,8 @@ public class main extends Application {
                         enemy.getChildren().addAll(body, head);
                         enemies.get(i).setVisual(enemy);
                     }
+                }else if(controller.getEnergy() > 0){
+                    controller.blank();
                 }
             }
 

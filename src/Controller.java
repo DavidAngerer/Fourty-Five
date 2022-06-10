@@ -40,7 +40,7 @@ public class Controller {
         fillCards();
         fillEfects();
         for (int i = 0; i < 5; i++) {
-            //player.addCard(bulletsinExistence.get(0).cloneBullet());
+            player.addCard(bulletsinExistence.get(0).cloneBullet());
             player.addCard(efectCardsInExistence.get(0).cloneEfectcard());
         }
         //player.addCard(bulletsinExistence.get(1).cloneBullet());
@@ -160,8 +160,7 @@ public class Controller {
                     }
                 }
             }
-            player.energy = 5;
-            main.setEnergy(5);
+            player.setEnergy(5);
         }
     }
 
@@ -282,6 +281,15 @@ public class Controller {
         }
     }
 
+    public ArrayList<Card> getHandCards(){
+        return cardsOnField;
+    }
+
+    public void blank(){
+        player.setEnergy(player.getEnergy()-1);
+        turn(new EfectCard(EfectCard.EffectCardName.round_skip));
+    }
+
     private void effectCard(EfectCard card){
         switch ((card.getCardName())){
             case molotov -> enemiesThisTurn.get(0).
@@ -333,7 +341,7 @@ public class Controller {
                 main.updateBullets(player.getBulletsInChamber());
             }
             case reversed_turn -> {
-                Bullet bullet = player.getBulletsInChamber()[4].cloneBullet();
+                final Bullet bullet = player.getBulletsInChamber()[4];
                 for (int i = player.getBulletsInChamber().length-2; i >= 0; i--) {
                     player.getBulletsInChamber()[i+1]=player.getBulletsInChamber()[i];
                 }
@@ -508,8 +516,7 @@ public class Controller {
                 }if(enemiesThisTurn.size()==0){
                     main.cardSelectScreen();
                 }else{
-                    player.energy--;
-                    main.setEnergy(player.getEnergy());
+                    player.setEnergy(player.getEnergy()-1);
                     if(dualWield){
                         dualWield=false;
                     }else if(player.getBulletsInChamber()[0].isEverLasting()){ //TODO Arrow
@@ -591,8 +598,7 @@ public class Controller {
         if(headShotThisTurn[2]){
             shoot(enemy,true);
         }else{
-            player.energy--;
-            main.setEnergy(player.getEnergy());
+            player.setEnergy(player.getEnergy()-1);
             cardsOnField.remove(player.bulletsInChamber[0]);
             rotate();
             if(headShotProbability+5<=360){

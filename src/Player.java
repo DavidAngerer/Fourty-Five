@@ -132,6 +132,7 @@ public class Player {
 
     public void setEnergy(int energy) {
         this.energy = energy;
+        main.setEnergy(energy);
     }
 
     public int getMaxHealth() {
