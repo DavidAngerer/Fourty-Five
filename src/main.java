@@ -403,7 +403,8 @@ public class main extends Application {
             bulletChambers[i] = new StackPane();
             bulletChambers[i].setId("Chamber"+i);
             Rectangle rectangle = new Rectangle(150,150);
-            rectangle.setFill(Color.DARKRED);
+            rectangle.setFill(Color.LIGHTGREY);
+            rectangle.setOpacity(0.5);
             bulletChambers[i].getChildren().add(rectangle);
             setNodeInSlot(bulletChambers[i],i);
         }
@@ -468,7 +469,7 @@ public class main extends Application {
                     head.setOnMouseClicked((MouseEvent b) -> {
                         HeadshotgameVisual a = new HeadshotgameVisual(20,
                                 controller.getHeadShotProbability(), 50, Color.LIGHTBLUE);
-                        pane.add(a.getNode(), 13, 2);
+                        pane.add(a.getNode(), 12, 2);
                         new Thread(a).start();
                         scene.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
                             @Override
@@ -667,7 +668,7 @@ public class main extends Application {
     public static void putCardWhereGoes(Card card) {
         for (int i = 0; i < 6; i++) {
             if (getNodeByNameId("HandCard" + i) == null) {
-                pane.add(card.getNode(), 10 + i, 8);
+                pane.add(card.getNode(), 10 + i, 7);
                 handcardsTaken++;
                 card.getNode().setId("HandCard" + i);
                 break;
@@ -750,7 +751,7 @@ public class main extends Application {
         circle.setFill(Color.GOLD);
         Text text = new Text(isHead ? "Head" : "Tails");
         coin.getChildren().addAll(circle, text);
-        pane.add(coin, 13, 2);
+        pane.add(coin, 12, 2);
         scene.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -801,7 +802,7 @@ public class main extends Application {
         Text number = new Text(side+"");
         StackPane dice = new StackPane();
         dice.getChildren().addAll(rectangle,number);
-        pane.add(dice,13,2);
+        pane.add(dice,12,2);
         scene.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
