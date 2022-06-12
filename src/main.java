@@ -436,7 +436,9 @@ public class main extends Application {
     private static void buttonShoot(ArrayList<Enemy> enemies) {
 
         ImageView buttonShoot = new ImageView("buttons/button_shoot_v1.png");
-        pane.add(buttonShoot, 5, 1);
+        pane.add(buttonShoot, 5, 2);
+        buttonShoot.setFitHeight(30);
+        buttonShoot.setFitWidth(30);
         GridPane.setHalignment(buttonShoot, HPos.CENTER);
 
         buttonShoot.setOnMouseClicked((MouseEvent e) -> {
