@@ -416,6 +416,8 @@ public class main extends Application {
         ImageView buttonEndTurn = new ImageView("buttons/button_endturn_v1.png");
         pane.add(buttonEndTurn, 5, 1);
         GridPane.setHalignment(buttonEndTurn, HPos.CENTER);
+        buttonEndTurn.setFitHeight(30);
+        buttonEndTurn.setFitWidth(170);
 
             buttonEndTurn.setOnMouseClicked((MouseEvent e) -> {
             controller.enemiesTurn();
