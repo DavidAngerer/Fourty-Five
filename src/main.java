@@ -404,7 +404,7 @@ public class main extends Application {
             bulletChambers[i].setId("Chamber"+i);
             Rectangle rectangle = new Rectangle(150,150);
             rectangle.setFill(Color.LIGHTGREY);
-            rectangle.setOpacity(0.5);
+            rectangle.setOpacity(0.5);//yay
             bulletChambers[i].getChildren().add(rectangle);
             setNodeInSlot(bulletChambers[i],i);
         }
