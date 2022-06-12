@@ -417,7 +417,7 @@ public class main extends Application {
         pane.add(buttonEndTurn, 5, 1);
         GridPane.setHalignment(buttonEndTurn, HPos.CENTER);
         buttonEndTurn.setFitHeight(30);
-        buttonEndTurn.setFitWidth(170);
+        buttonEndTurn.setPreserveRatio(true);
 
             buttonEndTurn.setOnMouseClicked((MouseEvent e) -> {
             controller.enemiesTurn();
@@ -440,7 +440,7 @@ public class main extends Application {
         ImageView buttonShoot = new ImageView("buttons/button_shoot_v1.png");
         pane.add(buttonShoot, 5, 2);
         buttonShoot.setFitHeight(30);
-        buttonShoot.setFitWidth(170);
+        buttonShoot.setPreserveRatio(true);
         GridPane.setHalignment(buttonShoot, HPos.CENTER);
 
         buttonShoot.setOnMouseClicked((MouseEvent e) -> {
