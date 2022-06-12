@@ -375,6 +375,7 @@ public class main extends Application {
         text.setFont(new Font(20));
         pane.add(text, 0, 0);
         //TODO Phillip anfangs box hintun wo dann wenn noch keine karte drüber gehovert wurde
+        //Ich weiß ehrlich gesagt nicht was ich damit machen soll
         bullets.addAll(controller.getRndBullets(3));
         efectCards.addAll(controller.getRndEffectCards(3));
         for (int i = 0; i < 3; i++) {
@@ -705,7 +706,7 @@ public class main extends Application {
         Text stats = new Text(card.getStats().entrySet().stream().map(n -> n.getKey() + " = " + n.getValue()).
                 collect(Collectors.joining("\n")));
         Text name = new Text(card.getCardNameAsString());
-        Rectangle background = new Rectangle(400, 300);
+        Rectangle background = new Rectangle(300, 200);
         background.setFill(Color.ORANGE);//farbe noch nicht final
         infos.getChildren().addAll(background, name, stats);
         infos.setAlignment(name, Pos.TOP_CENTER);
