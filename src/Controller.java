@@ -49,6 +49,13 @@ public class Controller {
             player.addCard(bulletsinExistence.get(0).cloneBullet());
             player.addCard(efectCardsInExistence.get(0).cloneEfectcard());
         }
+        for (int i = 0; i < 19; i++) {
+            player.addCard(bulletsinExistence.get(i).cloneBullet());
+            player.addCard(efectCardsInExistence.get(i).cloneEfectcard());
+        }
+        /*
+
+         */
         player.addCard(bulletsinExistence.get(1).cloneBullet());
         player.addCard(efectCardsInExistence.get(1).cloneEfectcard());
         initializeStats();
@@ -413,10 +420,12 @@ public class Controller {
     private void other(EfectCard card){
         switch (card.getCardName()){
             case questioning_choices -> {
-                for (int i = main.handcardsTaken; i < 6; i++) {
-                    cardsOnField.add(player.getBulletsInChamber()[i]);
-                    main.addCardInHand(player.getBulletsInChamber()[i]);
-                    player.removeBullet(i);
+                for (int i = 0; i < 5 && player.handCards.size()<6; i++) {
+                    if(player.getBulletsInChamber()[i]!=null){
+                        cardsOnField.add(player.getBulletsInChamber()[i]);
+                        main.addCardInHand(player.getBulletsInChamber()[i]);
+                        player.removeBullet(i);
+                    }
                 }
                 for (int i = 0; i < player.getBulletsInChamber().length; i++) {
                     player.removeBullet(i);

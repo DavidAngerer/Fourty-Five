@@ -88,15 +88,14 @@ public class main extends Application {
             }
         };
 
-        EventHandler eventHandlerKey = new EventHandler<KeyEvent>() {
+        scene.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 
             @Override
             public void handle(KeyEvent keyEvent) {
                 menu();
                 scene.removeEventHandler(KeyEvent.KEY_PRESSED, this);
             }
-        };
-        scene.addEventHandler(KeyEvent.KEY_PRESSED, eventHandlerKey);
+        });
         scene.addEventHandler(MouseEvent.MOUSE_CLICKED, eventHandlerMouse);
 
 
@@ -586,7 +585,12 @@ public class main extends Application {
      * @param card Bullet or EfectCard
      */
     public static void addCardInHand(Card card) {
-        final StackPane stack = createCard(card);
+        final StackPane stack;
+        if(card.getNode()==null){
+            stack = createCard(card);
+        }else{
+            stack = (StackPane)card.getNode();
+        }
         final int HANDSLOTS = handcardsTaken;
         stack.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
@@ -604,7 +608,13 @@ public class main extends Application {
     }
 
     public static StackPane createCard(Card card){
-        StackPane stack = getCardVisual(100, card);
+        StackPane stack;
+        try {
+            stack = getCardVisual(100, card);
+
+        } catch (IllegalArgumentException e) {
+            stack = getCardVisual(100, card.getCardNameAsString());
+        }
         stack.setOnMouseEntered(e -> {
             hoveredCard(card);
         });
