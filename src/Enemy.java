@@ -105,13 +105,13 @@ public class Enemy {
     }
 
     public boolean hasEfect(Efect.EfectName efectName){
-        for (Efect efect:
-             efectsOnHim) {
-            if(efect.efectName==efectName){
+        for (Efect efect :
+                efectsOnHim) {
+            if (efect.efectName == efectName) {
                 return true;
             }
         }
-        return efect.efectName ==efectName;
+        return efect!=null && efect.efectName == efectName;
     }
 
     public int rageMulitplier(){

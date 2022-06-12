@@ -83,12 +83,14 @@ public class Controller {
         cardsOnField = new ArrayList<>();
         headShotThisTurn= new boolean[]{false, false,false};
         for (int i = 0; i < enemyNumbers; i++) {
-            //if(Math.random()*100<stage*5-10){
-                Efect effekt = efectsInExistence.get((int) (efectsInExistence.size() * Math.random()));
-                enemiesThisTurn.add(new Enemy(hpPool / enemyNumbers, damage, effekt));
-            //}
+            Efect effekt = null;
+            if(Math.random()*100<stage*5-10) {
+                effekt = efectsInExistence.get((int) (efectsInExistence.size() * Math.random()));
+            }
+            enemiesThisTurn.add(new Enemy(hpPool / enemyNumbers, damage, effekt));
         }
         main.newStage(stage, player.getMaxHealth(), enemiesThisTurn);
+        player.getEfectcards().removeIf(card -> card.getCardName()== EfectCard.EffectCardName.Remorse);
     }
 
     public void enemiesTurn() {
@@ -99,6 +101,9 @@ public class Controller {
                     enemiesThisTurn) {
                 multiplier=1;
                 if(Math.random()>player.getAvoidChance()){
+                    if(enemy.hasEfect(Efect.EfectName.REMORSE)){
+                        player.addCard(new EfectCard(EfectCard.EffectCardName.Remorse));
+                    }
                     if(player.hasEffect(Efect.EfectName.POISOND)){
                         multiplier*=1.5;
                     }
@@ -163,7 +168,6 @@ public class Controller {
             int rnd;
             while(player.handCards.size()<6){
                 rnd = (int) (Math.random() * 2);
-                System.out.println(rnd);
                 if (rnd == 0) {
                     rnd = (int) (Math.random() * player.getBullets().size());
                     if (!cardsOnField.contains(player.getBullets().get(rnd))) {
@@ -178,7 +182,7 @@ public class Controller {
                     }
                 }
             }
-            player.setEnergy(5);
+            player.setEnergy(5,true);
         }
     }
 
@@ -305,11 +309,13 @@ public class Controller {
                 turn(card);
             }else if(card.getType()!=null &&card.getType().equals("effect")){
                 effectCard(card);
+            }else if(card.getType()!=null &&card.getType().equals("bullet")){
+                bullet(card);
             }
             cardsOnField.remove(card);
             player.handCards.remove(card);
             main.removeCard(card);
-            player.setEnergy(player.getEnergy() - card.getCost());
+            player.setEnergy(player.getEnergy() - card.getCost(),true);
             main.setEnergy(player.getEnergy());
             stats.put("Damage absorbed",stats.get("Damage absorbed")+(healthNow-player.getHealth()));
         }
@@ -320,8 +326,27 @@ public class Controller {
     }
 
     public void blank(){
-        player.setEnergy(player.getEnergy()-1);
+        player.setEnergy(player.getEnergy()-1,false);
         turn(new EfectCard(EfectCard.EffectCardName.round_skip));
+    }
+
+    private void bullet(EfectCard card){
+        switch ((card.getCardName())){
+            case gonna_keep_this -> {
+                for (int i = 0; i < player.getBulletsInChamber().length; i++) {
+                    if(player.getBulletsInChamber()[i]!=null){
+                        player.getBulletsInChamber()[i].bulletEffect = Bullet.BulletEffect.EVERLASTING;
+                    }
+                }
+            }
+            case random_Bullshit_go -> {
+                for (int i = 0; i < player.getBulletsInChamber().length; i++) {
+                    if(player.getBulletsInChamber()[i]!=null){
+                        player.getBulletsInChamber()[i].bulletEffect = Bullet.BulletEffect.SPRAY;
+                    }
+                }
+            }
+        }
     }
 
     private void effectCard(EfectCard card){
@@ -527,7 +552,8 @@ public class Controller {
     public void shoot(Enemy enemy, boolean body) {
         if(player.getBulletsInChamber()[0]!=null){
             boolean turnAtEnd = doBulletEffect(enemy);
-            if(player.getBulletsInChamber()[0].hasSpray() && !player.getBulletsInChamber()[0].isEverLasting()){
+            if(player.getBulletsInChamber()[0].bulletEffect== Bullet.BulletEffect.SPRAY &&
+                    !player.getBulletsInChamber()[0].isEverLasting()){
                 spray(player.getBulletsInChamber()[0],enemy,body);
             }
             float multiplier = getMultiplierOnPlayerToEnemy(enemy);
@@ -564,10 +590,11 @@ public class Controller {
     }
 
     private void doShootingMechanics() {
-        player.setEnergy(player.getEnergy()-1);
+        player.setEnergy(player.getEnergy()-1,false);
         if(dualWield){
             dualWield=false;
-        }else if(player.getBulletsInChamber()[0].bulletEffect== Bullet.BulletEffect.EVERLASTING){
+        }else if(player.getBulletsInChamber()[0].bulletEffect== Bullet.BulletEffect.EVERLASTING ||
+                player.getBulletsInChamber()[0].isEverLasting()){
             turn(new EfectCard(EfectCard.EffectCardName.round_skip));
         }else if(player.getBulletsInChamber()[0].bulletEffect== Bullet.BulletEffect.UNDEAD){
             player.getBulletsInChamber()[0].setDamage(player.bulletsInChamber[0].getDamage()+2);
@@ -648,13 +675,14 @@ public class Controller {
     }
 
     public void spray(Bullet bullet, Enemy enemy,boolean body){
-        player.setEnergy(player.getEnergy()+2);
+        player.setEnergy(player.getEnergy()+2,false);
         bullet.setEverLasting(true);
         bullet.setSpray(false);
         for (Enemy toHit:
              enemiesThisTurn) {
             if (!toHit.equals(enemy)) {
                 shoot(toHit,body);
+                turn(new EfectCard(EfectCard.EffectCardName.reversed_turn));
             }
         }
         bullet.setEverLasting(false);
@@ -680,7 +708,7 @@ public class Controller {
         if(headShotThisTurn[2]){
             shoot(enemy,true);
         }else{
-            player.setEnergy(player.getEnergy()-1);
+            player.setEnergy(player.getEnergy()-1,true);
             cardsOnField.remove(player.bulletsInChamber[0]);
             rotate();
             if(headShotProbability+5<=360){

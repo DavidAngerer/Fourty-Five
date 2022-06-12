@@ -337,6 +337,8 @@ public class main extends Application {
         controller = new Controller(1, 0);
     }
 
+    private static Text energy;
+
     /**
      * Enters a new Stage with new Enemies
      *
@@ -351,7 +353,7 @@ public class main extends Application {
         pane.getRowConstraints().clear();
         ArrayList<Bullet> bullets = new ArrayList<>();
         ArrayList<EfectCard> efectCards = new ArrayList<>();
-        Text energy = new Text("Energy left = 5");
+        energy = new Text("Energy left = 5");
         energy.setSelectionFill(Color.WHITE);
         energy.setStroke(Color.BLUE);
         energy.setStrokeWidth(1);
@@ -459,34 +461,33 @@ public class main extends Application {
                         public void handle(MouseEvent mouseEvent) {
                             controller.shoot(ene, true);
                             leaveshootingMode();
+                            setEnergy(controller.getEnergy());
                         }
                     });
                     Rectangle head = new Rectangle(80, 80);
                     head.setFill(Color.GREEN);
-                    head.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent mouseEvent) {
-                            HeadshotgameVisual a = new HeadshotgameVisual(20,
-                                    controller.getHeadShotProbability(), 50, Color.LIGHTBLUE);
-                            pane.add(a.getNode(), 3, 3);
-                            new Thread(a).start();
-                            scene.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
-                                @Override
-                                public void handle(KeyEvent keyEvent) {
-                                    if (keyEvent.getCharacter().equals(" ")) {
-                                        if (a.isInside()) {
-                                            controller.shoot(ene, false);
-                                        } else {
-                                            controller.miss(ene);
-                                        }
-                                        scene.removeEventHandler(KeyEvent.KEY_TYPED, this);
-                                        leaveshootingMode();
-                                        pane.getChildren().remove(a.getNode());
-                                        a.terminate();
+                    head.setOnMouseClicked((MouseEvent b) -> {
+                        HeadshotgameVisual a = new HeadshotgameVisual(20,
+                                controller.getHeadShotProbability(), 50, Color.LIGHTBLUE);
+                        pane.add(a.getNode(), 3, 3);
+                        new Thread(a).start();
+                        scene.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent keyEvent) {
+                                if (true) {
+                                    if (a.isInside()) {
+                                        controller.shoot(ene, false);
+                                    } else {
+                                        controller.miss(ene);
                                     }
+                                    leaveshootingMode();
+                                    pane.getChildren().remove(a.getNode());
+                                    a.terminate();
+                                    setEnergy(controller.getEnergy());
+                                    scene.removeEventHandler(MouseEvent.MOUSE_PRESSED, this);
                                 }
-                            });
-                        }
+                            }
+                        });
                     });
                     enemy.setAlignment(head, Pos.TOP_CENTER);
                     enemy.getChildren().addAll(body, head);
@@ -708,13 +709,15 @@ public class main extends Application {
      * @return Node/null if no node has id
      */
     public static Node getNodeByNameId(String id) {
-        for (Node node :
-                pane.getChildren()) {
-            if (node.getId() != null && node.getId().equals(id)) {
-                return node;
+        synchronized (pane){
+            for (Node node :
+                    pane.getChildren()) {
+                if (node.getId() != null && node.getId().equals(id)) {
+                    return node;
+                }
             }
+            return null;
         }
-        return null;
     }
 
     public static void updateBullets(Bullet[] bullets){

@@ -130,9 +130,11 @@ public class Player {
         return energy;
     }
 
-    public void setEnergy(int energy) {
+    public void setEnergy(int energy,boolean setmain) {
         this.energy = energy;
-        main.setEnergy(energy);
+        if(setmain){
+            main.setEnergy(energy);
+        }
     }
 
     public int getMaxHealth() {

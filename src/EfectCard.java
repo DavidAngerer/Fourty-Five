@@ -9,7 +9,8 @@ public class EfectCard extends Card{
         avoid,molotov,superhuman_reflexes_avoid,sweet_death,whiskey,questioning_choices,letting_luck_choose,
         aim_for_the_head,godlike_reflexes,confirmed_headshot,admirable_aim,blood_will_paint_the_rivers_red,
         sacrificial_avoid,flush,six_feet_under,your_weakness_disgusts_me,dual_wield,poison_vile,last_stand,round_skip,
-        suspicious_accuracy,trying_does_not_hurt,reversed_turn,gonna_keep_this,random_Bullshit_go
+        suspicious_accuracy,trying_does_not_hurt,reversed_turn,gonna_keep_this,random_Bullshit_go,Remorse,Soul_Weight,
+        Scar
     };
 
     protected int cost;
