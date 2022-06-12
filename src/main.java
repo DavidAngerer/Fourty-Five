@@ -210,6 +210,7 @@ public class main extends Application {
         StackPane stack;
         try {
             stack = getCardVisual(400, card[slot]);
+
         } catch (IllegalArgumentException e) {
             stack = getCardVisual(400, card[slot].getCardNameAsString());
         }
@@ -411,79 +412,154 @@ public class main extends Application {
     }
 
     private static void buttonEndTurn() {
-        Button endTurn = new Button("End Turn");
-        endTurn.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                controller.enemiesTurn();
-            }
+
+        ImageView buttonEndTurn = new ImageView("buttons/button_endturn_v1.png");
+        pane.add(buttonEndTurn, 5, 1);
+        GridPane.setHalignment(buttonEndTurn, HPos.CENTER);
+
+            buttonEndTurn.setOnMouseClicked((MouseEvent e) -> {
+            controller.enemiesTurn();
         });
-        pane.add(endTurn, 5, 1);
+
+
+
+//        Button endTurn = new Button("End Turn");
+//        endTurn.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+//            @Override
+//            public void handle(MouseEvent mouseEvent) {
+//                controller.enemiesTurn();
+//            }
+//        });
+//        pane.add(endTurn, 5, 1);
     }
 
     private static void buttonShoot(ArrayList<Enemy> enemies) {
-        Button shoot = new Button("shoot");
-        shoot.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                if (controller.shootAvailable() && controller.getEnergy() > 0) {
-                    shootingMode = true;
-                    for (Node node :
-                            pane.getChildren()) {
 
-                        node.setMouseTransparent(true);
-                    }
-                    for (int i = 0; i < enemies.size(); i++) {
-                        StackPane enemy = (StackPane) enemies.get(i).getVisual();
-                        enemy.setMouseTransparent(false);
-                        Rectangle body = new Rectangle(80, 300);
-                        body.setFill(Color.BLUE);
-                        final Enemy ene = enemies.get(i);
-                        body.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-                            @Override
-                            public void handle(MouseEvent mouseEvent) {
-                                controller.shoot(ene, true);
-                                leaveshootingMode();
-                            }
-                        });
-                        Rectangle head = new Rectangle(80, 80);
-                        head.setFill(Color.GREEN);
-                        head.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-                            @Override
-                            public void handle(MouseEvent mouseEvent) {
-                                HeadshotgameVisual a = new HeadshotgameVisual(20,
-                                        controller.getHeadShotProbability(), 50, Color.LIGHTBLUE);
-                                pane.add(a.getNode(), 3, 3);
-                                new Thread(a).start();
-                                scene.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
-                                    @Override
-                                    public void handle(KeyEvent keyEvent) {
-                                        if (keyEvent.getCharacter().equals(" ")) {
-                                            if (a.isInside()) {
-                                                controller.shoot(ene, false);
-                                            } else {
-                                                controller.miss(ene);
-                                            }
-                                            scene.removeEventHandler(KeyEvent.KEY_TYPED, this);
-                                            leaveshootingMode();
-                                            pane.getChildren().remove(a.getNode());
-                                            a.terminate();
-                                        }
-                                    }
-                                });
-                            }
-                        });
-                        enemy.setAlignment(head, Pos.TOP_CENTER);
-                        enemy.getChildren().addAll(body, head);
-                        enemies.get(i).setVisual(enemy);
-                    }
-                }else if(controller.getEnergy() > 0){
-                    controller.blank();
+        ImageView buttonShoot = new ImageView("buttons/button_shoot_v1.png");
+        pane.add(buttonShoot, 5, 1);
+        GridPane.setHalignment(buttonShoot, HPos.CENTER);
+
+        buttonShoot.setOnMouseClicked((MouseEvent e) -> {
+            if (controller.shootAvailable() && controller.getEnergy() > 0) {
+                shootingMode = true;
+                for (Node node :
+                        pane.getChildren()) {
+
+                    node.setMouseTransparent(true);
                 }
+                for (int i = 0; i < enemies.size(); i++) {
+                    StackPane enemy = (StackPane) enemies.get(i).getVisual();
+                    enemy.setMouseTransparent(false);
+                    Rectangle body = new Rectangle(80, 300);
+                    body.setFill(Color.BLUE);
+                    final Enemy ene = enemies.get(i);
+                    body.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent mouseEvent) {
+                            controller.shoot(ene, true);
+                            leaveshootingMode();
+                        }
+                    });
+                    Rectangle head = new Rectangle(80, 80);
+                    head.setFill(Color.GREEN);
+                    head.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent mouseEvent) {
+                            HeadshotgameVisual a = new HeadshotgameVisual(20,
+                                    controller.getHeadShotProbability(), 50, Color.LIGHTBLUE);
+                            pane.add(a.getNode(), 3, 3);
+                            new Thread(a).start();
+                            scene.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
+                                @Override
+                                public void handle(KeyEvent keyEvent) {
+                                    if (keyEvent.getCharacter().equals(" ")) {
+                                        if (a.isInside()) {
+                                            controller.shoot(ene, false);
+                                        } else {
+                                            controller.miss(ene);
+                                        }
+                                        scene.removeEventHandler(KeyEvent.KEY_TYPED, this);
+                                        leaveshootingMode();
+                                        pane.getChildren().remove(a.getNode());
+                                        a.terminate();
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    enemy.setAlignment(head, Pos.TOP_CENTER);
+                    enemy.getChildren().addAll(body, head);
+                    enemies.get(i).setVisual(enemy);
+                }
+            }else if(controller.getEnergy() > 0){
+                controller.blank();
             }
-
         });
-        pane.add(shoot, 5, 0);
+
+
+
+//        Button shoot = new Button("shoot");
+//        shoot.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+//            @Override
+//            public void handle(MouseEvent mouseEvent) {
+//                if (controller.shootAvailable() && controller.getEnergy() > 0) {
+//                    shootingMode = true;
+//                    for (Node node :
+//                            pane.getChildren()) {
+//
+//                        node.setMouseTransparent(true);
+//                    }
+//                    for (int i = 0; i < enemies.size(); i++) {
+//                        StackPane enemy = (StackPane) enemies.get(i).getVisual();
+//                        enemy.setMouseTransparent(false);
+//                        Rectangle body = new Rectangle(80, 300);
+//                        body.setFill(Color.BLUE);
+//                        final Enemy ene = enemies.get(i);
+//                        body.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+//                            @Override
+//                            public void handle(MouseEvent mouseEvent) {
+//                                controller.shoot(ene, true);
+//                                leaveshootingMode();
+//                            }
+//                        });
+//                        Rectangle head = new Rectangle(80, 80);
+//                        head.setFill(Color.GREEN);
+//                        head.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+//                            @Override
+//                            public void handle(MouseEvent mouseEvent) {
+//                                HeadshotgameVisual a = new HeadshotgameVisual(20,
+//                                        controller.getHeadShotProbability(), 50, Color.LIGHTBLUE);
+//                                pane.add(a.getNode(), 3, 3);
+//                                new Thread(a).start();
+//                                scene.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
+//                                    @Override
+//                                    public void handle(KeyEvent keyEvent) {
+//                                        if (keyEvent.getCharacter().equals(" ")) {
+//                                            if (a.isInside()) {
+//                                                controller.shoot(ene, false);
+//                                            } else {
+//                                                controller.miss(ene);
+//                                            }
+//                                            scene.removeEventHandler(KeyEvent.KEY_TYPED, this);
+//                                            leaveshootingMode();
+//                                            pane.getChildren().remove(a.getNode());
+//                                            a.terminate();
+//                                        }
+//                                    }
+//                                });
+//                            }
+//                        });
+//                        enemy.setAlignment(head, Pos.TOP_CENTER);
+//                        enemy.getChildren().addAll(body, head);
+//                        enemies.get(i).setVisual(enemy);
+//                    }
+//                }else if(controller.getEnergy() > 0){
+//                    controller.blank();
+//                }
+//            }
+
+//        });
+//        pane.add(shoot, 5, 0);
     }
 
     public static void leaveshootingMode() {
