@@ -596,8 +596,6 @@ public class main extends Application {
 //            Rectangle enemy = new Rectangle(80, 300);
 //            enemy.setFill(Color.RED);
 
-
-
             ImageView enemyPic = new ImageView("buttons/enemy_v3_shadow.png");
 
             enemyPic.setFitHeight(300);
@@ -744,7 +742,7 @@ public class main extends Application {
                 collect(Collectors.joining("\n")));
         Text name = new Text(card.getCardNameAsString());
         Rectangle background = new Rectangle(150, 300);
-        background.setFill(Color.GREY);
+        background.setFill(Color.ORANGE);
         infos.getChildren().addAll(background, name, stats);
         infos.setAlignment(name, Pos.TOP_CENTER);
         infos.setId("Infos");
