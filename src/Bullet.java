@@ -53,13 +53,7 @@ public class Bullet extends Card{
         this.bulletEffect = bulletEffect;
     }
 
-    public Node getNode() {
-        return node;
-    }
 
-    public void setNode(Node node) {
-        this.node = node;
-    }
 
     public Bullet cloneBullet(){
         return new Bullet(this.cardName,this.damageCalculatet,this.damage,this.cardDeskrition,this.rarity);
@@ -68,7 +62,7 @@ public class Bullet extends Card{
     @Override
     public Map<String, String> getStats() {
         Map<String,String> erg= new HashMap<>();
-        erg.put("Name",cardName.toString());
+        erg.put("Name",cardName.toString().replace("_"," "));
         erg.put("damage",damage+"");
         erg.put("Deskription",cardDeskrition);
         return erg;

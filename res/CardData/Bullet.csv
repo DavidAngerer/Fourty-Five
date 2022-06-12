@@ -15,7 +15,7 @@ Undead_Bullet;2 x undead strenth;undead;rare;;;
 Moon_Bullet;;good will;rare;;;
 Rotten_Bullet;6;<1, <+5;common;;;
 Wealthy_Bullet;8;$;rare;;;
-Backup_Bullet;2;/\+5 dmg;rare;;;
+Backup_Bullet;2;/\+20% dmg;rare;;;
 Bullet_Bullet_Bullet;3 x bulletnr;+ Bullet > ;superrare;;;
 Nuclear_Bullet;50;;ultrarare;;;
 Shotgun_Shell_Bullet;6;hits all enemies;rare;;;

@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -6,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -29,11 +31,7 @@ import java.util.stream.Collectors;
  * main class for the .Fourty-Five game, handles graphics (javafx)
  */
 public class main extends Application {
-    //TODO effectkarten spielen:
-    //TODO bullet type
     //TODO remorse
-    //TODO enemy aussuchen effekt
-    //TODO deathscreen
 
     /**
      * Resolution Height
@@ -498,71 +496,6 @@ public class main extends Application {
                 controller.blank();
             }
         });
-
-
-
-//        Button shoot = new Button("shoot");
-//        shoot.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-//            @Override
-//            public void handle(MouseEvent mouseEvent) {
-//                if (controller.shootAvailable() && controller.getEnergy() > 0) {
-//                    shootingMode = true;
-//                    for (Node node :
-//                            pane.getChildren()) {
-//
-//                        node.setMouseTransparent(true);
-//                    }
-//                    for (int i = 0; i < enemies.size(); i++) {
-//                        StackPane enemy = (StackPane) enemies.get(i).getVisual();
-//                        enemy.setMouseTransparent(false);
-//                        Rectangle body = new Rectangle(80, 300);
-//                        body.setFill(Color.BLUE);
-//                        final Enemy ene = enemies.get(i);
-//                        body.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-//                            @Override
-//                            public void handle(MouseEvent mouseEvent) {
-//                                controller.shoot(ene, true);
-//                                leaveshootingMode();
-//                            }
-//                        });
-//                        Rectangle head = new Rectangle(80, 80);
-//                        head.setFill(Color.GREEN);
-//                        head.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-//                            @Override
-//                            public void handle(MouseEvent mouseEvent) {
-//                                HeadshotgameVisual a = new HeadshotgameVisual(20,
-//                                        controller.getHeadShotProbability(), 50, Color.LIGHTBLUE);
-//                                pane.add(a.getNode(), 3, 3);
-//                                new Thread(a).start();
-//                                scene.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
-//                                    @Override
-//                                    public void handle(KeyEvent keyEvent) {
-//                                        if (keyEvent.getCharacter().equals(" ")) {
-//                                            if (a.isInside()) {
-//                                                controller.shoot(ene, false);
-//                                            } else {
-//                                                controller.miss(ene);
-//                                            }
-//                                            scene.removeEventHandler(KeyEvent.KEY_TYPED, this);
-//                                            leaveshootingMode();
-//                                            pane.getChildren().remove(a.getNode());
-//                                            a.terminate();
-//                                        }
-//                                    }
-//                                });
-//                            }
-//                        });
-//                        enemy.setAlignment(head, Pos.TOP_CENTER);
-//                        enemy.getChildren().addAll(body, head);
-//                        enemies.get(i).setVisual(enemy);
-//                    }
-//                }else if(controller.getEnergy() > 0){
-//                    controller.blank();
-//                }
-//            }
-
-//        });
-//        pane.add(shoot, 5, 0);
     }
 
     public static void leaveshootingMode() {
@@ -615,15 +548,35 @@ public class main extends Application {
      * Zeigt den Todesscreen an wenn man gestorben ist
      */
     public static void deathScreen() {
+        pane.getColumnConstraints().clear();
+        pane.getRowConstraints().clear();
+        pane.setMaxWidth(scene.getWidth());
+        pane.setMinWidth(scene.getWidth());
+        pane.getChildren().clear();
+        pane.setBackground(null);
         displayStats();
-        menu();
+        Button backToMainMenu = new Button("Back To Main Menu");
+        backToMainMenu.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                menu();
+            }
+        });
+        pane.add(backToMainMenu,0,5);
     }
 
     /**
      * Displays stats of round
      */
     public static void displayStats(){
-
+        int count=0;
+        for (Map.Entry<String,Integer> entry:
+             controller.getStats().entrySet()) {
+            Text text = new Text(entry.getKey()+": "+entry.getValue());
+            text.setFont(new Font(40));
+            pane.add(text,0,count);
+            count++;
+        }
     }
 
     /**
@@ -737,7 +690,6 @@ public class main extends Application {
         pane.getChildren().remove(getNodeByNameId("Infos"));
 
         StackPane infos = new StackPane();
-        //TODO ersetzten durch imageview von karte
         Text stats = new Text(card.getStats().entrySet().stream().map(n -> n.getKey() + " = " + n.getValue()).
                 collect(Collectors.joining("\n")));
         Text name = new Text(card.getCardNameAsString());
@@ -821,7 +773,7 @@ public class main extends Application {
             body.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent mouseEvent) {
-                    //controller.
+
                     leaveshootingMode();
                 }
             });

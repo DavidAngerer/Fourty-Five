@@ -56,18 +56,10 @@ public class EfectCard extends Card{
     @Override
     public Map<String, String> getStats() {
         Map<String,String> erg= new HashMap<>();
-        erg.put("Name",cardName.toString());
+        erg.put("Name",cardName.toString().replace("_", " "));
         erg.put("Cost",cost+"");
         erg.put("Deskription",cardDeskrition);
         return erg;
-    }
-
-    public Node getNode() {
-        return node;
-    }
-
-    public void setNode(Node node) {
-        this.node = node;
     }
 
     public int getCost() {

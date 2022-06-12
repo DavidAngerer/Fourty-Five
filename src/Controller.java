@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Controller {
@@ -30,6 +32,10 @@ public class Controller {
 
     private boolean dualWield = false;
 
+    private Map<String,Integer> stats= new HashMap<>();
+
+    private int damageDealtThisTurn=0;
+
     public Controller(float dificulty, int stage) {
         bulletsinExistence = new ArrayList<>();
         efectsInExistence = new ArrayList<>();
@@ -40,15 +46,23 @@ public class Controller {
         fillCards();
         fillEfects();
         for (int i = 0; i < 5; i++) {
-            //player.addCard(bulletsinExistence.get(0).cloneBullet());
+            player.addCard(bulletsinExistence.get(0).cloneBullet());
             player.addCard(efectCardsInExistence.get(0).cloneEfectcard());
         }
         player.addCard(bulletsinExistence.get(1).cloneBullet());
-        addCards(0,13);
         player.addCard(efectCardsInExistence.get(1).cloneEfectcard());
+        initializeStats();
     }
 
-    public void addCards(int ... cards){
+    public void initializeStats(){
+        stats.put("Damage absorbed",0);
+        stats.put("Damage dealt",0);
+        stats.put("Rounds survived",-1);
+        stats.put("Cards discovered",4);
+        stats.put("Most damage in one turn",0);
+    }
+
+    public void addBullets(int ... cards){
         for (int i = 0; i < cards.length; i++) {
             player.addCard(bulletsinExistence.get(cards[i]));
         }
@@ -56,6 +70,7 @@ public class Controller {
 
     public void nextStage() {
         stage++;
+        stats.put("Rounds survived",stats.get("Rounds survived")+1);
         int hpPool = (int) (Math.random() * (stage * 5)) + (stage * 15) + 50;
         int damage = (int) (Math.random() * (stage * 2)) + (stage * 2);
         enemiesThisTurn = new ArrayList<>();
@@ -77,6 +92,7 @@ public class Controller {
     }
 
     public void enemiesTurn() {
+        int healthNow = player.getHealth();
         float multiplier;
         if(freemoves<=0){
             for (Enemy enemy :
@@ -92,6 +108,7 @@ public class Controller {
                     multiplier*=enemy.rageMulitplier();
                     if(player.hasEffect(Efect.EfectName.THORNES)){
                         enemy.setHealth((int)(enemy.getHealth()-enemy.getDamage()*multiplier));
+                        damageDealtThisTurn+=(int)(enemy.getDamage()*multiplier);
                         if (enemy.getHealth() <= 0) {
                             main.removeEnemy(enemy);
                             enemiesThisTurn.remove(enemy);
@@ -106,6 +123,7 @@ public class Controller {
                 }
             }
         }
+        stats.put("Damage absorbed",stats.get("Damage absorbed")+(healthNow-player.getHealth()));
         if(checkAlive()){
             nextTurn();
         }
@@ -130,6 +148,11 @@ public class Controller {
     }
 
     private void nextTurn() {
+        if(damageDealtThisTurn>stats.get("Most damage in one turn")){
+            stats.put("Most damage in one turn",damageDealtThisTurn);
+        }
+        stats.put("Damage dealt",stats.get("Damage dealt")+damageDealtThisTurn);
+        damageDealtThisTurn=0;
         displayEffects();
         player.setAvoidChance(0);
         if(doEfects()){
@@ -166,14 +189,20 @@ public class Controller {
     public boolean checkAlive(){
         if (player.getHealth() <= 0) {
             main.deathScreen();
+            stats.put("Damage dealt",stats.get("Damage dealt")+damageDealtThisTurn);
             return false;
         }
         return true;
     }
 
+    public Map<String, Integer> getStats() {
+        return stats;
+    }
+
     public boolean doEfects(){
         if(player.hasEffect(Efect.EfectName.BURN)){
             player.setHealth(player.getHealth()-5);
+            stats.put("Damage absorbed",stats.get("Damage absorbed")+ 5);
         }
         for (Enemy enemy:
              enemiesThisTurn) {
@@ -181,12 +210,14 @@ public class Controller {
                  enemy.getEfectsOnHim()) {
                 efect.cyclesLeft--;
                 if(efect.cyclesLeft==0 && efect.killOnLastTurn){
+                    damageDealtThisTurn+=enemy.getHealth();
                     enemy.setHealth(0);
                 }
             }
             enemy.getEfectsOnHim().removeIf(n-> n.cyclesLeft<=0);
             if(enemy.hasEfect(Efect.EfectName.BURN)){
                 enemy.setHealth(enemy.getHealth()-5);
+                damageDealtThisTurn+=5;
             }
             if(enemy.getHealth()<=0){
                 main.removeEnemy(enemy);
@@ -197,7 +228,8 @@ public class Controller {
                 player.getEfects()) {
             efect.cyclesLeft--;
             if(efect.killOnLastTurn&&efect.cyclesLeft==0){
-                main.cardSelectScreen();
+                main.deathScreen();
+                stats.put("Damage dealt",stats.get("Damage dealt")+damageDealtThisTurn);
                 return false;
             }
         }
@@ -258,6 +290,7 @@ public class Controller {
 
     public void useEffectCard(EfectCard card) {
         if (card.getCost() <= player.getEnergy()) {
+            int healthNow = player.getHealth();
             if(card.getType()!=null &&card.getType().equals("avoid")){
                 avoidCards(card);
             }else if(card.getType()!=null &&card.getType().equals("direct dmg")){
@@ -278,6 +311,7 @@ public class Controller {
             main.removeCard(card);
             player.setEnergy(player.getEnergy() - card.getCost());
             main.setEnergy(player.getEnergy());
+            stats.put("Damage absorbed",stats.get("Damage absorbed")+(healthNow-player.getHealth()));
         }
     }
 
@@ -446,6 +480,7 @@ public class Controller {
                 for (Enemy enemy:
                      enemiesThisTurn) {
                     enemy.setHealth(enemy.getHealth()-(int)(20*multiplier));
+                    damageDealtThisTurn+=(int)(20*multiplier);
                     if (enemy.getHealth() <= 0) {
                         main.removeEnemy(enemy);
                         enemiesThisTurn.remove(enemy);
@@ -506,10 +541,13 @@ public class Controller {
             }
             if(enemy.hasEfect(Efect.EfectName.THORNES)){
                 player.setHealth((int)(player.getBulletsInChamber()[0].getDamage() * multiplier));
+                stats.put("Damage absorbed",stats.get("Damage absorbed")+
+                        (int)(player.getBulletsInChamber()[0].getDamage() * multiplier));
             }
             if(checkAlive()){
                 enemy.setHealth((int)(enemy.getHealth() -
                         player.getBulletsInChamber()[0].getDamage() * multiplier));
+                damageDealtThisTurn+=(int)(player.getBulletsInChamber()[0].getDamage() * multiplier);
                 if (enemy.getHealth() <= 0) {
                     main.removeEnemy(enemy);
                     enemiesThisTurn.remove(enemy);
@@ -545,6 +583,7 @@ public class Controller {
     }
 
     public boolean doBulletEffect(Enemy enemy){
+        checkBackupBullet();
         switch (player.getBulletsInChamber()[0].cardName){
             case Bewitched_Bullet -> {
                 return true;
@@ -574,9 +613,32 @@ public class Controller {
                     player.getBulletsInChamber()[1].setDamage(player.bulletsInChamber[1].getDamage()+5);
                 }
             }
+            case Bullet_Bullet_Bullet -> Bullet_Bullet_Bullet_damage();
             case Shotgun_Shell_Bullet -> player.getBulletsInChamber()[0].setSpray(true);
         }
         return false;
+    }
+
+    private void Bullet_Bullet_Bullet_damage() {
+        int damage = 0;
+        for (Card card:
+             cardsOnField) {
+            if(card.getClass().getSimpleName().equals("Bullet")){
+                damage+=3;
+            }
+        }
+        player.getBulletsInChamber()[0].setDamage(damage);
+    }
+
+    private void checkBackupBullet() {
+        if(player.getBulletsInChamber()[1]!=null &&
+                player.getBulletsInChamber()[1].cardName== Card.CardName.Backup_Bullet){
+            player.getBulletsInChamber()[0].setDamage((int)Math.round(player.getBulletsInChamber()[0].getDamage()*1.2));
+        }
+        if(player.getBulletsInChamber()[2]!=null &&
+                player.getBulletsInChamber()[2].cardName== Card.CardName.Backup_Bullet){
+            player.getBulletsInChamber()[0].setDamage((int)Math.round(player.getBulletsInChamber()[0].getDamage()*1.2));
+        }
     }
 
     public void diceThrow(){
@@ -690,6 +752,9 @@ public class Controller {
     }
 
     public void addCardToPlayer(Card card){
+        if(!player.getBullets().contains(card)&&!player.getEfectcards().contains(card)){
+            stats.put("Cards discovered",stats.get("Cards discovered")+1);
+        }
         player.addCard(card);
     }
 

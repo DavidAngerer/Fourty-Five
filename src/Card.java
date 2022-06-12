@@ -26,8 +26,12 @@ public abstract class Card {
 
     public abstract Map<String,String> getStats();
 
-    public abstract Node getNode();
-    public abstract void setNode(Node node);
+    public Node getNode(){
+        return node;
+    };
+    public void setNode(Node node){
+        this.node=node;
+    };
 
     public boolean gotCard(){
         double rnd =Math.random() * 100;
