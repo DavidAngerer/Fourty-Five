@@ -531,14 +531,14 @@ public class main extends Application {
 
             ImageView enemyPic = new ImageView("buttons/enemy_v3_shadow.png");
 
-            enemyPic.setFitHeight(300);
+            enemyPic.setFitHeight(200);
             enemyPic.setPreserveRatio(true);
 
             rects.get(i).getChildren().add(enemyPic);
-            pane.add(rects.get(i), i + 2, 1);
+            pane.add(rects.get(i), i + 6, 2);
             progressBars.add(new ProgressBar());
             progressBars.get(i).setProgress(1);
-            pane.add(progressBars.get(i), i + 2, 2);
+            pane.add(progressBars.get(i), i + 6, 3);
             enemies.get(i).setHealthBar(progressBars.get(i));
             enemies.get(i).setVisual(rects.get(i));
         }
