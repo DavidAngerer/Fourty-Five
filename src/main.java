@@ -742,7 +742,7 @@ public class main extends Application {
                 collect(Collectors.joining("\n")));
         Text name = new Text(card.getCardNameAsString());
         Rectangle background = new Rectangle(150, 300);
-        background.setFill(Color.ORANGE);
+        background.setFill(Color.ORANGE);//farbe noch nicht final
         infos.getChildren().addAll(background, name, stats);
         infos.setAlignment(name, Pos.TOP_CENTER);
         infos.setId("Infos");
