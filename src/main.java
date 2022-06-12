@@ -402,8 +402,8 @@ public class main extends Application {
         for (int i = 0; i < 5; i++) {
             bulletChambers[i] = new StackPane();
             bulletChambers[i].setId("Chamber"+i);
-            Rectangle rectangle = new Rectangle(100,100);
-            rectangle.setFill(Color.GREY);
+            Rectangle rectangle = new Rectangle(150,150);
+            rectangle.setFill(Color.DARKRED);
             bulletChambers[i].getChildren().add(rectangle);
             setNodeInSlot(bulletChambers[i],i);
         }
@@ -412,9 +412,9 @@ public class main extends Application {
     private static void buttonEndTurn() {
 
         ImageView buttonEndTurn = new ImageView("buttons/button_endturn_v1.png");
-        pane.add(buttonEndTurn, 5, 1);
+        pane.add(buttonEndTurn, 13, 1);
         GridPane.setHalignment(buttonEndTurn, HPos.CENTER);
-        buttonEndTurn.setFitHeight(30);
+        buttonEndTurn.setFitHeight(40);
         buttonEndTurn.setPreserveRatio(true);
 
             buttonEndTurn.setOnMouseClicked((MouseEvent e) -> {
@@ -436,8 +436,8 @@ public class main extends Application {
     private static void buttonShoot(ArrayList<Enemy> enemies) {
 
         ImageView buttonShoot = new ImageView("buttons/button_shoot_v1.png");
-        pane.add(buttonShoot, 5, 2);
-        buttonShoot.setFitHeight(30);
+        pane.add(buttonShoot, 13, 2);
+        buttonShoot.setFitHeight(40);
         buttonShoot.setPreserveRatio(true);
         GridPane.setHalignment(buttonShoot, HPos.CENTER);
 
@@ -452,7 +452,7 @@ public class main extends Application {
                 for (int i = 0; i < enemies.size(); i++) {
                     StackPane enemy = (StackPane) enemies.get(i).getVisual();
                     enemy.setMouseTransparent(false);
-                    Rectangle body = new Rectangle(80, 300);
+                    Rectangle body = new Rectangle(70, 160);
                     body.setFill(Color.BLUE);
                     final Enemy ene = enemies.get(i);
                     body.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
@@ -463,12 +463,12 @@ public class main extends Application {
                             setEnergy(controller.getEnergy());
                         }
                     });
-                    Rectangle head = new Rectangle(80, 80);
+                    Rectangle head = new Rectangle(70, 40);
                     head.setFill(Color.GREEN);
                     head.setOnMouseClicked((MouseEvent b) -> {
                         HeadshotgameVisual a = new HeadshotgameVisual(20,
                                 controller.getHeadShotProbability(), 50, Color.LIGHTBLUE);
-                        pane.add(a.getNode(), 3, 3);
+                        pane.add(a.getNode(), 13, 2);
                         new Thread(a).start();
                         scene.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
                             @Override
@@ -531,14 +531,14 @@ public class main extends Application {
 
             ImageView enemyPic = new ImageView("buttons/enemy_v3_shadow.png");
 
-            enemyPic.setFitHeight(200);
+            enemyPic.setFitHeight(170);
             enemyPic.setPreserveRatio(true);
 
             rects.get(i).getChildren().add(enemyPic);
-            pane.add(rects.get(i), i + 6, 2);
+            pane.add(rects.get(i), i + 9, 4);
             progressBars.add(new ProgressBar());
             progressBars.get(i).setProgress(1);
-            pane.add(progressBars.get(i), i + 6, 3);
+            pane.add(progressBars.get(i), i + 9, 5);
             enemies.get(i).setHealthBar(progressBars.get(i));
             enemies.get(i).setVisual(rects.get(i));
         }
@@ -610,10 +610,10 @@ public class main extends Application {
     public static StackPane createCard(Card card){
         StackPane stack;
         try {
-            stack = getCardVisual(100, card);
+            stack = getCardVisual(150, card);
 
         } catch (IllegalArgumentException e) {
-            stack = getCardVisual(100, card.getCardNameAsString());
+            stack = getCardVisual(150, card.getCardNameAsString());
         }
         stack.setOnMouseEntered(e -> {
             hoveredCard(card);
@@ -667,7 +667,7 @@ public class main extends Application {
     public static void putCardWhereGoes(Card card) {
         for (int i = 0; i < 6; i++) {
             if (getNodeByNameId("HandCard" + i) == null) {
-                pane.add(card.getNode(), 5 + i, 5);
+                pane.add(card.getNode(), 10 + i, 8);
                 handcardsTaken++;
                 card.getNode().setId("HandCard" + i);
                 break;
@@ -704,12 +704,12 @@ public class main extends Application {
         Text stats = new Text(card.getStats().entrySet().stream().map(n -> n.getKey() + " = " + n.getValue()).
                 collect(Collectors.joining("\n")));
         Text name = new Text(card.getCardNameAsString());
-        Rectangle background = new Rectangle(150, 300);
+        Rectangle background = new Rectangle(400, 300);
         background.setFill(Color.ORANGE);//farbe noch nicht final
         infos.getChildren().addAll(background, name, stats);
         infos.setAlignment(name, Pos.TOP_CENTER);
         infos.setId("Infos");
-        pane.add(infos, 11, 1);
+        pane.add(infos, 15, 1);
     }
 
     /**
@@ -750,7 +750,7 @@ public class main extends Application {
         circle.setFill(Color.GOLD);
         Text text = new Text(isHead ? "Head" : "Tails");
         coin.getChildren().addAll(circle, text);
-        pane.add(coin, 3, 3);
+        pane.add(coin, 13, 2);
         scene.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -801,7 +801,7 @@ public class main extends Application {
         Text number = new Text(side+"");
         StackPane dice = new StackPane();
         dice.getChildren().addAll(rectangle,number);
-        pane.add(dice,3,3);
+        pane.add(dice,13,2);
         scene.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
