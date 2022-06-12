@@ -6,7 +6,6 @@ import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -594,9 +593,17 @@ public class main extends Application {
         ArrayList<ProgressBar> progressBars = new ArrayList<>();
         for (int i = 0; i < enemies.size(); i++) {
             rects.add(new StackPane());
-            Rectangle enemy = new Rectangle(80, 300);
-            enemy.setFill(Color.RED);
-            rects.get(i).getChildren().add(enemy);
+//            Rectangle enemy = new Rectangle(80, 300);
+//            enemy.setFill(Color.RED);
+
+
+
+            ImageView enemyPic = new ImageView("buttons/enemy_v3_shadow.png");
+
+            enemyPic.setFitHeight(300);
+            enemyPic.setPreserveRatio(true);
+
+            rects.get(i).getChildren().add(enemyPic);
             pane.add(rects.get(i), i + 2, 1);
             progressBars.add(new ProgressBar());
             progressBars.get(i).setProgress(1);
