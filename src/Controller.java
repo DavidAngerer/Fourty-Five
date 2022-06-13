@@ -49,12 +49,11 @@ public class Controller {
             player.addCard(bulletsinExistence.get(0).cloneBullet());
             player.addCard(efectCardsInExistence.get(0).cloneEfectcard());
         }
-        for (int i = 0; i < 19; i++) {
+        /*
+            for (int i = 0; i < 19; i++) {
             player.addCard(bulletsinExistence.get(i).cloneBullet());
             player.addCard(efectCardsInExistence.get(i).cloneEfectcard());
-        }
-        /*
-
+            }
          */
         player.addCard(bulletsinExistence.get(1).cloneBullet());
         player.addCard(efectCardsInExistence.get(1).cloneEfectcard());
